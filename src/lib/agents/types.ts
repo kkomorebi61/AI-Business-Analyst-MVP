@@ -19,6 +19,13 @@ export interface AgentTrace {
   intent: { intent: Intent; reason: string };
   metric: { metrics: MetricKey[] };
   data: { sources: string[] };
+  /** V1.1：查询治理留痕（分级 / 覆盖率 / 风险 / 理由链） */
+  governance?: {
+    queryClass: QueryClass;
+    coverageLevel: CoverageLevel;
+    riskLevel: GovernanceRiskLevel;
+    reasons: string[];
+  };
 }
 
 /* ---------- Insight Agent 产出结构（对齐报告页各区） ---------- */
@@ -56,6 +63,61 @@ export interface Evidence {
   lastUpdated: string | null; // 最晚更新时间
 }
 
+/* ---------- Query Governance（V1.1：查询分级 / 覆盖率 / 风险 / 响应策略 / 事件归因） ---------- */
+/* 来源：11_Query_Governance（§4 分级 / §6 覆盖率 / §7 风险 / §8 响应 / §10 异常） + 10_Data_Trust */
+
+/** 查询分级（doc 11 §4）：A 直答 / B 部分回答 / C 不支持 */
+export type QueryClass = "A" | "B" | "C";
+
+/** 覆盖率等级（doc 11 §6 阈值，verbatim）：High ≥ 80 / Medium 50–<80 / Low < 50 */
+export type CoverageLevel = "High" | "Medium" | "Low";
+
+/** 治理风险等级（结论可信度风险，与单条 Risk.level 分离避免歧义） */
+export type GovernanceRiskLevel = "low" | "medium" | "high";
+
+/** 响应策略：决定 UI 展示与是否抑制结论 */
+export type ResponseStrategy = "direct" | "partial" | "refuse" | "suspend";
+
+/** 异常检测结果（doc 11 §10：异常数据暂停 AI 分析） */
+export interface AnomalyResult {
+  detected: boolean;
+  metric?: string;
+  ratio?: number;
+}
+
+/** 业务事件归因（来源：08_business_events.json） */
+export interface EventAttribution {
+  event_name: string;
+  event_date: string; // YYYY-MM-DD
+  event_type: "Marketing" | "Supply Chain" | "Member" | "Channel" | "Product";
+  direction: "Positive" | "Negative";
+  description: string;
+  matched_metrics: MetricKey[]; // 该事件命中的异常指标
+}
+
+/** Finding / Risk 的可选根因（事件归因产出） */
+export interface RootCause {
+  event: EventAttribution;
+  note: string; // 例如 "618 预热带动 GMV 环比 +30%"
+}
+
+/** 查询治理结论 —— 挂到 AnalysisResult.governance，UI 直读 */
+export interface GovernanceVerdict {
+  queryClass: QueryClass;
+  coverageLevel: CoverageLevel;
+  coverage: number | null; // 0~100，已引用源的平均覆盖
+  riskLevel: GovernanceRiskLevel;
+  responseStrategy: ResponseStrategy;
+  requiredSources: string[]; // 本分析类型要求的源系统
+  missingSources: string[]; // 缺失源（未接入或覆盖过低）
+  metricAvailable: boolean; // 核心指标是否在指标库且有数据
+  reasons: string[]; // 判定理由链（可解释 / trace）
+  mandatedText: string | null; // 按策略填充的强制文案
+  banner: { title: string; description: string }; // 顶部横幅
+  anomaly: AnomalyResult;
+  attributedEvents: EventAttribution[]; // 本周期内命中的业务事件
+}
+
 export interface Finding {
   id: string;
   category: string; // 商品 / 渠道 / 会员
@@ -65,6 +127,8 @@ export interface Finding {
   metric: string; // +¥770万 GMV
   direction: "up" | "down";
   evidence?: Evidence; // V1.1：数据依据
+  lineage?: string[]; // V1.1：数据血缘（METRIC_SPECS.lineage）
+  rootCause?: RootCause; // V1.1：业务事件归因
 }
 
 export interface Risk {
@@ -74,6 +138,8 @@ export interface Risk {
   description: string;
   impact: string; // 影响: 预计每周减少利润 ¥48万
   evidence?: Evidence; // V1.1：数据依据
+  lineage?: string[]; // V1.1：数据血缘
+  rootCause?: RootCause; // V1.1：业务事件归因
 }
 
 export interface Recommendation {
@@ -106,5 +172,7 @@ export interface AnalysisResult {
   trend: { date: string; gmv: number; orders: number }[];
   hasComparison: boolean; // 是否有上一期可比（30 天档为 false）
   dataSources: number; // 4
+  /** V1.1：查询治理结论（分级 / 覆盖率 / 风险 / 响应策略 / 事件归因） */
+  governance?: GovernanceVerdict;
   trace: AgentTrace;
 }
