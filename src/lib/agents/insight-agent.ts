@@ -1,5 +1,5 @@
 /**
- * Insight Agent —— 生成业务洞察（V2：基于 90 天聚合数据动态生成）
+ * Insight Agent —— 生成业务洞察（V2：基于 90 天聚合数据动态生成 + Evidence）
  *
  * 分析逻辑：发生了什么 → 为什么 → 业务风险 → 行动建议
  *
@@ -7,13 +7,15 @@
  * 复购趋势、营销 ROI）推导摘要 / 发现 / 风险 / 建议。
  * 切换 7/14/30/90 天时，洞察与 KPI、图表保持一致。
  *
- * 原则：不虚构原因。归因到具体经营事件的能力在 Query Governance 阶段
- * （接入 08_business_events）后补齐。
+ * V1.1：每条 Finding / Risk 都通过 Evidence Engine 附带数据依据
+ * （metric before→after + 数据源 + 覆盖率 + 健康度）。不虚构原因；
+ * 归因到具体经营事件的能力在 Query Governance 阶段（接入 08_business_events）补齐。
  */
 
 import type { ChannelAggregate } from "@/lib/data/daily";
 import { RECOMMENDATIONS, type Role } from "@/lib/kb/metric-kb";
 import type { DataAgentOutput } from "./data-agent";
+import { buildChannelEvidence, buildMetricEvidence } from "./evidence-engine";
 import type { Finding, Intent, Recommendation, Risk } from "./types";
 
 export interface InsightAgentOutput {
@@ -97,7 +99,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
     text = `${data.rangeLabel}累计 GMV ${fmtMoney(s.current.gmv)}，订单 ${s.current.orders.toLocaleString("zh-CN")} 单，客单价约 ¥${s.current.aov.toFixed(0)}，转化率 ${s.current.conversion.toFixed(1)}%。当前时间范围缺少上一周期数据，暂不展示环比。`;
   }
 
-  // 发现
+  // 发现（每条带 Evidence）
   const findings: Finding[] = [];
   findings.push({
     id: "f-gmv",
@@ -107,6 +109,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
     description: `${data.rangeLabel} GMV 累计 ${fmtMoney(s.current.gmv)}，对应订单 ${s.current.orders.toLocaleString("zh-CN")} 单，客单价约 ¥${s.current.aov.toFixed(0)}，转化率 ${s.current.conversion.toFixed(1)}%。`,
     metric: data.hasComparison ? fmtSignedPct(gmvDelta!) : fmtMoney(s.current.gmv),
     direction: data.hasComparison ? (gmvDelta! >= 0 ? "up" : "down") : "up",
+    evidence: buildMetricEvidence(["gmv", "orders"], data),
   });
   if (top && top.channel) {
     findings.push({
@@ -117,6 +120,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       description: `${top.channel}贡献 GMV ${fmtMoney(top.gmv)}，ROI ${top.roi.toFixed(1)}${top.gmvDelta !== null ? `，环比 ${fmtSignedPct(top.gmvDelta)}` : ""}。`,
       metric: top.gmvDelta !== null ? fmtSignedPct(top.gmvDelta) : `ROI ${top.roi.toFixed(1)}`,
       direction: top.gmvDelta !== null ? (top.gmvDelta >= 0 ? "up" : "down") : "up",
+      evidence: buildChannelEvidence(top),
     });
   }
   if (repDelta !== null) {
@@ -128,10 +132,11 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       description: `${data.rangeLabel}平均复购率 ${data.crm.repurchaseRate.toFixed(1)}%，环比 ${repDelta >= 0 ? "提升" : "下降"} ${Math.abs(repDelta).toFixed(1)} 个百分点。`,
       metric: `${repDelta >= 0 ? "+" : ""}${repDelta.toFixed(1)} pp`,
       direction: repDelta >= 0 ? "up" : "down",
+      evidence: buildMetricEvidence(["repurchaseRate"], data),
     });
   }
 
-  // 风险（由负向信号推导）
+  // 风险（由负向信号推导，每条带 Evidence）
   const risks: Risk[] = [];
   if (data.hasComparison && refundDelta !== undefined && refundDelta > 0.3) {
     risks.push({
@@ -140,6 +145,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       title: "退款率抬升",
       description: `退款率环比 +${refundDelta.toFixed(1)}pp 至 ${s.current.refundRate.toFixed(1)}%，可能源于履约时效或商品质量。`,
       impact: "影响: 拉低净 GMV、增加售后成本",
+      evidence: buildMetricEvidence(["refundRate"], data),
     });
   }
   if (weak && weak.roi < 1.5) {
@@ -149,6 +155,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       title: `${weak.channel}渠道投入产出失衡`,
       description: `${weak.channel} ROI 仅 ${weak.roi.toFixed(1)}，低于盈亏线，流量大但转化弱。`,
       impact: "影响: 拖累整体营销 ROI",
+      evidence: buildChannelEvidence(weak),
     });
   }
   if (data.hasComparison && m.roiDelta !== null && m.roiDelta < -0.2) {
@@ -158,6 +165,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       title: "营销 ROI 下滑",
       description: `营销 ROI 环比 ${m.roiDelta.toFixed(2)} 至 ${m.roi.toFixed(2)}，投放效率下降。`,
       impact: "影响: 同等投入带来的 GMV 减少",
+      evidence: buildMetricEvidence(["roi"], data),
     });
   }
   if (repDelta !== null && repDelta < 0) {
@@ -167,6 +175,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       title: "复购走弱影响 LTV",
       description: `复购率环比下降 ${Math.abs(repDelta).toFixed(1)} 个百分点，若持续将拉低会员生命周期价值。`,
       impact: "影响: LTV 存在下行动能",
+      evidence: buildMetricEvidence(["repurchaseRate"], data),
     });
   }
 
@@ -206,6 +215,7 @@ function crmInsight(data: DataAgentOutput): InsightAgentOutput {
         description: `${data.rangeLabel}平均复购率 ${data.crm.repurchaseRate.toFixed(1)}%。`,
         metric: hasCmp ? `${repDelta! >= 0 ? "+" : ""}${repDelta!.toFixed(1)} pp` : `${data.crm.repurchaseRate.toFixed(1)}%`,
         direction: hasCmp ? (repDelta! >= 0 ? "up" : "down") : "up",
+        evidence: buildMetricEvidence(["repurchaseRate"], data),
       },
       {
         id: "f2",
@@ -215,11 +225,19 @@ function crmInsight(data: DataAgentOutput): InsightAgentOutput {
         description: `VIP 会员 ${data.crm.vipMembers.toLocaleString("zh-CN")} 人，活跃会员 ${data.crm.activeMembers.toLocaleString("zh-CN")} 人，LTV ¥${data.crm.ltv.toLocaleString("zh-CN")}。`,
         metric: `VIP ${data.crm.vipMembers.toLocaleString("zh-CN")}`,
         direction: "up",
+        evidence: buildMetricEvidence(["vipMembers", "ltv"], data),
       },
     ],
     risks: hasCmp && repDelta! < 0
       ? [
-          { id: "r1", level: "high", title: "LTV 下行风险", description: "复购率是 LTV 的核心驱动，持续走弱将直接拉低会员生命周期价值。", impact: "影响: LTV 预计环比下降" },
+          {
+            id: "r1",
+            level: "high",
+            title: "LTV 下行风险",
+            description: "复购率是 LTV 的核心驱动，持续走弱将直接拉低会员生命周期价值。",
+            impact: "影响: LTV 预计环比下降",
+            evidence: buildMetricEvidence(["repurchaseRate"], data),
+          },
         ]
       : [],
     recommendations: [toRec(RECOMMENDATIONS.repurchase_down, 1)],
@@ -235,18 +253,26 @@ function channelInsight(data: DataAgentOutput): InsightAgentOutput {
 
   return {
     summary: { tag: "渠道摘要", accuracy: 93, readingTimeSec: 30, text },
-    findings: data.channels.slice(0, 3).map((c, i) => ({
-      id: `f${i + 1}`,
+    findings: data.channels.slice(0, 3).map((c) => ({
+      id: `f-${c.channel}`,
       category: "渠道",
       icon: "truck",
       title: `${c.channel}渠道${c.gmvDelta !== null && c.gmvDelta >= 0 ? "增长" : c.gmvDelta !== null ? "下滑" : "表现"}`,
       description: `GMV ${fmtMoney(c.gmv)}，订单 ${c.orders.toLocaleString("zh-CN")}，转化率 ${c.conversion.toFixed(1)}%，ROI ${c.roi.toFixed(1)}${c.gmvDelta !== null ? `，环比 ${fmtSignedPct(c.gmvDelta)}` : ""}。`,
       metric: c.gmvDelta !== null ? fmtSignedPct(c.gmvDelta) : `ROI ${c.roi.toFixed(1)}`,
       direction: c.gmvDelta !== null ? (c.gmvDelta >= 0 ? "up" : "down") : "up",
+      evidence: buildChannelEvidence(c),
     })),
     risks:
       weak && weak.roi < 1.5
-        ? [{ id: "r1", level: "medium", title: `${weak.channel}渠道 ROI 偏低`, description: `${weak.channel} ROI ${weak.roi.toFixed(1)}，低于盈亏线。`, impact: "影响: 拖累整体营销 ROI" }]
+        ? [{
+            id: "r1",
+            level: "medium",
+            title: `${weak.channel}渠道 ROI 偏低`,
+            description: `${weak.channel} ROI ${weak.roi.toFixed(1)}，低于盈亏线。`,
+            impact: "影响: 拖累整体营销 ROI",
+            evidence: buildChannelEvidence(weak),
+          }]
         : [],
     recommendations: [toRec(RECOMMENDATIONS.channel_opportunity, 1)],
   };

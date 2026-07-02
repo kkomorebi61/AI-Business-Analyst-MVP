@@ -35,6 +35,27 @@ export interface KpiPoint {
   icon: string; // 图标 key（UI 层映射 lucide）
 }
 
+/* ---------- Evidence Engine（V1.1 可信闭环：每个结论都带数据依据） ---------- */
+
+/** 单个指标的 before → after → change */
+export interface EvidenceItem {
+  metric: string; // GMV / 复购率 ...
+  before: number | null; // 上一期值（无上一期时为 null）
+  after: number | null; // 当期值
+  change: number | null; // 变化量（见 changeKind）
+  changeKind: "pct" | "pp" | "value"; // 相对% / 百分点 / 绝对值
+  unit: string; // "¥" / "%" / ""
+}
+
+/** 一条结论（Finding / Risk）的数据依据 */
+export interface Evidence {
+  items: EvidenceItem[];
+  dataSources: string[]; // ["OMS","CDP"] —— 引用的源系统
+  coverage: number | null; // 0~100，来自 Data Trust 注册表
+  healthStatus: string; // Healthy / Warning / Delayed / Error
+  lastUpdated: string | null; // 最晚更新时间
+}
+
 export interface Finding {
   id: string;
   category: string; // 商品 / 渠道 / 会员
@@ -43,6 +64,7 @@ export interface Finding {
   description: string;
   metric: string; // +¥770万 GMV
   direction: "up" | "down";
+  evidence?: Evidence; // V1.1：数据依据
 }
 
 export interface Risk {
@@ -51,6 +73,7 @@ export interface Risk {
   title: string;
   description: string;
   impact: string; // 影响: 预计每周减少利润 ¥48万
+  evidence?: Evidence; // V1.1：数据依据
 }
 
 export interface Recommendation {
