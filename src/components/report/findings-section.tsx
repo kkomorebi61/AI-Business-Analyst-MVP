@@ -1,18 +1,24 @@
-import { ArrowRight } from "lucide-react";
+"use client";
+
+import { ArrowRight, Sparkles } from "lucide-react";
 import { Icon } from "@/components/icons";
+import EvidenceInline from "./evidence-inline";
 import type { Finding } from "@/lib/agents/types";
 
-/** 第02节 关键发现：发现卡（分类标签 + 图标 / 标题 / 描述 / 指标徽标 + 深入分析） */
-export default function FindingsSection({ findings }: { findings: Finding[] }) {
+/** 第02节 关键发现：发现卡（分类标签 / 标题 / 描述 / 指标 / Evidence / 根因 / 查看依据） */
+export default function FindingsSection({
+  findings,
+  onViewEvidence,
+}: {
+  findings: Finding[];
+  onViewEvidence: (f: Finding) => void;
+}) {
   return (
     <div className="flex flex-col gap-3">
       {findings.map((f) => {
         const up = f.direction === "up";
         return (
-          <div
-            key={f.id}
-            className="rounded-xl border border-border bg-white p-4"
-          >
+          <div key={f.id} className="rounded-xl border border-border bg-white p-4">
             <div className="flex items-center gap-2">
               <div
                 className={`flex h-8 w-8 items-center justify-center rounded-lg ${
@@ -24,6 +30,12 @@ export default function FindingsSection({ findings }: { findings: Finding[] }) {
               <span className="rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground">
                 {f.category}
               </span>
+              {f.rootCause && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-700">
+                  <Sparkles className="h-3 w-3" />
+                  根因：{f.rootCause.event.event_name}
+                </span>
+              )}
             </div>
 
             <div className="mt-2.5 flex items-start justify-between gap-3">
@@ -42,8 +54,13 @@ export default function FindingsSection({ findings }: { findings: Finding[] }) {
               </span>
             </div>
 
-            <button className="mt-3 flex items-center gap-1 text-xs text-blue-600">
-              深入分析 <ArrowRight className="h-3 w-3" />
+            <EvidenceInline evidence={f.evidence} />
+
+            <button
+              onClick={() => onViewEvidence(f)}
+              className="mt-3 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
+            >
+              查看依据 <ArrowRight className="h-3 w-3" />
             </button>
           </div>
         );

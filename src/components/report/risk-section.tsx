@@ -1,4 +1,7 @@
-import { ShieldAlert, TriangleAlert } from "lucide-react";
+"use client";
+
+import { ArrowRight, ShieldAlert, Sparkles, TriangleAlert } from "lucide-react";
+import EvidenceInline from "./evidence-inline";
 import type { Risk } from "@/lib/agents/types";
 
 const LEVEL = {
@@ -7,8 +10,14 @@ const LEVEL = {
   low: { label: "低风险", bar: "border-l-slate-300", text: "text-slate-500", chip: "bg-slate-100 text-slate-500" },
 } as const;
 
-/** 第03节 风险提示：按严重度着色的风险卡（高/中/低） */
-export default function RiskSection({ risks }: { risks: Risk[] }) {
+/** 第03节 风险提示：按严重度着色的风险卡（含 Evidence / 根因 / 查看依据） */
+export default function RiskSection({
+  risks,
+  onViewEvidence,
+}: {
+  risks: Risk[];
+  onViewEvidence: (r: Risk) => void;
+}) {
   return (
     <div className="flex flex-col gap-3">
       {risks.map((r) => {
@@ -25,16 +34,28 @@ export default function RiskSection({ risks }: { risks: Risk[] }) {
               >
                 <IconCmp className="h-4 w-4" />
               </div>
-              <span className={`text-xs font-semibold ${lv.text}`}>
-                {lv.label}
-              </span>
+              <span className={`text-xs font-semibold ${lv.text}`}>{lv.label}</span>
             </div>
 
             <h3 className="mt-2.5 text-[15px] font-semibold">{r.title}</h3>
-            <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
-              {r.description}
-            </p>
+            <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{r.description}</p>
             <p className="mt-2 text-xs text-muted-foreground">{r.impact}</p>
+
+            {r.rootCause && (
+              <div className="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs text-amber-700">
+                <Sparkles className="h-3 w-3" />
+                根因：{r.rootCause.event.event_name}
+              </div>
+            )}
+
+            <EvidenceInline evidence={r.evidence} />
+
+            <button
+              onClick={() => onViewEvidence(r)}
+              className="mt-3 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
+            >
+              查看依据 <ArrowRight className="h-3 w-3" />
+            </button>
           </div>
         );
       })}

@@ -5,9 +5,14 @@
 import {
   Activity,
   BarChart3,
+  Clock,
   Crown,
+  Database,
+  FileText,
   Gem,
+  GitBranch,
   Lightbulb,
+  Link,
   Megaphone,
   MousePointerClick,
   Package,
@@ -25,6 +30,7 @@ import {
   UserMinus,
   Users,
   Wallet,
+  X,
   type LucideIcon,
 } from "lucide-react";
 
@@ -57,6 +63,13 @@ const MAP: Record<string, LucideIcon> = {
   shield: ShieldAlert,
   star: Sparkles,
   activity: Activity,
+  // evidence / trust / drawer
+  database: Database,
+  gitBranch: GitBranch,
+  clock: Clock,
+  fileText: FileText,
+  link: Link,
+  x: X,
 };
 
 export function Icon({

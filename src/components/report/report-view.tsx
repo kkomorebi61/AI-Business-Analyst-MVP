@@ -10,9 +10,11 @@ import RecommendationsSection from "./recommendations-section";
 import ReportFooter from "./report-footer";
 import SectionHeading from "./section-heading";
 import TrendChart from "./trend-chart";
+import QueryBanner from "./query-banner";
+import EvidenceDrawer from "./evidence-drawer";
 import RangeSwitcher from "@/components/home/range-switcher";
 import type { Range } from "@/lib/data/daily";
-import type { AnalysisResult } from "@/lib/agents/types";
+import type { AnalysisResult, Finding, Risk } from "@/lib/agents/types";
 import type { Role } from "@/lib/kb/metric-kb";
 
 const ROLE_LABEL: Record<Role, string> = {
@@ -34,6 +36,10 @@ export default function ReportView({
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState<Range>(initialRange);
   const [nonce, setNonce] = useState(0);
+  const [drawer, setDrawer] = useState<{ open: boolean; target: Finding | Risk | null }>({
+    open: false,
+    target: null,
+  });
 
   const run = useCallback(async () => {
     setLoading(true);
@@ -55,6 +61,10 @@ export default function ReportView({
   useEffect(() => {
     void run();
   }, [run, nonce]);
+
+  const onViewEvidence = useCallback((target: Finding | Risk) => {
+    setDrawer({ open: true, target });
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -89,52 +99,77 @@ export default function ReportView({
               </div>
             </section>
 
+            {/* 查询分级横幅（直答 / 部分回答 / 暂不支持 / 数据异常） */}
+            <div className="mt-6">
+              <QueryBanner verdict={result.governance} />
+            </div>
+
             <div className="mt-6 space-y-8">
               <SummarySection summary={result.summary} />
 
-              <TrendChart data={result.trend} rangeLabel={result.rangeLabel} />
+              {/* 拒答（Class C）无数据；暂停保留 dashboard；直答/部分展示全部 */}
+              {result.governance.responseStrategy !== "refuse" && (
+                <TrendChart data={result.trend} rangeLabel={result.rangeLabel} />
+              )}
 
-              <section>
-                <SectionHeading
-                  index="01"
-                  title="KPI 驾驶舱"
-                  subtitle={`定义${result.rangeLabel}表现的核心指标`}
-                />
-                <KpiCards kpis={result.kpis} />
-              </section>
+              {result.governance.responseStrategy !== "refuse" && (
+                <section>
+                  <SectionHeading
+                    index="01"
+                    title="KPI 驾驶舱"
+                    subtitle={`定义${result.rangeLabel}表现的核心指标`}
+                  />
+                  <KpiCards kpis={result.kpis} />
+                </section>
+              )}
 
-              <section>
-                <SectionHeading
-                  index="02"
-                  title="关键发现"
-                  subtitle="按业务影响排序的洞察"
-                />
-                <FindingsSection findings={result.findings} />
-              </section>
+              {(result.governance.responseStrategy === "direct" ||
+                result.governance.responseStrategy === "partial") && (
+                <section>
+                  <SectionHeading
+                    index="02"
+                    title="关键发现"
+                    subtitle="按业务影响排序的洞察"
+                  />
+                  <FindingsSection findings={result.findings} onViewEvidence={onViewEvidence} />
+                </section>
+              )}
 
-              <section>
-                <SectionHeading
-                  index="03"
-                  title="风险提示"
-                  subtitle="影响下期表现的重点风险"
-                />
-                <RiskSection risks={result.risks} />
-              </section>
+              {(result.governance.responseStrategy === "direct" ||
+                result.governance.responseStrategy === "partial") && (
+                <section>
+                  <SectionHeading
+                    index="03"
+                    title="风险提示"
+                    subtitle="影响下期表现的重点风险"
+                  />
+                  <RiskSection risks={result.risks} onViewEvidence={onViewEvidence} />
+                </section>
+              )}
 
-              <section>
-                <SectionHeading
-                  index="04"
-                  title="行动建议"
-                  subtitle="按预期收益与投入排序"
-                />
-                <RecommendationsSection recommendations={result.recommendations} />
-              </section>
+              {(result.governance.responseStrategy === "direct" ||
+                result.governance.responseStrategy === "partial") && (
+                <section>
+                  <SectionHeading
+                    index="04"
+                    title="行动建议"
+                    subtitle="按预期收益与投入排序"
+                  />
+                  <RecommendationsSection recommendations={result.recommendations} />
+                </section>
+              )}
 
               <ReportFooter dataSources={result.dataSources} />
             </div>
           </div>
         )}
       </main>
+
+      <EvidenceDrawer
+        open={drawer.open}
+        target={drawer.target}
+        onClose={() => setDrawer({ open: false, target: null })}
+      />
     </div>
   );
 }
