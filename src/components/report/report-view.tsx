@@ -98,7 +98,7 @@ export default function ReportView({
                 <SectionHeading
                   index="01"
                   title="KPI 驾驶舱"
-                  subtitle={`定义${result.rangeLabel}表现的四个核心指标`}
+                  subtitle={`定义${result.rangeLabel}表现的核心指标`}
                 />
                 <KpiCards kpis={result.kpis} />
               </section>

@@ -1,11 +1,14 @@
 /**
- * Insight Agent —— 生成业务洞察（V1.1：基于时间范围聚合数据动态生成）
+ * Insight Agent —— 生成业务洞察（V2：基于 90 天聚合数据动态生成）
  *
  * 分析逻辑：发生了什么 → 为什么 → 业务风险 → 行动建议
  *
- * 与 Sprint 1 的差异：不再硬编码叙事，而是从 Data Agent 的聚合结果
- * （GMV/订单/利润环比、各渠道环比、复购趋势）推导摘要/发现/风险/建议。
- * 这样切换 7/14/30 天时，洞察与 KPI、图表完全一致。
+ * 从 Data Agent 的聚合结果（GMV/订单/客单价/转化/退款环比、各渠道环比、
+ * 复购趋势、营销 ROI）推导摘要 / 发现 / 风险 / 建议。
+ * 切换 7/14/30/90 天时，洞察与 KPI、图表保持一致。
+ *
+ * 原则：不虚构原因。归因到具体经营事件的能力在 Query Governance 阶段
+ * （接入 08_business_events）后补齐。
  */
 
 import type { ChannelAggregate } from "@/lib/data/daily";
@@ -62,10 +65,12 @@ function weakChannel(channels: ChannelAggregate[]): ChannelAggregate | null {
 
 function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
   const s = data.sales;
+  const m = data.marketing;
   const top = topChannel(data.channels);
   const weak = weakChannel(data.channels);
   const gmvDelta = s.delta?.gmv;
   const repDelta = data.crm.repurchaseDelta;
+  const refundDelta = s.delta?.refundRate;
 
   // 摘要
   let text: string;
@@ -75,17 +80,21 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       top.gmvDelta !== null && top.gmvDelta >= 0
         ? `增长主要来自${top.channel}渠道（GMV 环比 ${fmtSignedPct(top.gmvDelta)}）`
         : "各渠道表现分化";
-    const profitNote =
-      s.delta && s.delta.profit < 0
-        ? `；但利润环比 ${fmtSignedPct(s.delta.profit)}，需关注成本结构`
+    const refundNote =
+      refundDelta !== undefined && refundDelta > 0.2
+        ? `；退款率环比 +${refundDelta.toFixed(1)}pp，需关注履约`
+        : "";
+    const roiNote =
+      m.roiDelta !== null && m.roiDelta < 0
+        ? `、营销 ROI 环比 ${m.roiDelta.toFixed(2)}`
         : "";
     const memberNote =
       repDelta !== null && repDelta < 0
         ? `、高价值会员复购走弱 ${Math.abs(repDelta).toFixed(1)} 个百分点`
         : "";
-    text = `${data.rangeLabel}整体表现${tone}。GMV 环比 ${fmtSignedPct(gmvDelta)}，累计 ${fmtMoney(s.current.gmv)}，${driver}${profitNote}${memberNote}。`;
+    text = `${data.rangeLabel}整体表现${tone}。GMV 环比 ${fmtSignedPct(gmvDelta)}，累计 ${fmtMoney(s.current.gmv)}，${driver}${refundNote}${roiNote}${memberNote}。`;
   } else {
-    text = `${data.rangeLabel}累计 GMV ${fmtMoney(s.current.gmv)}，订单 ${s.current.orders.toLocaleString("zh-CN")} 单，利润 ${fmtMoney(s.current.profit)}。当前时间范围缺少上一周期数据，暂不展示环比。`;
+    text = `${data.rangeLabel}累计 GMV ${fmtMoney(s.current.gmv)}，订单 ${s.current.orders.toLocaleString("zh-CN")} 单，客单价约 ¥${s.current.aov.toFixed(0)}，转化率 ${s.current.conversion.toFixed(1)}%。当前时间范围缺少上一周期数据，暂不展示环比。`;
   }
 
   // 发现
@@ -95,7 +104,7 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
     category: "经营",
     icon: "gmv",
     title: data.hasComparison ? `GMV 环比${gmvDelta! >= 0 ? "增长" : "下降"}` : "GMV 累计表现",
-    description: `${data.rangeLabel} GMV 累计 ${fmtMoney(s.current.gmv)}，对应订单 ${s.current.orders.toLocaleString("zh-CN")} 单，客单价约 ¥${s.current.aov.toFixed(0)}。`,
+    description: `${data.rangeLabel} GMV 累计 ${fmtMoney(s.current.gmv)}，对应订单 ${s.current.orders.toLocaleString("zh-CN")} 单，客单价约 ¥${s.current.aov.toFixed(0)}，转化率 ${s.current.conversion.toFixed(1)}%。`,
     metric: data.hasComparison ? fmtSignedPct(gmvDelta!) : fmtMoney(s.current.gmv),
     direction: data.hasComparison ? (gmvDelta! >= 0 ? "up" : "down") : "up",
   });
@@ -124,13 +133,13 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
 
   // 风险（由负向信号推导）
   const risks: Risk[] = [];
-  if (data.hasComparison && s.delta && s.delta.profit < 0) {
+  if (data.hasComparison && refundDelta !== undefined && refundDelta > 0.3) {
     risks.push({
-      id: "r-profit",
-      level: s.delta.profit < -5 ? "high" : "medium",
-      title: "利润率承压",
-      description: `利润环比 ${fmtSignedPct(s.delta.profit)}，履约与营销成本上升是主要拖累。`,
-      impact: `影响: ${data.rangeLabel}利润减少约 ${fmtMoney(Math.abs(s.current.profit - (s.previous?.profit ?? s.current.profit)))}`,
+      id: "r-refund",
+      level: refundDelta > 0.8 ? "high" : "medium",
+      title: "退款率抬升",
+      description: `退款率环比 +${refundDelta.toFixed(1)}pp 至 ${s.current.refundRate.toFixed(1)}%，可能源于履约时效或商品质量。`,
+      impact: "影响: 拉低净 GMV、增加售后成本",
     });
   }
   if (weak && weak.roi < 1.5) {
@@ -140,6 +149,15 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
       title: `${weak.channel}渠道投入产出失衡`,
       description: `${weak.channel} ROI 仅 ${weak.roi.toFixed(1)}，低于盈亏线，流量大但转化弱。`,
       impact: "影响: 拖累整体营销 ROI",
+    });
+  }
+  if (data.hasComparison && m.roiDelta !== null && m.roiDelta < -0.2) {
+    risks.push({
+      id: "r-roi",
+      level: "medium",
+      title: "营销 ROI 下滑",
+      description: `营销 ROI 环比 ${m.roiDelta.toFixed(2)} 至 ${m.roi.toFixed(2)}，投放效率下降。`,
+      impact: "影响: 同等投入带来的 GMV 减少",
     });
   }
   if (repDelta !== null && repDelta < 0) {
@@ -154,8 +172,9 @@ function overviewInsight(data: DataAgentOutput): InsightAgentOutput {
 
   // 行动建议（由风险 + 增长机会推导）
   const recommendations: Recommendation[] = [];
-  if (risks.some((r) => r.id === "r-profit")) recommendations.push(toRec(RECOMMENDATIONS.profit_down, recommendations.length + 1));
+  if (risks.some((r) => r.id === "r-refund")) recommendations.push(toRec(RECOMMENDATIONS.refund_up, recommendations.length + 1));
   if (risks.some((r) => r.id === "r-member")) recommendations.push(toRec(RECOMMENDATIONS.repurchase_down, recommendations.length + 1));
+  if (risks.some((r) => r.id === "r-channel" || r.id === "r-roi")) recommendations.push(toRec(RECOMMENDATIONS.roi_low, recommendations.length + 1));
   recommendations.push(toRec(RECOMMENDATIONS.channel_opportunity, recommendations.length + 1));
 
   return {
@@ -173,11 +192,11 @@ function crmInsight(data: DataAgentOutput): InsightAgentOutput {
   const hasCmp = data.hasComparison && repDelta !== null;
 
   const text = hasCmp
-    ? `${data.rangeLabel}平均复购率 ${data.crm.repurchaseRate.toFixed(1)}%，环比 ${repDelta! >= 0 ? "提升" : "下降"} ${Math.abs(repDelta!).toFixed(1)} 个百分点。结合库存与活动数据，主因为畅销品补货延迟导致的「被动不买」而非真实流失；建议优先补货并精准触达高价值会员。`
-    : `${data.rangeLabel}平均复购率 ${data.crm.repurchaseRate.toFixed(1)}%，活跃会员 ${data.crm.activeMembers.toLocaleString("zh-CN")}，LTV ¥${data.crm.ltv}。`;
+    ? `${data.rangeLabel}平均复购率 ${data.crm.repurchaseRate.toFixed(1)}%，环比 ${repDelta! >= 0 ? "提升" : "下降"} ${Math.abs(repDelta!).toFixed(1)} 个百分点。建议结合近期会员活动与触达数据进一步归因，优先精准触达 VIP / 高价值会员。`
+    : `${data.rangeLabel}平均复购率 ${data.crm.repurchaseRate.toFixed(1)}%，活跃会员 ${data.crm.activeMembers.toLocaleString("zh-CN")}，VIP 会员 ${data.crm.vipMembers.toLocaleString("zh-CN")}，LTV ¥${data.crm.ltv.toLocaleString("zh-CN")}。`;
 
   return {
-    summary: { tag: "归因摘要", accuracy: 94, readingTimeSec: 35, text },
+    summary: { tag: "会员摘要", accuracy: 94, readingTimeSec: 35, text },
     findings: [
       {
         id: "f1",
@@ -190,12 +209,12 @@ function crmInsight(data: DataAgentOutput): InsightAgentOutput {
       },
       {
         id: "f2",
-        category: "商品",
-        icon: "package",
-        title: "补货延迟为主要诱因",
-        description: "畅销品库存不足 7 天，高价值会员「想买无货」，表现为复购走弱而非流失。",
-        metric: "库存 <7 天",
-        direction: "down",
+        category: "会员",
+        icon: "vip",
+        title: "高价值会员盘子",
+        description: `VIP 会员 ${data.crm.vipMembers.toLocaleString("zh-CN")} 人，活跃会员 ${data.crm.activeMembers.toLocaleString("zh-CN")} 人，LTV ¥${data.crm.ltv.toLocaleString("zh-CN")}。`,
+        metric: `VIP ${data.crm.vipMembers.toLocaleString("zh-CN")}`,
+        direction: "up",
       },
     ],
     risks: hasCmp && repDelta! < 0
@@ -221,7 +240,7 @@ function channelInsight(data: DataAgentOutput): InsightAgentOutput {
       category: "渠道",
       icon: "truck",
       title: `${c.channel}渠道${c.gmvDelta !== null && c.gmvDelta >= 0 ? "增长" : c.gmvDelta !== null ? "下滑" : "表现"}`,
-      description: `GMV ${fmtMoney(c.gmv)}，ROI ${c.roi.toFixed(1)}${c.gmvDelta !== null ? `，环比 ${fmtSignedPct(c.gmvDelta)}` : ""}。`,
+      description: `GMV ${fmtMoney(c.gmv)}，订单 ${c.orders.toLocaleString("zh-CN")}，转化率 ${c.conversion.toFixed(1)}%，ROI ${c.roi.toFixed(1)}${c.gmvDelta !== null ? `，环比 ${fmtSignedPct(c.gmvDelta)}` : ""}。`,
       metric: c.gmvDelta !== null ? fmtSignedPct(c.gmvDelta) : `ROI ${c.roi.toFixed(1)}`,
       direction: c.gmvDelta !== null ? (c.gmvDelta >= 0 ? "up" : "down") : "up",
     })),

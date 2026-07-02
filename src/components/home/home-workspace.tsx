@@ -13,7 +13,7 @@ const PERSPECTIVES: { value: Role; label: string }[] = [
 ];
 
 const SUGGESTIONS: { question: string; desc: string }[] = [
-  { question: "本周业务表现如何？", desc: "GMV、订单数和利润的本周表现摘要" },
+  { question: "本周业务表现如何？", desc: "GMV、订单数、转化率的本周表现摘要" },
   { question: "为什么 GMV 下降了？", desc: "针对 GMV 下降的原因分析" },
   { question: "各渠道表现如何？", desc: "分渠道、LTV 与活跃会员分析" },
   { question: "哪个渠道表现最好？", desc: "对比分析，自然与推荐渠道的转化" },

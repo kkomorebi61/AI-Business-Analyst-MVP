@@ -1,18 +1,21 @@
 /**
- * Data Agent —— 从日数据按时间范围聚合取数（V1.1）
+ * Data Agent —— 从 V2 日数据按时间范围聚合取数
  *
- * 输入：Metric Agent 选出的指标 + 时间范围 range(7/14/30)
- * 输出：每个指标的 KPI（本期值 / 上一期 / 环比）+ 当期日序列（趋势图）+ 各域聚合（供 Insight）
+ * 输入：Metric Agent 选出的指标 + 时间范围 range(7/14/30/90)
+ * 输出：每个指标的 KPI（本期值 / 上一期 / 变化）+ 当期日序列（趋势图）+ 各域聚合（供 Insight）
  *
- * 数据源：sales_daily / crm_daily / channels_daily（+ products.json 占位 = 4 个数据源）
+ * 数据源（V2 · 90 天）：01 经营 / 02 会员 / 03 营销 / 04 渠道（详见 daily.ts）
+ * 源系统（Data Trust）：OMS / CRM / CDP / Marketing Platform
  */
 
 import {
   aggregateChannels,
   aggregateCrm,
+  aggregateMarketing,
   aggregateSales,
   type ChannelAggregate,
   type CrmAggregate,
+  type MarketingAggregate,
   type Range,
   type SalesAggregate,
 } from "@/lib/data/daily";
@@ -20,6 +23,7 @@ import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
 import type { KpiPoint } from "./types";
 
 export interface DataAgentOutput {
+  /** 源系统（用于 Data Trust 展示与 dataSources 计数） */
   sources: string[];
   range: Range;
   rangeLabel: string;
@@ -29,18 +33,25 @@ export interface DataAgentOutput {
   sales: SalesAggregate;
   channels: ChannelAggregate[];
   crm: CrmAggregate;
+  marketing: MarketingAggregate;
 }
+
+/** 系统真实使用到的源系统（对齐 07_data_sources） */
+const SOURCE_SYSTEMS = ["OMS", "CRM", "CDP", "Marketing Platform"];
 
 export function dataAgent(metrics: MetricKey[], range: Range): DataAgentOutput {
   const sales = aggregateSales(range);
   const channels = aggregateChannels(range);
   const crm = aggregateCrm(range);
+  const marketing = aggregateMarketing(range);
 
-  const kpis = metrics.map((m) => buildKpi(m, sales, crm, channels)).filter((k): k is KpiPoint => k !== null);
+  const kpis = metrics
+    .map((m) => buildKpi(m, sales, crm, channels, marketing))
+    .filter((k): k is KpiPoint => k !== null);
   const trend = sales.daily.map((d) => ({ date: d.date, gmv: d.gmv, orders: d.orders }));
 
   return {
-    sources: ["sales_daily.json", "crm_daily.json", "channels_daily.json", "products.json"],
+    sources: SOURCE_SYSTEMS,
     range,
     rangeLabel: sales.rangeLabel,
     hasComparison: sales.hasComparison,
@@ -49,6 +60,7 @@ export function dataAgent(metrics: MetricKey[], range: Range): DataAgentOutput {
     sales,
     channels,
     crm,
+    marketing,
   };
 }
 
@@ -67,6 +79,7 @@ function buildKpi(
   sales: SalesAggregate,
   crm: CrmAggregate,
   channels: ChannelAggregate[],
+  marketing: MarketingAggregate,
 ): KpiPoint | null {
   const spec = METRIC_SPECS[key];
   const base = { key, name: spec.name, en: spec.en, prevLabel: "上一周期", icon: iconOf(key) };
@@ -82,43 +95,37 @@ function buildKpi(
         cmp ? sales.previous!.orders.toLocaleString("zh-CN") : "—",
         sales.delta?.orders,
       );
-    case "profit":
-      return kpi(base, fmtMoney(sales.current.profit), cmp ? fmtMoney(sales.previous!.profit) : "—", sales.delta?.profit);
     case "aov":
       return kpi(base, fmtMoney(sales.current.aov), cmp ? fmtMoney(sales.previous!.aov) : "—", sales.delta?.aov);
+    case "conversion":
+      return rateKpi(base, `${sales.current.conversion.toFixed(1)}%`, cmp ? `${sales.previous!.conversion.toFixed(1)}%` : "—", sales.delta?.conversion);
+    case "refundRate":
+      return rateKpi(base, `${sales.current.refundRate.toFixed(1)}%`, cmp ? `${sales.previous!.refundRate.toFixed(1)}%` : "—", sales.delta?.refundRate);
     case "repurchaseRate":
-      return {
-        ...base,
-        name: "复购率",
-        value: `${crm.repurchaseRate.toFixed(1)}%`,
-        prevValue: crm.prevRepurchaseRate !== null ? `${crm.prevRepurchaseRate.toFixed(1)}%` : "—",
-        deltaPct: crm.repurchaseDelta ?? 0,
-        direction: (crm.repurchaseDelta ?? 0) >= 0 ? "up" : "down",
-      };
+      return rateKpi(
+        { ...base, name: "复购率" },
+        `${crm.repurchaseRate.toFixed(1)}%`,
+        crm.prevRepurchaseRate !== null ? `${crm.prevRepurchaseRate.toFixed(1)}%` : "—",
+        crm.repurchaseDelta ?? undefined,
+      );
     case "ltv":
-      return { ...base, value: `¥${crm.ltv}`, prevValue: "—", deltaPct: 0, direction: "up" };
+      return { ...base, value: `¥${crm.ltv.toLocaleString("zh-CN")}`, prevValue: "—", deltaPct: 0, direction: "up" };
     case "newMembers":
       return { ...base, value: crm.newMembers.toLocaleString("zh-CN"), prevValue: "—", deltaPct: 0, direction: "up" };
     case "activeMembers":
       return { ...base, value: crm.activeMembers.toLocaleString("zh-CN"), prevValue: "—", deltaPct: 0, direction: "up" };
     case "churnRate":
       return { ...base, value: `${crm.churnRate.toFixed(1)}%`, prevValue: "—", deltaPct: 0, direction: "up" };
-    case "traffic": {
-      const total = channels.reduce((s, c) => s + c.traffic, 0);
-      return { ...base, value: total.toLocaleString("zh-CN"), prevValue: "—", deltaPct: 0, direction: "up" };
-    }
-    case "cvr":
-      return { ...base, value: "3.1%", prevValue: "—", deltaPct: 0, direction: "up" };
-    case "roi": {
-      const avg = channels.reduce((s, c) => s + c.roi, 0) / (channels.length || 1);
-      return { ...base, value: avg.toFixed(1), prevValue: "—", deltaPct: 0, direction: "up" };
-    }
+    case "vipMembers":
+      return { ...base, value: crm.vipMembers.toLocaleString("zh-CN"), prevValue: "—", deltaPct: 0, direction: "up" };
+    case "roi":
+      return rateKpi(base, marketing.roi.toFixed(2), marketing.prevRoi !== null ? marketing.prevRoi.toFixed(2) : "—", marketing.roiDelta ?? undefined);
     default:
       return null;
   }
 }
 
-/** 金额/订单类指标：delta 为百分比 */
+/** 金额/订单类指标：delta 为相对变化率 % */
 function kpi(
   base: { key: MetricKey; name: string; en: string; prevLabel: string; icon: string },
   value: string,
@@ -126,28 +133,33 @@ function kpi(
   deltaPct: number | undefined,
 ): KpiPoint {
   const d = deltaPct ?? 0;
-  return {
-    ...base,
-    value,
-    prevValue,
-    deltaPct: d,
-    direction: d >= 0 ? "up" : "down",
-  };
+  return { ...base, value, prevValue, deltaPct: d, direction: d >= 0 ? "up" : "down" };
+}
+
+/** rate 类指标（转化率/退款率/复购率/ROI）：delta 为百分点差 */
+function rateKpi(
+  base: { key: MetricKey; name: string; en: string; prevLabel: string; icon: string },
+  value: string,
+  prevValue: string,
+  deltaPp: number | undefined,
+): KpiPoint {
+  const d = deltaPp ?? 0;
+  return { ...base, value, prevValue, deltaPct: d, direction: d >= 0 ? "up" : "down" };
 }
 
 function iconOf(key: MetricKey): string {
   const map: Partial<Record<MetricKey, string>> = {
     gmv: "gmv",
     orders: "orders",
-    profit: "profit",
     aov: "aov",
+    conversion: "conversion",
+    refundRate: "refund",
     repurchaseRate: "repurchase",
     ltv: "ltv",
     newMembers: "members",
     activeMembers: "members",
     churnRate: "churn",
-    traffic: "traffic",
-    cvr: "cvr",
+    vipMembers: "vip",
     roi: "roi",
   };
   return map[key] ?? "gmv";

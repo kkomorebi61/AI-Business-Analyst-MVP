@@ -11,7 +11,7 @@ import type { Range } from "@/lib/data/daily";
  */
 export default function KpiSidebar({ range }: { range: Range }) {
   const { kpis, rangeLabel } = dataAgent(
-    ["gmv", "orders", "profit", "aov"],
+    ["gmv", "orders", "aov", "conversion"],
     range,
   );
 

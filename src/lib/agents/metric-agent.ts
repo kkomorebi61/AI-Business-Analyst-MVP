@@ -19,10 +19,10 @@ export function metricAgent(role: Role, intent: Intent): MetricAgentOutput {
 
   // 意图微调：渠道/风险场景补充运营侧指标，保证可解释
   if (intent === "channel_analysis") {
-    appendUnique(metrics, ["traffic", "cvr", "roi"]);
+    appendUnique(metrics, ["conversion", "roi", "refundRate"]);
   }
   if (intent === "risk_analysis") {
-    appendUnique(metrics, ["profit", "churnRate", "repurchaseRate"]);
+    appendUnique(metrics, ["refundRate", "churnRate", "repurchaseRate"]);
   }
 
   return { metrics };

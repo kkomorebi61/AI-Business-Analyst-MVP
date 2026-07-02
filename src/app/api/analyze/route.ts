@@ -5,7 +5,7 @@ import type { Role } from "@/lib/kb/metric-kb";
 
 /**
  * POST /api/analyze
- * 入参：{ question: string; perspective?: Role; range?: 7|14|30 }
+ * 入参：{ question: string; perspective?: Role; range?: 7|14|30|90 }
  * 出参：AnalysisResult（Role→Intent→Metric→Data→Insight 工作流产物）
  */
 export async function POST(req: Request) {

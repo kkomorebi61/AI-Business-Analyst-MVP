@@ -6,7 +6,7 @@ const VALID_ROLES: Role[] = ["CEO", "CRM_MANAGER", "OPERATION_MANAGER"];
 
 /**
  * 分析报告页（路由：/report）
- * 入参来自首页跳转：?question=…&perspective=…&range=7|14|30
+ * 入参来自首页跳转：?question=…&perspective=…&range=7|14|30|90
  */
 export default function ReportPage({
   searchParams,
