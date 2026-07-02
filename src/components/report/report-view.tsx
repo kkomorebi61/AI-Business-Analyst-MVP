@@ -12,10 +12,11 @@ import SectionHeading from "./section-heading";
 import TrendChart from "./trend-chart";
 import QueryBanner from "./query-banner";
 import EvidenceDrawer from "./evidence-drawer";
+import MetricDetailDrawer from "@/components/metrics/metric-detail-drawer";
 import RangeSwitcher from "@/components/home/range-switcher";
 import type { Range } from "@/lib/data/daily";
 import type { AnalysisResult, Finding, Risk } from "@/lib/agents/types";
-import type { Role } from "@/lib/kb/metric-kb";
+import type { MetricKey, Role } from "@/lib/kb/metric-kb";
 
 const ROLE_LABEL: Record<Role, string> = {
   CEO: "CEO 视角",
@@ -39,6 +40,10 @@ export default function ReportView({
   const [drawer, setDrawer] = useState<{ open: boolean; target: Finding | Risk | null }>({
     open: false,
     target: null,
+  });
+  const [metricDrawer, setMetricDrawer] = useState<{ open: boolean; key: MetricKey | null }>({
+    open: false,
+    key: null,
   });
 
   const run = useCallback(async () => {
@@ -64,6 +69,10 @@ export default function ReportView({
 
   const onViewEvidence = useCallback((target: Finding | Risk) => {
     setDrawer({ open: true, target });
+  }, []);
+
+  const onViewMetric = useCallback((key: MetricKey) => {
+    setMetricDrawer({ open: true, key });
   }, []);
 
   return (
@@ -119,7 +128,7 @@ export default function ReportView({
                     title="KPI 驾驶舱"
                     subtitle={`定义${result.rangeLabel}表现的核心指标`}
                   />
-                  <KpiCards kpis={result.kpis} />
+                  <KpiCards kpis={result.kpis} onViewMetric={onViewMetric} />
                 </section>
               )}
 
@@ -131,7 +140,11 @@ export default function ReportView({
                     title="关键发现"
                     subtitle="按业务影响排序的洞察"
                   />
-                  <FindingsSection findings={result.findings} onViewEvidence={onViewEvidence} />
+                  <FindingsSection
+                    findings={result.findings}
+                    onViewEvidence={onViewEvidence}
+                    onViewMetric={onViewMetric}
+                  />
                 </section>
               )}
 
@@ -143,7 +156,11 @@ export default function ReportView({
                     title="风险提示"
                     subtitle="影响下期表现的重点风险"
                   />
-                  <RiskSection risks={result.risks} onViewEvidence={onViewEvidence} />
+                  <RiskSection
+                    risks={result.risks}
+                    onViewEvidence={onViewEvidence}
+                    onViewMetric={onViewMetric}
+                  />
                 </section>
               )}
 
@@ -169,6 +186,12 @@ export default function ReportView({
         open={drawer.open}
         target={drawer.target}
         onClose={() => setDrawer({ open: false, target: null })}
+      />
+
+      <MetricDetailDrawer
+        open={metricDrawer.open}
+        metricKey={metricDrawer.key}
+        onClose={() => setMetricDrawer({ open: false, key: null })}
       />
     </div>
   );

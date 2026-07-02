@@ -3,15 +3,19 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Icon } from "@/components/icons";
 import EvidenceInline from "./evidence-inline";
+import MetricExplainLink from "@/components/metrics/metric-explain-link";
 import type { Finding } from "@/lib/agents/types";
+import type { MetricKey } from "@/lib/kb/metric-kb";
 
-/** 第02节 关键发现：发现卡（分类标签 / 标题 / 描述 / 指标 / Evidence / 根因 / 查看依据） */
+/** 第02节 关键发现：发现卡（分类标签 / 标题 / 描述 / 指标 / Evidence / 根因 / 查看依据 / 该指标如何计算） */
 export default function FindingsSection({
   findings,
   onViewEvidence,
+  onViewMetric,
 }: {
   findings: Finding[];
   onViewEvidence: (f: Finding) => void;
+  onViewMetric?: (key: MetricKey) => void;
 }) {
   return (
     <div className="flex flex-col gap-3">
@@ -56,12 +60,18 @@ export default function FindingsSection({
 
             <EvidenceInline evidence={f.evidence} />
 
-            <button
-              onClick={() => onViewEvidence(f)}
-              className="mt-3 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
-            >
-              查看依据 <ArrowRight className="h-3 w-3" />
-            </button>
+            <div className="mt-3 flex items-center justify-between">
+              <MetricExplainLink
+                text={`${f.title} ${f.metric} ${f.description} ${f.evidence?.items.map((i) => i.metric).join(" ") ?? ""}`}
+                onViewMetric={onViewMetric}
+              />
+              <button
+                onClick={() => onViewEvidence(f)}
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
+              >
+                查看依据 <ArrowRight className="h-3 w-3" />
+              </button>
+            </div>
           </div>
         );
       })}

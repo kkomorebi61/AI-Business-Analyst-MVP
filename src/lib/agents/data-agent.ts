@@ -20,6 +20,7 @@ import {
   type SalesAggregate,
 } from "@/lib/data/daily";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
+import { metricTrustInfo } from "@/lib/data/data-trust";
 import type { KpiPoint } from "./types";
 
 export interface DataAgentOutput {
@@ -47,7 +48,8 @@ export function dataAgent(metrics: MetricKey[], range: Range): DataAgentOutput {
 
   const kpis = metrics
     .map((m) => buildKpi(m, sales, crm, channels, marketing))
-    .filter((k): k is KpiPoint => k !== null);
+    .filter((k): k is KpiPoint => k !== null)
+    .map((k) => ({ ...k, trust: metricTrustInfo(k.key) }));
   const trend = sales.daily.map((d) => ({ date: d.date, gmv: d.gmv, orders: d.orders }));
 
   return {

@@ -5,6 +5,7 @@
 
 import type { Range } from "@/lib/data/daily";
 import type { MetricKey, Role } from "@/lib/kb/metric-kb";
+import type { MetricTrustInfo } from "@/lib/data/data-trust";
 
 export type Intent =
   | "business_overview"
@@ -40,6 +41,8 @@ export interface KpiPoint {
   deltaPct: number; // 12.4
   direction: "up" | "down";
   icon: string; // 图标 key（UI 层映射 lucide）
+  /** V3：该指标的数据可信度（10_Data_Trust_Layer），供 KPI 卡内联展示与详情抽屉 */
+  trust?: MetricTrustInfo;
 }
 
 /* ---------- Evidence Engine（V1.1 可信闭环：每个结论都带数据依据） ---------- */

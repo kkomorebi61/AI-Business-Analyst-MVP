@@ -2,7 +2,9 @@
 
 import { ArrowRight, ShieldAlert, Sparkles, TriangleAlert } from "lucide-react";
 import EvidenceInline from "./evidence-inline";
+import MetricExplainLink from "@/components/metrics/metric-explain-link";
 import type { Risk } from "@/lib/agents/types";
+import type { MetricKey } from "@/lib/kb/metric-kb";
 
 const LEVEL = {
   high: { label: "高风险", bar: "border-l-red-500", text: "text-red-600", chip: "bg-red-50 text-red-600" },
@@ -14,9 +16,11 @@ const LEVEL = {
 export default function RiskSection({
   risks,
   onViewEvidence,
+  onViewMetric,
 }: {
   risks: Risk[];
   onViewEvidence: (r: Risk) => void;
+  onViewMetric?: (key: MetricKey) => void;
 }) {
   return (
     <div className="flex flex-col gap-3">
@@ -50,12 +54,18 @@ export default function RiskSection({
 
             <EvidenceInline evidence={r.evidence} />
 
-            <button
-              onClick={() => onViewEvidence(r)}
-              className="mt-3 flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
-            >
-              查看依据 <ArrowRight className="h-3 w-3" />
-            </button>
+            <div className="mt-3 flex items-center justify-between">
+              <MetricExplainLink
+                text={`${r.title} ${r.description} ${r.impact} ${r.evidence?.items.map((i) => i.metric).join(" ") ?? ""}`}
+                onViewMetric={onViewMetric}
+              />
+              <button
+                onClick={() => onViewEvidence(r)}
+                className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
+              >
+                查看依据 <ArrowRight className="h-3 w-3" />
+              </button>
+            </div>
           </div>
         );
       })}

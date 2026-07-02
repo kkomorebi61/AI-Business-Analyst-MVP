@@ -9,6 +9,7 @@
  */
 
 import registry from "./mock-data/07_data_sources.json";
+import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
 
 interface RegistryRow {
   source_system: string;
@@ -100,4 +101,105 @@ export function trustForSources(systems: string[]): TrustSummary {
     healthStatus: worstHealth(cited),
     lastUpdated,
   };
+}
+
+/* ------------------------------------------------------------------ *
+ * 单指标可信度（来源：10_Data_Trust_Layer §10 Trust Score + §11 Levels）
+ *
+ * Trust Score = Coverage×40% + Freshness×30% + Health×20% + Completeness×10%
+ * 分级：≥90 High / 75-89 Medium / 60-74 Low / <60 Caution
+ * ------------------------------------------------------------------ */
+
+export type ConfidenceLevel = "High" | "Medium" | "Low" | "Caution";
+
+export interface MetricTrustInfo {
+  /** 引用的源系统（规范化名） */
+  sources: string[];
+  /** 覆盖率（引用源平均，0~100） */
+  coverage: number | null;
+  /** 最差健康度（Healthy/Warning/Delayed/Critical） */
+  health: string;
+  /** 最晚更新时间（注册表口径） */
+  lastUpdated: string | null;
+  /** 时效性等级 */
+  freshness: Freshness;
+  /** 综合可信度评分 0~100 */
+  trustScore: number;
+  /** 可信度分级 */
+  confidence: ConfidenceLevel;
+  /** 源完整度 0~100（必需源是否均已接入注册表） */
+  completeness: number;
+}
+
+/** Freshness → 0~100 分（doc 10 §5） */
+const FRESHNESS_SCORE: Record<Freshness, number> = {
+  Healthy: 100,
+  Warning: 90,
+  Delayed: 70,
+  Critical: 40,
+};
+
+/** health_status → 0~100 分（doc 10 §7） */
+const HEALTH_SCORE: Record<string, number> = {
+  Healthy: 100,
+  Warning: 80,
+  Delayed: 60,
+  Error: 30,
+  Critical: 30,
+};
+
+/** 综合分 → 分级（doc 10 §11） */
+export function confidenceOf(score: number): ConfidenceLevel {
+  if (score >= 90) return "High";
+  if (score >= 75) return "Medium";
+  if (score >= 60) return "Low";
+  return "Caution";
+}
+
+/**
+ * 计算单个指标的可信度。
+ * 以 METRIC_SPECS[key].source_keys 为必需源，聚合覆盖率 / 健康 / 时效 / 完整度。
+ */
+export function metricTrustInfo(key: MetricKey): MetricTrustInfo {
+  const spec = METRIC_SPECS[key];
+  const required = spec.source_keys;
+  const summary = trustForSources(required);
+
+  const coverage = summary.coverage ?? 0;
+  const freshness = required.every((s) => getSource(s))
+    ? worstFreshness(required.map((s) => getSource(s)!))
+    : "Critical";
+  const healthScore = HEALTH_SCORE[summary.healthStatus] ?? 100;
+  const completeness = required.length
+    ? Math.round((required.filter((s) => getSource(s)).length / required.length) * 100)
+    : 100;
+
+  const trustScore = Math.round(
+    coverage * 0.4 +
+      FRESHNESS_SCORE[freshness] * 0.3 +
+      healthScore * 0.2 +
+      completeness * 0.1,
+  );
+
+  return {
+    sources: summary.sources,
+    coverage: summary.coverage,
+    health: summary.healthStatus,
+    lastUpdated: summary.lastUpdated,
+    freshness,
+    trustScore,
+    confidence: confidenceOf(trustScore),
+    completeness,
+  };
+}
+
+/** 取一组源中最差时效性 */
+function worstFreshness(systems: SourceTrust[]): Freshness {
+  const RANK: Record<Freshness, number> = { Healthy: 0, Warning: 1, Delayed: 2, Critical: 3 };
+  if (!systems.length) return "Healthy";
+  return systems.reduce((worst, s) => {
+    const w = RANK[worst] ?? 0;
+    const cur = RANK[s.freshness] ?? 0;
+    return cur > w ? s.freshness : worst;
+  }, "Healthy" as Freshness);
 }
