@@ -1,8 +1,8 @@
 # AI Business Analyst · MVP
 
-> 面向 **CEO / CRM 经理 / 运营经理** 的自然语言业务分析平台——提问即得摘要、KPI、洞察、风险与行动建议。
+> 面向 **CEO / CRM 经理 / 运营经理** 的自然语言业务分析平台——提问即得摘要、KPI、洞察、风险与行动建议，且**每个结论都带数据依据与查询分级**。
 
-本仓库为 **Sprint 1** 交付物：Agent 工作流 MVP（规则引擎 + Mock 数据），UI 严格参照设计稿实现。
+本仓库为 MVP 完整交付物：Agent 工作流（规则引擎 + 90 天 Mock 数据）+ 数据可信层 + 查询治理引擎，UI 严格参照设计稿实现。
 
 ---
 
@@ -11,9 +11,13 @@
 | 层 | 选型 |
 | --- | --- |
 | 前端 | Next.js 14（App Router）· TypeScript · TailwindCSS · shadcn 风格组件 · lucide-react |
-| 后端 | Next.js API Routes（`/api/analyze`） |
-| 数据 | Mock JSON（`sales.json` / `crm.json` / `channels.json`） |
-| LLM | GLM 5.1（**预留接口**，Sprint 1 默认规则引擎，无需 Key） |
+| 图表 | **纯手写 SVG**（趋势折线图），不引入 recharts 等图表库 |
+| 后端 | Next.js API Routes（`/api/analyze`、`/api/kpis`） |
+| 数据 | Mock JSON（`src/lib/data/mock-data/01~08`，90 天 8 数据集） |
+| 测试 | Vitest（**devDependency**，不进运行时） |
+| LLM | GLM 5.1（**预留接口**，默认规则引擎，无需 Key） |
+
+> 依赖克制：无 Radix 等 UI 原语库、无图表库；重数据聚合下沉服务端，不进客户端 bundle（见「Phase 5 · Bundle 优化」）。
 
 ---
 
@@ -24,9 +28,23 @@ npm install
 npm run dev        # http://localhost:3000
 # 或生产构建
 npm run build && npm start
+npm test           # 运行 47 条 Vitest 单测（governance 引擎）
 ```
 
-Sprint 1 **无需任何环境变量**。接入 GLM 时复制 `.env.local.example` → `.env.local` 并设 `ANALYST_AGENT_MODE=glm`（见下文「Agent 实现方案」）。
+MVP **无需任何环境变量**。接入 GLM 时复制 `.env.local.example` → `.env.local` 并设 `ANALYST_AGENT_MODE=glm`（见「Agent 实现方案」）。
+
+---
+
+## 交付阶段总览
+
+| 阶段 | 主题 | 关键产出 |
+| --- | --- | --- |
+| Phase 1 | Agent 工作流 MVP | Role→Intent→Metric→Data→Insight 五段编排，首页 + 报告页 |
+| V1.1 | 时间范围分析 | 7/14/30/90 天切换，90 天 Mock 数据层，纯 SVG 趋势图 |
+| Phase 2 | 数据可信层（Data Trust） | Evidence Engine：每条结论挂 before/after/血缘/覆盖率 |
+| Phase 3 | 数据可信中心（`/trust`） | 数据源注册表 / 时效 / 健康度 / 覆盖率 / 血缘可视化 |
+| Phase 4 | 查询治理（Query Governance） | A/B/C 分级 + 覆盖率门 + 4 级响应 + 异常暂停 + 事件归因（47 单测） |
+| Phase 5 | 文档与 Bundle | README 同步 V2；KPI 聚合下沉 API，客户端瘦身 |
 
 ---
 
@@ -37,33 +55,41 @@ AI-Business-Analyst-MVP/
 ├── 01_~07_*.rtf|png|pdf          # 需求/设计原始资料（不动）
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx            # 根布局（中文、字体、标题）
-│   │   ├── globals.css           # Tailwind + 主题变量（对齐设计稿配色）
-│   │   ├── page.tsx              # 首页（服务端：组装 hero + KPI 仪表盘）
-│   │   ├── report/page.tsx       # 分析报告页（读 searchParams → 交给 ReportView）
-│   │   └── api/analyze/route.ts  # POST 接口：跑 Agent 工作流，返回 AnalysisResult
+│   │   ├── layout.tsx / globals.css / page.tsx
+│   │   ├── report/page.tsx       # 分析报告页（searchParams → ReportView）
+│   │   ├── trust/page.tsx        # 数据可信中心（Phase 3）
+│   │   └── api/
+│   │       ├── analyze/route.ts  # POST：跑 Agent 工作流 → AnalysisResult
+│   │       └── kpis/route.ts     # GET：按 range 服务端聚合 → KPI（Phase 5，避免 JSON 进客户端）
 │   ├── components/
 │   │   ├── ui/                   # shadcn 风格原语：button / card / badge / input
-│   │   ├── icons.tsx             # string key → lucide 图标（数据层不存组件）
-│   │   ├── top-nav.tsx           # 首页顶栏（智谱云分析 / 首页·驾驶舱·问答·数据源）
-│   │   ├── home/                 # 首页：home-workspace（提问+视角+推荐卡）/ kpi-sidebar
-│   │   └── report/               # 报告：header / summary / kpi-cards /
-│   │                             #       findings / risk / recommendations / footer / report-view
+│   │   ├── icons.tsx             # string key → lucide 图标
+│   │   ├── top-nav.tsx           # 顶栏（首页 · 问答 · 数据源）
+│   │   ├── home/                 # 首页：workspace（提问+视角+时间范围+推荐卡）/ kpi-sidebar / range-switcher
+│   │   └── report/               # 报告：header / summary / kpi-cards / findings /
+│   │                             #       risk / recommendations / trend-chart(SVG) /
+│   │                             #       query-banner(分级) / evidence-drawer / evidence-inline
 │   └── lib/
 │       ├── utils.ts              # cn / 数字·百分比格式化
-│       ├── data/                 # V2 数据层：mock-data/01~08（90天）+ daily.ts + data-trust.ts
-│       │       └── daily.ts      # 按 range(7/14/30) 窗口聚合 + 环比 + 日序列
-│       ├── kb/metric-kb.ts       # 指标知识库（角色→指标 / 定义 / 归因规则 / 推荐行动）
+│       ├── data/
+│       │   ├── mock-data/01~08   # V2 · 90 天 8 数据集（经营/会员/营销/渠道/分层/SCRM/数据源/事件）
+│       │   ├── daily.ts          # 按 range(7/14/30/90) 窗口聚合 + 环比 + 日序列
+│       │   └── data-trust.ts     # 数据源注册表（07）→ 覆盖率/健康度/血缘
+│       ├── kb/metric-kb.ts       # 指标知识库（定义/公式/血缘/归因规则/推荐行动）
+│       ├── governance/           # Phase 4：查询治理引擎（纯函数，47 单测）
+│       │   ├── classify.ts       #   A/B/C 分级 + 必需源齐全度
+│       │   ├── coverage.ts       #   覆盖率评估（High≥80 / Medium 50–<80 / Low<50）
+│       │   ├── risk.ts           #   响应策略决策（direct/partial/refuse/suspend）
+│       │   ├── anomaly.ts        #   异常检测（量级 5× + 率类 ≥20pp）
+│       │   ├── events.ts         #   业务事件归因（08_business_events）
+│       │   └── index.ts          #   buildVerdict / applyStrategy / enrichInsight
 │       └── agents/
-│           ├── types.ts          # AnalysisResult 等共享类型
-│           ├── role-agent.ts     # ① Role Agent
-│           ├── intent-agent.ts   # ② Intent Agent
-│           ├── metric-agent.ts   # ③ Metric Agent
-│           ├── data-agent.ts     # ④ Data Agent
-│           ├── insight-agent.ts  # ⑤ Insight Agent
-│           ├── workflow.ts       #   编排 ①→⑤
-│           └── llm-client.ts     #   GLM 5.1 客户端（预留，Sprint 1 未启用）
-├── components.json / tailwind.config.ts / tsconfig.json / next.config.mjs
+│           ├── types.ts          # AnalysisResult / Evidence / GovernanceVerdict 等共享类型
+│           ├── role / intent / metric / data / insight-agent.ts   # ①~⑤
+│           ├── evidence-engine.ts #  Evidence Engine（Phase 2）
+│           ├── workflow.ts       #   编排 + 接入 governance（Phase 4）
+│           └── llm-client.ts     #   GLM 5.1 客户端（预留，未启用）
+├── components.json / tailwind.config.ts / tsconfig.json / next.config.mjs / vitest.config.ts
 └── package.json
 ```
 
@@ -74,56 +100,46 @@ AI-Business-Analyst-MVP/
 ### 首页 `/`（对应 `05_homepage.png`）
 
 ```
-顶栏：智谱云分析 │ 首页 驾驶舱 问答 数据源 │ EN 🔔 ⚙️ 头像
+顶栏：智谱云分析 │ 首页  问答  数据源 │ EN 🔔 ⚙️ 头像
 ─────────────────────────────────────────────────────────
  左栏（主）                              │ 右栏
- 下午好，思辰。                          │ KPI 仪表盘（昨日上线）
- 今天想了解什么？  视角 [CEO ▾]          │ ┌ GMV      ¥4.28亿  +12.3% ▲
- ┌──────────────────────────────┐       │ │ 订单数    38,210   +6.1%  ▲
- │ 试试问问一些问题               │       │ │ 利润     ¥612万   -2.3%  ▼
- │ [对比 Q3 与 Q2 各渠道 GMV…]   │       │ │ 复购率   …        …
- │ ✨智能推荐 [近7天][按/自动]  [搜索]│      │ └
- └──────────────────────────────┘       │
- 为 CEO 推荐              深度分析 →      │
- ┌────────────┐ ┌────────────┐          │
- │本周业务表现？│ │为什么GMV下降？│        │
- └────────────┘ └────────────┘          │
- ┌────────────┐ ┌────────────┐          │
- │各渠道表现？ │ │哪个渠道最好？│          │
- └────────────┘ └────────────┘          │
+ 下午好，思辰。                          │ KPI 仪表盘（最近7天）
+ 今天想了解什么？  视角 [CEO ▾] [最近7天▾]│ ┌ GMV      ¥99万   +8.5% ▲
+ ┌──────────────────────────────┐       │ │ 订单数    3,991   +3.3% ▲
+ │ 试试问问一些问题   [搜索]       │       │ │ 客单价    ¥248    +5.1% ▲
+ └──────────────────────────────┘       │ │ 转化率    4.0%    +0.3pp ▲
+ 为 CEO 推荐              深度分析 →     │ └
+ [本周业务表现如何？][为什么GMV下降？]    │ （KPI 走 /api/kpis，切换范围实时重算）
+ [各渠道表现如何？]  [哪个渠道最好？]     │
 ```
-- 输入框回车 / 点「搜索」/ 点推荐卡 → 跳转 `/report?question=…&perspective=…`
-- 视角下拉（CEO / CRM 经理 / 运营经理）会改变推荐区标题并随提问带入
+- 输入框回车 / 点「搜索」/ 点推荐卡 → 跳转 `/report?question=…&perspective=…&range=…`
+- 视角下拉（CEO / CRM 经理 / 运营经理）改变推荐区标题并随提问带入
+- 时间范围（7/14/30/90 天）切换：右侧 KPI 经 `/api/kpis` 实时重算
 
 ### 分析报告页 `/report`（对应 PDF 三页）
 
-服务端读 `searchParams`，客户端 `ReportView` 调 `/api/analyze`，骨架屏 → 渲染：
+客户端 `ReportView` 调 `/api/analyze`，骨架屏 → 渲染：
 
 ```
-顶栏：← 返回      本周表现报告      重新生成 · 分分享 · 导出 PDF
+顶栏：← 返回      本周表现报告      重新生成 · 分享 · 导出 PDF
 ┌──────────────── 报告文档（白卡）────────────────┐
-│ · AI 业务分析师 · CEO 视角                       │
+│ · AI 业务分析师 · CEO 视角       时间范围 [最近7天▾]│
 │ 本周业务表现如何？                               │
-│ ─────────────────────────                       │
-│ 本周整体表现 [高智能摘要]  AI生成·查准度96% ·45s  │
-│ 〔摘要灰底段落〕                                │
-│                                                  │
-│ 第01节 KPI 驾驶舱 — 定义本周表现的四个核心指标    │
-│ ┌ GMV ¥4.28亿 +12.3%▲ ┐ ┌ 订单数 38,210 +6.1%▲┐ │
-│ └ 利润 ¥612万 -2.3%▼  ┘ └ 客单价 ¥112.04 +5.9%▲┘ │
-│                                                  │
-│ 第02节 关键发现 — 按业务影响排序                  │
-│ 〔新品驱动增长 +¥770万 / 京东 +24% / 复购-8pp〕   │
-│                                                  │
+│ ─ 查询分级横幅（直答 / 部分回答 / 暂不支持 / 数据异常）│
+│ ─ 摘要灰底段落                    AI生成·查准度96%·45s│
+│ 第01节 KPI 驾驶舱（GMV/订单/客单价/转化率/ROI）   │
+│ 第02节 关键发现 — 每条带「查看依据」(Evidence+血缘+根因)│
 │ 第03节 风险提示 — 高/中/低风险卡（彩色左边框）     │
-│ 〔利润率被压缩·高 / 库存风险·中 / CAC·低〕        │
-│                                                  │
 │ 第04节 行动建议 — 按预期收益与投入排序             │
-│ 〔行动01 重新激活A级会员 / 行动02 / 行动03〕       │
-│ ─────────────────────────                       │
-│ ⭐ 基于 4 个数据源生成，执行前请核实。 👍有用 👎不够好│
+│ ⭐ 基于 4 个数据源生成，执行前请核实。           │
 └──────────────────────────────────────────────────┘
 ```
+- 点「查看依据」打开 Evidence 抽屉：before→after 变化、引用源系统、覆盖率、健康度、数据血缘、业务事件根因
+- 分级为「拒答 / 暂停」时，正文隐藏，仅留横幅与（暂停时）KPI 仪表盘
+
+### 数据可信中心 `/trust`（Phase 3）
+
+汇总卡（数据源数 / 平均覆盖率 / 健康源 / 异常延迟源）+ 数据源状态卡（覆盖率进度条、健康度、时效徽标）+ 核心指标的数据血缘与定义（公式 / 负责人 / 更新频率 / 归因规则）。数据来自 `07_data_sources` 注册表。
 
 ---
 
@@ -132,74 +148,91 @@ AI-Business-Analyst-MVP/
 工作流（`src/lib/agents/workflow.ts`）编排，全链路可解释、可单测：
 
 ```
-提问 ─▶ Role Agent ─▶ Intent Agent ─▶ Metric Agent ─▶ Data Agent ─▶ Insight Agent ─▶ AnalysisResult
+提问 ─▶ Role ─▶ Intent ─▶ Metric ─▶ Data ─▶ Insight
+                                        │        │
+                                        └──▶ 【查询治理门】◀──┘
+                                  classify → anomaly → coverage → verdict → applyStrategy
 ```
 
-| Agent | 输入 | 输出 | Sprint 1 实现（规则引擎） |
+| Agent | 输入 | 输出 | 实现（规则引擎） |
 | --- | --- | --- | --- |
 | **① Role** | 提问 + 视角 | `CEO \| CRM_MANAGER \| OPERATION_MANAGER` | 显式视角优先；否则关键词命中；默认 CEO |
-| **② Intent** | 提问 | `business_overview \| sales_analysis \| crm_analysis \| channel_analysis \| risk_analysis` | 关键词权重；「为什么…下降」→ 归属业务域 + 风险倾向 |
-| **③ Metric** | 角色 + 意图 | 指标列表 | 角色→指标（`ROLE_METRICS`），意图做补充微调 |
-| **④ Data** | 指标列表 | KPI（本期/上期/同比）+ 原始数据集 | 读 Mock JSON，计算环比 |
-| **⑤ Insight** | 角色/意图/数据 | 摘要 + 发现 + 风险 + 建议 | 基于 `metric-kb` 归因规则 + 场景知识库生成 |
+| **② Intent** | 提问 | 业务域 + 风险倾向 | 关键词权重；「为什么…下降」→ 归属业务域 + 风险倾向 |
+| **③ Metric** | 角色 + 意图 | 指标列表 | 角色→指标，意图做补充微调 |
+| **④ Data** | 指标 + range | KPI（本期/上期/环比）+ 日序列 + 各域聚合 | 读 90 天 Mock，按 range 窗口聚合 |
+| **⑤ Insight** | 角色/意图/数据 | 摘要 + 发现 + 风险 + 建议 | 数据驱动，从聚合结果推导（随 range 变化） |
 
-**为什么 Sprint 1 用规则引擎 + Mock：**
-- 满足「先使用 Mock Data」，开箱即用、**无需 API Key**、可在演示/面试中即时跑通；
-- 每个 Agent 是纯函数，边界清晰，便于单测与替换；
-- 「本周经营概览」主场景产出与设计稿**逐字一致**；CRM/风险/渠道场景按规则派生。
+**GLM 5.1 接入路径（已预留，零 UI 改动）：** `llm-client.ts` 已实现智谱 BigModel 的 OpenAI 兼容调用；把 `ANALYST_AGENT_MODE` 切到 `glm`，在各 Agent 内用同一份 `types.ts` 结构调用，`AnalysisResult` 结构不变。知识库（`metric-kb.ts`）作为 system prompt / few-shot 注入。
 
-**GLM 5.1 接入路径（已预留，零 UI 改动）：**
-1. `src/lib/agents/llm-client.ts` 已实现智谱 BigModel 的 OpenAI 兼容调用（`chat()`，支持 `response_format: json`）。
-2. 把 `ANALYST_AGENT_MODE` 切到 `glm`，在各 Agent 内部用同一份 `types.ts` 的输入/输出结构调用 GLM，**AnalysisResult 结构不变，前端零改动**。
-3. 知识库（`metric-kb.ts`）作为 system prompt / few-shot 注入，保证 GLM 输出符合归因规则。
-
-**可解释性**：`AnalysisResult.trace` 记录每步推理（role/intent/metrics/dataSources 的命中理由），调试或「展示推理过程」时可直接用。
+**可解释性**：`AnalysisResult.trace` 记录每步推理命中理由；`governance.reasons` 记录分级判定链。
 
 ---
 
-## 4. 下一步 Sprint 计划（严格遵循 `04_Sprint_Backlog`）
+## 4. 数据可信层（Phase 2 · Data Trust）
 
-| Sprint | 目标 | 关键任务 | 对应成功场景 |
-| --- | --- | --- | --- |
-| **Sprint 2** | 角色化体验 | CEO / CRM / 运营三套独立视图；同问题不同角色不同输出 | 场景 2（CRM 经理提问→会员分析/复购/LTV/流失） |
-| **Sprint 3** | 业务仪表盘 | KPI 卡强化、趋势图表（接入每日明细）、洞察面板 | 仪表盘可视化 |
-| **Sprint 4** | 根因分析 | **归因树**（Cause Tree）、风险深挖、推荐引擎升级 | 场景 3（为什么复购率下降→根因树） |
-| **Sprint 5** | 高管报告 | 摘要报告、复制、分享、**导出 PDF** | 报告对外交付 |
+每条 Finding / Risk 都挂 `evidence`（数据依据）、`lineage`（数据血缘）、`rootCause`（业务事件根因）：
 
-> Sprint 1 已为后续埋好接口：`report` 页可按角色切换 KPI/洞察；`/report` 已具备「重新生成」；导出/分享按钮已占位（Sprint 5 启用）；根因树入口（关键发现「深入分析」）已留链接（Sprint 4 启用）。
-
-**明确不做（Master Prompt 约束）：** Forecast Agent / PPT 导出 / 营销自动化 / 数据库集成。
+- **Evidence Engine**（`evidence-engine.ts`）：从聚合结果推导每个指标的 `before → after → change`（区分相对 % / 百分点 / 绝对值），附引用源系统、覆盖率、健康度、最晚更新时间。
+- **数据源注册表**（`data-trust.ts` ← `07_data_sources.json`）：OMS / CRM / CDP / Marketing Platform 等源的覆盖率、健康度（Healthy/Warning/Delayed/Error）、时效。
+- **指标知识库**（`metric-kb.ts`）：每个指标的定义 / 公式 / 业务含义 / 负责人 / 更新频率 / 归因规则 / 数据血缘链路。
 
 ---
 
-## V1.1 · 时间范围分析（已交付）
+## 5. 查询治理（Phase 4 · Query Governance）
 
-支持「最近 7 / 14 / 30 天」切换，系统按选择范围聚合日数据，KPI、AI 分析、趋势图同步变化。
+来源：`11_Query_Governance`（分级 / 覆盖率 / 风险 / 响应 / 异常）+ `10_Data_Trust`。引擎位于 `src/lib/governance/`，**纯函数 + 47 单测**，`insight-agent.ts` 与 `api/analyze/route.ts` 全程未改。
 
-**数据升级**
-- V2 数据层：`src/lib/data/mock-data/01~08`（90 天 8 数据集）；旧 30 天 `*_daily.json`（来源 `mock一个月数据V2/`）已移除。
-- 新增 `src/lib/data/daily.ts`：`aggregateSales/aggregateChannels/aggregateCrm(range)` 取「最近 N 天」为当期、其前 N 天为上一期，计算环比。
+**查询分级（A/B/C）**
+- **A 直答**：指标在库 + 必需源齐全 → 完整摘要/发现/风险/建议
+- **B 部分回答**：缺源或成本源未接入（如利润）→ 摘要前置「部分回答」提示，正文照常
+- **C 暂不支持**：指标不在库 → 仅留横幅，正文隐藏
 
-**四处联动**（验收：切换时间范围后 KPI / 分析 / 图表自动变化）
-1. **首页时间筛选器** —— 视角选择器右侧的 `RangeSwitcher`（默认 7 天）；右侧 KPI 仪表盘随 range **实时重算**。
-2. **报告页时间范围** —— 摘要区 `RangeSwitcher`，切换即**重跑 Agent 工作流**（重新 fetch `/api/analyze?range=…`）。
-3. **KPI 驾驶舱** —— GMV / Orders / Profit / AOV 由当期聚合得出，显示真实环比（↑/↓%）。
-4. **GMV 日趋势图** —— 新增纯 SVG 折线图（`report/trend-chart.tsx`，零新依赖），点数 = range（7→7 点，30→30 点）。
+**覆盖率门（阈值 verbatim）**：High ≥ 80 / Medium 50–<80 / Low < 50。覆盖率按**实际引用源**计算。
 
-**Agent 升级**
-- **Data Agent**：按 `range` 聚合日数据，KPI 来自真实环比；返回当期日序列 `trend` 供图表。
-- **Insight Agent**：改为**数据驱动**——摘要/发现/风险/建议从聚合结果推导（如「最近7天 GMV 环比 +8.8%，增长主要来自京东渠道」），随 range 变化。
+**4 级响应策略**（按降级层实现，非缓存）：`direct`（直答）→ `partial`（部分）→ `refuse`（拒答）→ `suspend`（数据异常暂停）。异常检测：量级 ≥ 5× 且率类另需 ≥ 20pp。
 
-**环比口径与边界**
-- 7 / 14 天档：与上一周期对比，显示完整环比。
-- 30 天档：数据窗口仅 30 天，无上一周期 → `hasComparison=false`，KPI 不显示环比、摘要改述累计值（界面有「当前范围无上一周期，未显示环比」提示）。默认 7 天不受影响。
-- 暂不实现预测功能。
+**业务事件归因**（`08_business_events.json`）：将周期内命中的业务事件（618 预热 / 爆款新品 / 企微触达下降等）挂为 Finding/Risk 的根因。
 
-**验证（实测）**
+**开发态演示开关**——Mock 全 High、波动小（≤1.12×），异常/Medium/Low 无法被真实问题触发；提问含以下关键词可强制注入对应裁决，便于浏览器演示全部横幅：`演示数据异常`(→suspend) / `演示低覆盖`(→refuse) / `演示中等覆盖`(→partial)。
 
-| range | GMV | 环比 | 摘要要点 |
-| --- | --- | --- | --- |
-| 7 天 | ¥241万 | +8.8% | 整体积极，GMV 环比 +8.8% |
-| 14 天 | ¥462万 | −1.9% | 整体承压，增长主要来自小红书渠道 +14.5% |
-| 30 天 | ¥1000万 | — | 累计 GMV ¥1000万（无上一周期） |
+---
 
+## 6. 时间范围与环比口径（V1.1）
+
+支持「最近 7 / 14 / 30 / 90 天」切换，系统按窗口聚合 90 天日数据：取末 N 天为当期、其前 N 天为上一期计算环比。KPI、AI 分析、趋势图同步变化。
+
+- **7 / 14 / 30 天档**：90 天数据内有上一期，显示完整环比（`hasComparison=true`）。
+- **90 天档**：无上一周期 → `hasComparison=false`，KPI 不显示环比，摘要改述累计值。
+- 四处联动：首页 RangeSwitcher + KPI 仪表盘（`/api/kpis`）、报告页 RangeSwitcher（重跑 `/api/analyze`）、KPI 驾驶舱、GMV 日趋势图（点数 = range）。
+
+**验证（实测，CEO 视角，提问「本周业务表现如何？」）**
+
+| range | GMV | 环比 | 摘要要点 | 命中事件 |
+| --- | --- | --- | --- | --- |
+| 7 天 | ¥99万 | +8.5% | 整体积极，增长主要来自小红书渠道 +92.8% | 爆款新品上线 |
+| 14 天 | ¥190万 | +8.8% | 增长主要来自天猫 +25.7%；高价值会员复购走弱 1.3pp | 爆款新品上线 |
+| 30 天 | ¥388万 | +12.4% | 增长主要来自小程序 +15.2%；复购走弱 0.7pp | 企微触达下降、爆款新品上线 |
+| 90 天 | ¥1080万 | —（无上一期） | 累计口径，不展示环比 | 618 预热、爆款新品上线 |
+
+> 暂不实现预测功能。
+
+---
+
+## 7. Phase 5 · Bundle 优化
+
+**问题**：`daily.ts` 顶层静态 `import` 了 4 个 90 天 Mock JSON（经营/会员/营销/渠道，合计 ~111KB，渠道表 64KB）。首页 `KpiSidebar` 原为客户端组件直接调用 `dataAgent` 聚合，导致这 4 份数据被打进客户端 bundle（首页 First Load 多出 ~29KB gzip，专属数据 chunk 达 81KB）——仅为渲染 4 个 KPI 卡。
+
+**方案**：新增 `GET /api/kpis?range=N`，服务端跑 `dataAgent` 聚合并只回传 `{ kpis, rangeLabel }`（~400B）。`KpiSidebar` 改为客户端 fetch + 骨架屏。重数据从此留在服务端，客户端 chunk 中再也搜不到渠道/营销/会员数据。
+
+**效果（`next build` 实测）**：
+
+| 路由 | First Load JS（前 → 后） |
+| --- | --- |
+| `/`（首页） | 122 kB → **109 kB**（−13 kB） |
+| `/report`（报告） | 117 kB → **106 kB**（−11 kB） |
+
+---
+
+## 8. 明确不做（Master Prompt 约束）
+
+Forecast Agent / PPT 导出 / 营销自动化 / 数据库集成；GLM 模型路由兜底（GLM 未启用，rule 模式）。导出 PDF、分享按钮为 UI 占位。
