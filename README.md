@@ -51,7 +51,7 @@ AI-Business-Analyst-MVP/
 │   │                             #       findings / risk / recommendations / footer / report-view
 │   └── lib/
 │       ├── utils.ts              # cn / 数字·百分比格式化
-│       ├── data/                 # V1.1 日数据：sales/crm/channels_daily.json（30天）
+│       ├── data/                 # V2 数据层：mock-data/01~08（90天）+ daily.ts + data-trust.ts
 │       │       └── daily.ts      # 按 range(7/14/30) 窗口聚合 + 环比 + 日序列
 │       ├── kb/metric-kb.ts       # 指标知识库（角色→指标 / 定义 / 归因规则 / 推荐行动）
 │       └── agents/
@@ -177,7 +177,7 @@ AI-Business-Analyst-MVP/
 支持「最近 7 / 14 / 30 天」切换，系统按选择范围聚合日数据，KPI、AI 分析、趋势图同步变化。
 
 **数据升级**
-- 引入 30 天日数据：`src/lib/data/{sales,crm,channels}_daily.json`（来源 `mock一个月数据V2/`）。
+- V2 数据层：`src/lib/data/mock-data/01~08`（90 天 8 数据集）；旧 30 天 `*_daily.json`（来源 `mock一个月数据V2/`）已移除。
 - 新增 `src/lib/data/daily.ts`：`aggregateSales/aggregateChannels/aggregateCrm(range)` 取「最近 N 天」为当期、其前 N 天为上一期，计算环比。
 
 **四处联动**（验收：切换时间范围后 KPI / 分析 / 图表自动变化）
