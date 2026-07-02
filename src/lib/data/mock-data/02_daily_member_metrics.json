@@ -1,0 +1,812 @@
+[
+  {
+    "date": "2026-04-03",
+    "active_members": 17995,
+    "new_members": 258,
+    "repurchase_rate": 24.5,
+    "ltv": 1120,
+    "churn_rate": 3.1,
+    "vip_members": 3196
+  },
+  {
+    "date": "2026-04-04",
+    "active_members": 18057,
+    "new_members": 292,
+    "repurchase_rate": 24.6,
+    "ltv": 1122,
+    "churn_rate": 3.1,
+    "vip_members": 3203
+  },
+  {
+    "date": "2026-04-05",
+    "active_members": 18084,
+    "new_members": 285,
+    "repurchase_rate": 24.4,
+    "ltv": 1125,
+    "churn_rate": 3.1,
+    "vip_members": 3207
+  },
+  {
+    "date": "2026-04-06",
+    "active_members": 18062,
+    "new_members": 260,
+    "repurchase_rate": 24.4,
+    "ltv": 1121,
+    "churn_rate": 3.1,
+    "vip_members": 3210
+  },
+  {
+    "date": "2026-04-07",
+    "active_members": 18160,
+    "new_members": 267,
+    "repurchase_rate": 24.7,
+    "ltv": 1132,
+    "churn_rate": 3.1,
+    "vip_members": 3216
+  },
+  {
+    "date": "2026-04-08",
+    "active_members": 18181,
+    "new_members": 264,
+    "repurchase_rate": 24.7,
+    "ltv": 1130,
+    "churn_rate": 3.1,
+    "vip_members": 3225
+  },
+  {
+    "date": "2026-04-09",
+    "active_members": 18133,
+    "new_members": 265,
+    "repurchase_rate": 24.6,
+    "ltv": 1133,
+    "churn_rate": 3.1,
+    "vip_members": 3225
+  },
+  {
+    "date": "2026-04-10",
+    "active_members": 18214,
+    "new_members": 265,
+    "repurchase_rate": 24.7,
+    "ltv": 1129,
+    "churn_rate": 3.1,
+    "vip_members": 3228
+  },
+  {
+    "date": "2026-04-11",
+    "active_members": 18236,
+    "new_members": 294,
+    "repurchase_rate": 24.8,
+    "ltv": 1137,
+    "churn_rate": 3.1,
+    "vip_members": 3229
+  },
+  {
+    "date": "2026-04-12",
+    "active_members": 18314,
+    "new_members": 296,
+    "repurchase_rate": 24.7,
+    "ltv": 1137,
+    "churn_rate": 3.1,
+    "vip_members": 3231
+  },
+  {
+    "date": "2026-04-13",
+    "active_members": 18280,
+    "new_members": 263,
+    "repurchase_rate": 24.6,
+    "ltv": 1137,
+    "churn_rate": 3.1,
+    "vip_members": 3237
+  },
+  {
+    "date": "2026-04-14",
+    "active_members": 18342,
+    "new_members": 268,
+    "repurchase_rate": 24.6,
+    "ltv": 1139,
+    "churn_rate": 3.1,
+    "vip_members": 3243
+  },
+  {
+    "date": "2026-04-15",
+    "active_members": 18401,
+    "new_members": 270,
+    "repurchase_rate": 24.9,
+    "ltv": 1146,
+    "churn_rate": 3.1,
+    "vip_members": 3247
+  },
+  {
+    "date": "2026-04-16",
+    "active_members": 18399,
+    "new_members": 266,
+    "repurchase_rate": 24.8,
+    "ltv": 1144,
+    "churn_rate": 3.1,
+    "vip_members": 3249
+  },
+  {
+    "date": "2026-04-17",
+    "active_members": 18386,
+    "new_members": 264,
+    "repurchase_rate": 24.7,
+    "ltv": 1147,
+    "churn_rate": 3.1,
+    "vip_members": 3249
+  },
+  {
+    "date": "2026-04-18",
+    "active_members": 18413,
+    "new_members": 297,
+    "repurchase_rate": 24.8,
+    "ltv": 1150,
+    "churn_rate": 3.1,
+    "vip_members": 3261
+  },
+  {
+    "date": "2026-04-19",
+    "active_members": 18457,
+    "new_members": 302,
+    "repurchase_rate": 25.0,
+    "ltv": 1154,
+    "churn_rate": 3.2,
+    "vip_members": 3267
+  },
+  {
+    "date": "2026-04-20",
+    "active_members": 18420,
+    "new_members": 274,
+    "repurchase_rate": 24.7,
+    "ltv": 1150,
+    "churn_rate": 3.2,
+    "vip_members": 3267
+  },
+  {
+    "date": "2026-04-21",
+    "active_members": 18500,
+    "new_members": 272,
+    "repurchase_rate": 24.9,
+    "ltv": 1154,
+    "churn_rate": 3.1,
+    "vip_members": 3262
+  },
+  {
+    "date": "2026-04-22",
+    "active_members": 18556,
+    "new_members": 279,
+    "repurchase_rate": 25.1,
+    "ltv": 1162,
+    "churn_rate": 3.2,
+    "vip_members": 3271
+  },
+  {
+    "date": "2026-04-23",
+    "active_members": 18634,
+    "new_members": 274,
+    "repurchase_rate": 25.1,
+    "ltv": 1162,
+    "churn_rate": 3.2,
+    "vip_members": 3277
+  },
+  {
+    "date": "2026-04-24",
+    "active_members": 18553,
+    "new_members": 272,
+    "repurchase_rate": 24.8,
+    "ltv": 1160,
+    "churn_rate": 3.1,
+    "vip_members": 3278
+  },
+  {
+    "date": "2026-04-25",
+    "active_members": 18668,
+    "new_members": 303,
+    "repurchase_rate": 25.1,
+    "ltv": 1166,
+    "churn_rate": 3.2,
+    "vip_members": 3281
+  },
+  {
+    "date": "2026-04-26",
+    "active_members": 18660,
+    "new_members": 307,
+    "repurchase_rate": 25.2,
+    "ltv": 1170,
+    "churn_rate": 3.2,
+    "vip_members": 3288
+  },
+  {
+    "date": "2026-04-27",
+    "active_members": 18723,
+    "new_members": 278,
+    "repurchase_rate": 25.2,
+    "ltv": 1170,
+    "churn_rate": 3.2,
+    "vip_members": 3296
+  },
+  {
+    "date": "2026-04-28",
+    "active_members": 18690,
+    "new_members": 277,
+    "repurchase_rate": 25.0,
+    "ltv": 1171,
+    "churn_rate": 3.2,
+    "vip_members": 3289
+  },
+  {
+    "date": "2026-04-29",
+    "active_members": 18708,
+    "new_members": 280,
+    "repurchase_rate": 25.1,
+    "ltv": 1171,
+    "churn_rate": 3.1,
+    "vip_members": 3301
+  },
+  {
+    "date": "2026-04-30",
+    "active_members": 18792,
+    "new_members": 283,
+    "repurchase_rate": 25.1,
+    "ltv": 1179,
+    "churn_rate": 3.2,
+    "vip_members": 3310
+  },
+  {
+    "date": "2026-05-01",
+    "active_members": 18829,
+    "new_members": 281,
+    "repurchase_rate": 25.1,
+    "ltv": 1175,
+    "churn_rate": 3.2,
+    "vip_members": 3309
+  },
+  {
+    "date": "2026-05-02",
+    "active_members": 18849,
+    "new_members": 308,
+    "repurchase_rate": 25.2,
+    "ltv": 1178,
+    "churn_rate": 3.1,
+    "vip_members": 3308
+  },
+  {
+    "date": "2026-05-03",
+    "active_members": 18850,
+    "new_members": 310,
+    "repurchase_rate": 24.8,
+    "ltv": 1185,
+    "churn_rate": 3.2,
+    "vip_members": 3320
+  },
+  {
+    "date": "2026-05-04",
+    "active_members": 18918,
+    "new_members": 282,
+    "repurchase_rate": 24.4,
+    "ltv": 1184,
+    "churn_rate": 3.2,
+    "vip_members": 3321
+  },
+  {
+    "date": "2026-05-05",
+    "active_members": 18851,
+    "new_members": 281,
+    "repurchase_rate": 23.9,
+    "ltv": 1182,
+    "churn_rate": 3.2,
+    "vip_members": 3321
+  },
+  {
+    "date": "2026-05-06",
+    "active_members": 18967,
+    "new_members": 285,
+    "repurchase_rate": 23.5,
+    "ltv": 1183,
+    "churn_rate": 3.2,
+    "vip_members": 3323
+  },
+  {
+    "date": "2026-05-07",
+    "active_members": 19041,
+    "new_members": 290,
+    "repurchase_rate": 23.5,
+    "ltv": 1193,
+    "churn_rate": 3.3,
+    "vip_members": 3335
+  },
+  {
+    "date": "2026-05-08",
+    "active_members": 18974,
+    "new_members": 286,
+    "repurchase_rate": 23.9,
+    "ltv": 1192,
+    "churn_rate": 3.2,
+    "vip_members": 3336
+  },
+  {
+    "date": "2026-05-09",
+    "active_members": 19049,
+    "new_members": 312,
+    "repurchase_rate": 24.0,
+    "ltv": 1192,
+    "churn_rate": 3.2,
+    "vip_members": 3337
+  },
+  {
+    "date": "2026-05-10",
+    "active_members": 19106,
+    "new_members": 320,
+    "repurchase_rate": 24.7,
+    "ltv": 1195,
+    "churn_rate": 3.2,
+    "vip_members": 3342
+  },
+  {
+    "date": "2026-05-11",
+    "active_members": 19116,
+    "new_members": 290,
+    "repurchase_rate": 25.0,
+    "ltv": 1197,
+    "churn_rate": 3.3,
+    "vip_members": 3349
+  },
+  {
+    "date": "2026-05-12",
+    "active_members": 19080,
+    "new_members": 285,
+    "repurchase_rate": 25.3,
+    "ltv": 1200,
+    "churn_rate": 3.2,
+    "vip_members": 3351
+  },
+  {
+    "date": "2026-05-13",
+    "active_members": 19156,
+    "new_members": 291,
+    "repurchase_rate": 25.2,
+    "ltv": 1197,
+    "churn_rate": 3.2,
+    "vip_members": 3347
+  },
+  {
+    "date": "2026-05-14",
+    "active_members": 19188,
+    "new_members": 290,
+    "repurchase_rate": 25.7,
+    "ltv": 1206,
+    "churn_rate": 3.2,
+    "vip_members": 3356
+  },
+  {
+    "date": "2026-05-15",
+    "active_members": 19231,
+    "new_members": 293,
+    "repurchase_rate": 25.7,
+    "ltv": 1205,
+    "churn_rate": 3.2,
+    "vip_members": 3362
+  },
+  {
+    "date": "2026-05-16",
+    "active_members": 19238,
+    "new_members": 320,
+    "repurchase_rate": 25.5,
+    "ltv": 1204,
+    "churn_rate": 3.2,
+    "vip_members": 3362
+  },
+  {
+    "date": "2026-05-17",
+    "active_members": 19284,
+    "new_members": 321,
+    "repurchase_rate": 25.7,
+    "ltv": 1211,
+    "churn_rate": 3.2,
+    "vip_members": 3365
+  },
+  {
+    "date": "2026-05-18",
+    "active_members": 19317,
+    "new_members": 297,
+    "repurchase_rate": 25.8,
+    "ltv": 1215,
+    "churn_rate": 3.2,
+    "vip_members": 3372
+  },
+  {
+    "date": "2026-05-19",
+    "active_members": 19309,
+    "new_members": 297,
+    "repurchase_rate": 25.8,
+    "ltv": 1214,
+    "churn_rate": 3.2,
+    "vip_members": 3381
+  },
+  {
+    "date": "2026-05-20",
+    "active_members": 19357,
+    "new_members": 291,
+    "repurchase_rate": 26.2,
+    "ltv": 1223,
+    "churn_rate": 3.2,
+    "vip_members": 3374
+  },
+  {
+    "date": "2026-05-21",
+    "active_members": 19372,
+    "new_members": 300,
+    "repurchase_rate": 26.8,
+    "ltv": 1241,
+    "churn_rate": 3.2,
+    "vip_members": 3379
+  },
+  {
+    "date": "2026-05-22",
+    "active_members": 19398,
+    "new_members": 300,
+    "repurchase_rate": 27.6,
+    "ltv": 1262,
+    "churn_rate": 3.2,
+    "vip_members": 3387
+  },
+  {
+    "date": "2026-05-23",
+    "active_members": 19483,
+    "new_members": 332,
+    "repurchase_rate": 28.2,
+    "ltv": 1271,
+    "churn_rate": 3.1,
+    "vip_members": 3389
+  },
+  {
+    "date": "2026-05-24",
+    "active_members": 19470,
+    "new_members": 328,
+    "repurchase_rate": 28.6,
+    "ltv": 1283,
+    "churn_rate": 3.1,
+    "vip_members": 3388
+  },
+  {
+    "date": "2026-05-25",
+    "active_members": 19465,
+    "new_members": 298,
+    "repurchase_rate": 28.4,
+    "ltv": 1275,
+    "churn_rate": 3.2,
+    "vip_members": 3401
+  },
+  {
+    "date": "2026-05-26",
+    "active_members": 19514,
+    "new_members": 301,
+    "repurchase_rate": 27.7,
+    "ltv": 1262,
+    "churn_rate": 3.2,
+    "vip_members": 3409
+  },
+  {
+    "date": "2026-05-27",
+    "active_members": 19525,
+    "new_members": 295,
+    "repurchase_rate": 27.1,
+    "ltv": 1253,
+    "churn_rate": 3.1,
+    "vip_members": 3405
+  },
+  {
+    "date": "2026-05-28",
+    "active_members": 19527,
+    "new_members": 296,
+    "repurchase_rate": 26.4,
+    "ltv": 1242,
+    "churn_rate": 3.2,
+    "vip_members": 3408
+  },
+  {
+    "date": "2026-05-29",
+    "active_members": 19664,
+    "new_members": 301,
+    "repurchase_rate": 26.1,
+    "ltv": 1232,
+    "churn_rate": 3.3,
+    "vip_members": 3418
+  },
+  {
+    "date": "2026-05-30",
+    "active_members": 19718,
+    "new_members": 337,
+    "repurchase_rate": 25.9,
+    "ltv": 1236,
+    "churn_rate": 3.3,
+    "vip_members": 3425
+  },
+  {
+    "date": "2026-05-31",
+    "active_members": 19605,
+    "new_members": 327,
+    "repurchase_rate": 25.9,
+    "ltv": 1233,
+    "churn_rate": 3.2,
+    "vip_members": 3421
+  },
+  {
+    "date": "2026-06-01",
+    "active_members": 19722,
+    "new_members": 306,
+    "repurchase_rate": 25.9,
+    "ltv": 1235,
+    "churn_rate": 3.2,
+    "vip_members": 3429
+  },
+  {
+    "date": "2026-06-02",
+    "active_members": 19729,
+    "new_members": 311,
+    "repurchase_rate": 26.1,
+    "ltv": 1245,
+    "churn_rate": 3.3,
+    "vip_members": 3437
+  },
+  {
+    "date": "2026-06-03",
+    "active_members": 19704,
+    "new_members": 308,
+    "repurchase_rate": 26.0,
+    "ltv": 1241,
+    "churn_rate": 3.2,
+    "vip_members": 3431
+  },
+  {
+    "date": "2026-06-04",
+    "active_members": 19692,
+    "new_members": 308,
+    "repurchase_rate": 25.9,
+    "ltv": 1246,
+    "churn_rate": 3.2,
+    "vip_members": 3432
+  },
+  {
+    "date": "2026-06-05",
+    "active_members": 19856,
+    "new_members": 306,
+    "repurchase_rate": 26.0,
+    "ltv": 1250,
+    "churn_rate": 3.3,
+    "vip_members": 3441
+  },
+  {
+    "date": "2026-06-06",
+    "active_members": 19835,
+    "new_members": 342,
+    "repurchase_rate": 26.3,
+    "ltv": 1253,
+    "churn_rate": 3.3,
+    "vip_members": 3448
+  },
+  {
+    "date": "2026-06-07",
+    "active_members": 19908,
+    "new_members": 340,
+    "repurchase_rate": 26.0,
+    "ltv": 1253,
+    "churn_rate": 3.3,
+    "vip_members": 3451
+  },
+  {
+    "date": "2026-06-08",
+    "active_members": 19897,
+    "new_members": 303,
+    "repurchase_rate": 26.1,
+    "ltv": 1254,
+    "churn_rate": 3.3,
+    "vip_members": 3449
+  },
+  {
+    "date": "2026-06-09",
+    "active_members": 19908,
+    "new_members": 314,
+    "repurchase_rate": 26.2,
+    "ltv": 1258,
+    "churn_rate": 3.3,
+    "vip_members": 3462
+  },
+  {
+    "date": "2026-06-10",
+    "active_members": 19964,
+    "new_members": 309,
+    "repurchase_rate": 26.3,
+    "ltv": 1257,
+    "churn_rate": 3.3,
+    "vip_members": 3461
+  },
+  {
+    "date": "2026-06-11",
+    "active_members": 20010,
+    "new_members": 313,
+    "repurchase_rate": 26.0,
+    "ltv": 1258,
+    "churn_rate": 3.2,
+    "vip_members": 3465
+  },
+  {
+    "date": "2026-06-12",
+    "active_members": 20023,
+    "new_members": 316,
+    "repurchase_rate": 26.1,
+    "ltv": 1261,
+    "churn_rate": 3.3,
+    "vip_members": 3463
+  },
+  {
+    "date": "2026-06-13",
+    "active_members": 20032,
+    "new_members": 353,
+    "repurchase_rate": 26.3,
+    "ltv": 1265,
+    "churn_rate": 3.3,
+    "vip_members": 3477
+  },
+  {
+    "date": "2026-06-14",
+    "active_members": 20100,
+    "new_members": 352,
+    "repurchase_rate": 25.5,
+    "ltv": 1267,
+    "churn_rate": 3.3,
+    "vip_members": 3477
+  },
+  {
+    "date": "2026-06-15",
+    "active_members": 20050,
+    "new_members": 313,
+    "repurchase_rate": 24.7,
+    "ltv": 1262,
+    "churn_rate": 3.3,
+    "vip_members": 3477
+  },
+  {
+    "date": "2026-06-16",
+    "active_members": 20123,
+    "new_members": 317,
+    "repurchase_rate": 24.2,
+    "ltv": 1268,
+    "churn_rate": 3.4,
+    "vip_members": 3490
+  },
+  {
+    "date": "2026-06-17",
+    "active_members": 20173,
+    "new_members": 324,
+    "repurchase_rate": 24.3,
+    "ltv": 1271,
+    "churn_rate": 3.4,
+    "vip_members": 3491
+  },
+  {
+    "date": "2026-06-18",
+    "active_members": 20222,
+    "new_members": 316,
+    "repurchase_rate": 24.1,
+    "ltv": 1274,
+    "churn_rate": 3.4,
+    "vip_members": 3489
+  },
+  {
+    "date": "2026-06-19",
+    "active_members": 20164,
+    "new_members": 311,
+    "repurchase_rate": 24.2,
+    "ltv": 1276,
+    "churn_rate": 3.4,
+    "vip_members": 3495
+  },
+  {
+    "date": "2026-06-20",
+    "active_members": 20323,
+    "new_members": 356,
+    "repurchase_rate": 24.4,
+    "ltv": 1279,
+    "churn_rate": 3.4,
+    "vip_members": 3499
+  },
+  {
+    "date": "2026-06-21",
+    "active_members": 20260,
+    "new_members": 359,
+    "repurchase_rate": 24.3,
+    "ltv": 1281,
+    "churn_rate": 3.4,
+    "vip_members": 3509
+  },
+  {
+    "date": "2026-06-22",
+    "active_members": 20278,
+    "new_members": 319,
+    "repurchase_rate": 24.1,
+    "ltv": 1278,
+    "churn_rate": 3.4,
+    "vip_members": 3507
+  },
+  {
+    "date": "2026-06-23",
+    "active_members": 20315,
+    "new_members": 322,
+    "repurchase_rate": 24.4,
+    "ltv": 1279,
+    "churn_rate": 3.4,
+    "vip_members": 3511
+  },
+  {
+    "date": "2026-06-24",
+    "active_members": 20393,
+    "new_members": 327,
+    "repurchase_rate": 24.4,
+    "ltv": 1291,
+    "churn_rate": 3.4,
+    "vip_members": 3520
+  },
+  {
+    "date": "2026-06-25",
+    "active_members": 20362,
+    "new_members": 328,
+    "repurchase_rate": 24.4,
+    "ltv": 1291,
+    "churn_rate": 3.4,
+    "vip_members": 3516
+  },
+  {
+    "date": "2026-06-26",
+    "active_members": 20336,
+    "new_members": 317,
+    "repurchase_rate": 24.3,
+    "ltv": 1288,
+    "churn_rate": 3.4,
+    "vip_members": 3524
+  },
+  {
+    "date": "2026-06-27",
+    "active_members": 20496,
+    "new_members": 362,
+    "repurchase_rate": 24.4,
+    "ltv": 1292,
+    "churn_rate": 3.4,
+    "vip_members": 3522
+  },
+  {
+    "date": "2026-06-28",
+    "active_members": 20493,
+    "new_members": 363,
+    "repurchase_rate": 24.6,
+    "ltv": 1293,
+    "churn_rate": 3.4,
+    "vip_members": 3530
+  },
+  {
+    "date": "2026-06-29",
+    "active_members": 20515,
+    "new_members": 327,
+    "repurchase_rate": 24.5,
+    "ltv": 1297,
+    "churn_rate": 3.4,
+    "vip_members": 3537
+  },
+  {
+    "date": "2026-06-30",
+    "active_members": 20438,
+    "new_members": 319,
+    "repurchase_rate": 24.5,
+    "ltv": 1296,
+    "churn_rate": 3.4,
+    "vip_members": 3537
+  },
+  {
+    "date": "2026-07-01",
+    "active_members": 20573,
+    "new_members": 330,
+    "repurchase_rate": 24.6,
+    "ltv": 1302,
+    "churn_rate": 3.4,
+    "vip_members": 3548
+  }
+]

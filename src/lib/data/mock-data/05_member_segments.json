@@ -1,0 +1,3602 @@
+[
+  {
+    "date": "2026-04-03",
+    "segment": "VIP",
+    "member_count": 3196,
+    "gmv": 979799,
+    "repurchase_rate": 45.4,
+    "ltv": 5206
+  },
+  {
+    "date": "2026-04-03",
+    "segment": "Loyal",
+    "member_count": 6200,
+    "gmv": 518736,
+    "repurchase_rate": 31.9,
+    "ltv": 2593
+  },
+  {
+    "date": "2026-04-03",
+    "segment": "Potential",
+    "member_count": 5400,
+    "gmv": 209848,
+    "repurchase_rate": 16.4,
+    "ltv": 1098
+  },
+  {
+    "date": "2026-04-03",
+    "segment": "Churn Risk",
+    "member_count": 2100,
+    "gmv": 76097,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-04-03",
+    "segment": "New Member",
+    "member_count": 2800,
+    "gmv": 120337,
+    "repurchase_rate": 6.2,
+    "ltv": 321
+  },
+  {
+    "date": "2026-04-04",
+    "segment": "VIP",
+    "member_count": 3203,
+    "gmv": 983761,
+    "repurchase_rate": 45.3,
+    "ltv": 5212
+  },
+  {
+    "date": "2026-04-04",
+    "segment": "Loyal",
+    "member_count": 6207,
+    "gmv": 523176,
+    "repurchase_rate": 32.2,
+    "ltv": 2606
+  },
+  {
+    "date": "2026-04-04",
+    "segment": "Potential",
+    "member_count": 5406,
+    "gmv": 211102,
+    "repurchase_rate": 16.4,
+    "ltv": 1103
+  },
+  {
+    "date": "2026-04-04",
+    "segment": "Churn Risk",
+    "member_count": 2103,
+    "gmv": 76417,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-04",
+    "segment": "New Member",
+    "member_count": 2975,
+    "gmv": 121474,
+    "repurchase_rate": 6.2,
+    "ltv": 321
+  },
+  {
+    "date": "2026-04-05",
+    "segment": "VIP",
+    "member_count": 3207,
+    "gmv": 988355,
+    "repurchase_rate": 45.1,
+    "ltv": 5206
+  },
+  {
+    "date": "2026-04-05",
+    "segment": "Loyal",
+    "member_count": 6215,
+    "gmv": 523933,
+    "repurchase_rate": 32.1,
+    "ltv": 2608
+  },
+  {
+    "date": "2026-04-05",
+    "segment": "Potential",
+    "member_count": 5413,
+    "gmv": 211106,
+    "repurchase_rate": 16.3,
+    "ltv": 1106
+  },
+  {
+    "date": "2026-04-05",
+    "segment": "Churn Risk",
+    "member_count": 2105,
+    "gmv": 76368,
+    "repurchase_rate": 7.7,
+    "ltv": 626
+  },
+  {
+    "date": "2026-04-05",
+    "segment": "New Member",
+    "member_count": 2978,
+    "gmv": 120600,
+    "repurchase_rate": 6.2,
+    "ltv": 320
+  },
+  {
+    "date": "2026-04-06",
+    "segment": "VIP",
+    "member_count": 3210,
+    "gmv": 993556,
+    "repurchase_rate": 45.1,
+    "ltv": 5189
+  },
+  {
+    "date": "2026-04-06",
+    "segment": "Loyal",
+    "member_count": 6222,
+    "gmv": 525008,
+    "repurchase_rate": 32.1,
+    "ltv": 2608
+  },
+  {
+    "date": "2026-04-06",
+    "segment": "Potential",
+    "member_count": 5419,
+    "gmv": 212905,
+    "repurchase_rate": 16.4,
+    "ltv": 1106
+  },
+  {
+    "date": "2026-04-06",
+    "segment": "Churn Risk",
+    "member_count": 2108,
+    "gmv": 76254,
+    "repurchase_rate": 7.6,
+    "ltv": 626
+  },
+  {
+    "date": "2026-04-06",
+    "segment": "New Member",
+    "member_count": 2808,
+    "gmv": 120513,
+    "repurchase_rate": 6.2,
+    "ltv": 319
+  },
+  {
+    "date": "2026-04-07",
+    "segment": "VIP",
+    "member_count": 3216,
+    "gmv": 998941,
+    "repurchase_rate": 45.4,
+    "ltv": 5198
+  },
+  {
+    "date": "2026-04-07",
+    "segment": "Loyal",
+    "member_count": 6230,
+    "gmv": 533128,
+    "repurchase_rate": 32.2,
+    "ltv": 2615
+  },
+  {
+    "date": "2026-04-07",
+    "segment": "Potential",
+    "member_count": 5426,
+    "gmv": 215266,
+    "repurchase_rate": 16.4,
+    "ltv": 1111
+  },
+  {
+    "date": "2026-04-07",
+    "segment": "Churn Risk",
+    "member_count": 2110,
+    "gmv": 76885,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-07",
+    "segment": "New Member",
+    "member_count": 2811,
+    "gmv": 121678,
+    "repurchase_rate": 6.2,
+    "ltv": 321
+  },
+  {
+    "date": "2026-04-08",
+    "segment": "VIP",
+    "member_count": 3225,
+    "gmv": 998904,
+    "repurchase_rate": 45.1,
+    "ltv": 5203
+  },
+  {
+    "date": "2026-04-08",
+    "segment": "Loyal",
+    "member_count": 6237,
+    "gmv": 532762,
+    "repurchase_rate": 32.2,
+    "ltv": 2629
+  },
+  {
+    "date": "2026-04-08",
+    "segment": "Potential",
+    "member_count": 5432,
+    "gmv": 215261,
+    "repurchase_rate": 16.4,
+    "ltv": 1112
+  },
+  {
+    "date": "2026-04-08",
+    "segment": "Churn Risk",
+    "member_count": 2113,
+    "gmv": 77036,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-08",
+    "segment": "New Member",
+    "member_count": 2814,
+    "gmv": 122445,
+    "repurchase_rate": 6.2,
+    "ltv": 322
+  },
+  {
+    "date": "2026-04-09",
+    "segment": "VIP",
+    "member_count": 3225,
+    "gmv": 1003003,
+    "repurchase_rate": 45.2,
+    "ltv": 5186
+  },
+  {
+    "date": "2026-04-09",
+    "segment": "Loyal",
+    "member_count": 6245,
+    "gmv": 534020,
+    "repurchase_rate": 32.0,
+    "ltv": 2627
+  },
+  {
+    "date": "2026-04-09",
+    "segment": "Potential",
+    "member_count": 5439,
+    "gmv": 216086,
+    "repurchase_rate": 16.4,
+    "ltv": 1112
+  },
+  {
+    "date": "2026-04-09",
+    "segment": "Churn Risk",
+    "member_count": 2115,
+    "gmv": 77315,
+    "repurchase_rate": 7.6,
+    "ltv": 625
+  },
+  {
+    "date": "2026-04-09",
+    "segment": "New Member",
+    "member_count": 2817,
+    "gmv": 122439,
+    "repurchase_rate": 6.2,
+    "ltv": 322
+  },
+  {
+    "date": "2026-04-10",
+    "segment": "VIP",
+    "member_count": 3228,
+    "gmv": 1010543,
+    "repurchase_rate": 45.1,
+    "ltv": 5200
+  },
+  {
+    "date": "2026-04-10",
+    "segment": "Loyal",
+    "member_count": 6252,
+    "gmv": 534968,
+    "repurchase_rate": 31.9,
+    "ltv": 2632
+  },
+  {
+    "date": "2026-04-10",
+    "segment": "Potential",
+    "member_count": 5445,
+    "gmv": 216139,
+    "repurchase_rate": 16.4,
+    "ltv": 1110
+  },
+  {
+    "date": "2026-04-10",
+    "segment": "Churn Risk",
+    "member_count": 2118,
+    "gmv": 77519,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-04-10",
+    "segment": "New Member",
+    "member_count": 2820,
+    "gmv": 122411,
+    "repurchase_rate": 6.1,
+    "ltv": 321
+  },
+  {
+    "date": "2026-04-11",
+    "segment": "VIP",
+    "member_count": 3229,
+    "gmv": 1013210,
+    "repurchase_rate": 45.5,
+    "ltv": 5206
+  },
+  {
+    "date": "2026-04-11",
+    "segment": "Loyal",
+    "member_count": 6260,
+    "gmv": 541647,
+    "repurchase_rate": 32.4,
+    "ltv": 2648
+  },
+  {
+    "date": "2026-04-11",
+    "segment": "Potential",
+    "member_count": 5452,
+    "gmv": 218640,
+    "repurchase_rate": 16.4,
+    "ltv": 1115
+  },
+  {
+    "date": "2026-04-11",
+    "segment": "Churn Risk",
+    "member_count": 2120,
+    "gmv": 77757,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-11",
+    "segment": "New Member",
+    "member_count": 2996,
+    "gmv": 124229,
+    "repurchase_rate": 6.2,
+    "ltv": 322
+  },
+  {
+    "date": "2026-04-12",
+    "segment": "VIP",
+    "member_count": 3231,
+    "gmv": 1024900,
+    "repurchase_rate": 45.2,
+    "ltv": 5200
+  },
+  {
+    "date": "2026-04-12",
+    "segment": "Loyal",
+    "member_count": 6267,
+    "gmv": 542916,
+    "repurchase_rate": 32.2,
+    "ltv": 2646
+  },
+  {
+    "date": "2026-04-12",
+    "segment": "Potential",
+    "member_count": 5458,
+    "gmv": 219048,
+    "repurchase_rate": 16.4,
+    "ltv": 1117
+  },
+  {
+    "date": "2026-04-12",
+    "segment": "Churn Risk",
+    "member_count": 2123,
+    "gmv": 77870,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-12",
+    "segment": "New Member",
+    "member_count": 2999,
+    "gmv": 125142,
+    "repurchase_rate": 6.2,
+    "ltv": 322
+  },
+  {
+    "date": "2026-04-13",
+    "segment": "VIP",
+    "member_count": 3237,
+    "gmv": 1015014,
+    "repurchase_rate": 45.1,
+    "ltv": 5184
+  },
+  {
+    "date": "2026-04-13",
+    "segment": "Loyal",
+    "member_count": 6274,
+    "gmv": 539500,
+    "repurchase_rate": 32.1,
+    "ltv": 2646
+  },
+  {
+    "date": "2026-04-13",
+    "segment": "Potential",
+    "member_count": 5465,
+    "gmv": 217677,
+    "repurchase_rate": 16.3,
+    "ltv": 1119
+  },
+  {
+    "date": "2026-04-13",
+    "segment": "Churn Risk",
+    "member_count": 2125,
+    "gmv": 77790,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-13",
+    "segment": "New Member",
+    "member_count": 2828,
+    "gmv": 124916,
+    "repurchase_rate": 6.2,
+    "ltv": 322
+  },
+  {
+    "date": "2026-04-14",
+    "segment": "VIP",
+    "member_count": 3243,
+    "gmv": 1023607,
+    "repurchase_rate": 45.3,
+    "ltv": 5194
+  },
+  {
+    "date": "2026-04-14",
+    "segment": "Loyal",
+    "member_count": 6282,
+    "gmv": 544150,
+    "repurchase_rate": 32.0,
+    "ltv": 2650
+  },
+  {
+    "date": "2026-04-14",
+    "segment": "Potential",
+    "member_count": 5471,
+    "gmv": 219118,
+    "repurchase_rate": 16.4,
+    "ltv": 1124
+  },
+  {
+    "date": "2026-04-14",
+    "segment": "Churn Risk",
+    "member_count": 2128,
+    "gmv": 78562,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-14",
+    "segment": "New Member",
+    "member_count": 2831,
+    "gmv": 125246,
+    "repurchase_rate": 6.2,
+    "ltv": 323
+  },
+  {
+    "date": "2026-04-15",
+    "segment": "VIP",
+    "member_count": 3247,
+    "gmv": 1035649,
+    "repurchase_rate": 45.5,
+    "ltv": 5196
+  },
+  {
+    "date": "2026-04-15",
+    "segment": "Loyal",
+    "member_count": 6289,
+    "gmv": 548755,
+    "repurchase_rate": 32.3,
+    "ltv": 2655
+  },
+  {
+    "date": "2026-04-15",
+    "segment": "Potential",
+    "member_count": 5478,
+    "gmv": 222560,
+    "repurchase_rate": 16.4,
+    "ltv": 1126
+  },
+  {
+    "date": "2026-04-15",
+    "segment": "Churn Risk",
+    "member_count": 2130,
+    "gmv": 79364,
+    "repurchase_rate": 7.7,
+    "ltv": 630
+  },
+  {
+    "date": "2026-04-15",
+    "segment": "New Member",
+    "member_count": 2834,
+    "gmv": 126739,
+    "repurchase_rate": 6.2,
+    "ltv": 323
+  },
+  {
+    "date": "2026-04-16",
+    "segment": "VIP",
+    "member_count": 3249,
+    "gmv": 1040769,
+    "repurchase_rate": 45.1,
+    "ltv": 5203
+  },
+  {
+    "date": "2026-04-16",
+    "segment": "Loyal",
+    "member_count": 6297,
+    "gmv": 551876,
+    "repurchase_rate": 31.9,
+    "ltv": 2661
+  },
+  {
+    "date": "2026-04-16",
+    "segment": "Potential",
+    "member_count": 5484,
+    "gmv": 221880,
+    "repurchase_rate": 16.4,
+    "ltv": 1128
+  },
+  {
+    "date": "2026-04-16",
+    "segment": "Churn Risk",
+    "member_count": 2133,
+    "gmv": 79222,
+    "repurchase_rate": 7.6,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-16",
+    "segment": "New Member",
+    "member_count": 2836,
+    "gmv": 125597,
+    "repurchase_rate": 6.2,
+    "ltv": 324
+  },
+  {
+    "date": "2026-04-17",
+    "segment": "VIP",
+    "member_count": 3249,
+    "gmv": 1034449,
+    "repurchase_rate": 45.0,
+    "ltv": 5204
+  },
+  {
+    "date": "2026-04-17",
+    "segment": "Loyal",
+    "member_count": 6304,
+    "gmv": 552633,
+    "repurchase_rate": 32.1,
+    "ltv": 2666
+  },
+  {
+    "date": "2026-04-17",
+    "segment": "Potential",
+    "member_count": 5491,
+    "gmv": 220631,
+    "repurchase_rate": 16.3,
+    "ltv": 1123
+  },
+  {
+    "date": "2026-04-17",
+    "segment": "Churn Risk",
+    "member_count": 2135,
+    "gmv": 79237,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-04-17",
+    "segment": "New Member",
+    "member_count": 2839,
+    "gmv": 126194,
+    "repurchase_rate": 6.2,
+    "ltv": 324
+  },
+  {
+    "date": "2026-04-18",
+    "segment": "VIP",
+    "member_count": 3261,
+    "gmv": 1050003,
+    "repurchase_rate": 45.2,
+    "ltv": 5194
+  },
+  {
+    "date": "2026-04-18",
+    "segment": "Loyal",
+    "member_count": 6312,
+    "gmv": 552236,
+    "repurchase_rate": 32.0,
+    "ltv": 2671
+  },
+  {
+    "date": "2026-04-18",
+    "segment": "Potential",
+    "member_count": 5497,
+    "gmv": 223406,
+    "repurchase_rate": 16.4,
+    "ltv": 1132
+  },
+  {
+    "date": "2026-04-18",
+    "segment": "Churn Risk",
+    "member_count": 2138,
+    "gmv": 79697,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-18",
+    "segment": "New Member",
+    "member_count": 3017,
+    "gmv": 126786,
+    "repurchase_rate": 6.2,
+    "ltv": 325
+  },
+  {
+    "date": "2026-04-19",
+    "segment": "VIP",
+    "member_count": 3267,
+    "gmv": 1056244,
+    "repurchase_rate": 45.4,
+    "ltv": 5196
+  },
+  {
+    "date": "2026-04-19",
+    "segment": "Loyal",
+    "member_count": 6319,
+    "gmv": 559403,
+    "repurchase_rate": 32.1,
+    "ltv": 2674
+  },
+  {
+    "date": "2026-04-19",
+    "segment": "Potential",
+    "member_count": 5504,
+    "gmv": 224981,
+    "repurchase_rate": 16.4,
+    "ltv": 1132
+  },
+  {
+    "date": "2026-04-19",
+    "segment": "Churn Risk",
+    "member_count": 2140,
+    "gmv": 79554,
+    "repurchase_rate": 7.7,
+    "ltv": 630
+  },
+  {
+    "date": "2026-04-19",
+    "segment": "New Member",
+    "member_count": 3020,
+    "gmv": 127723,
+    "repurchase_rate": 6.2,
+    "ltv": 324
+  },
+  {
+    "date": "2026-04-20",
+    "segment": "VIP",
+    "member_count": 3267,
+    "gmv": 1052263,
+    "repurchase_rate": 45.2,
+    "ltv": 5180
+  },
+  {
+    "date": "2026-04-20",
+    "segment": "Loyal",
+    "member_count": 6326,
+    "gmv": 554754,
+    "repurchase_rate": 32.0,
+    "ltv": 2675
+  },
+  {
+    "date": "2026-04-20",
+    "segment": "Potential",
+    "member_count": 5510,
+    "gmv": 225076,
+    "repurchase_rate": 16.4,
+    "ltv": 1134
+  },
+  {
+    "date": "2026-04-20",
+    "segment": "Churn Risk",
+    "member_count": 2143,
+    "gmv": 79379,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-04-20",
+    "segment": "New Member",
+    "member_count": 2848,
+    "gmv": 127442,
+    "repurchase_rate": 6.2,
+    "ltv": 323
+  },
+  {
+    "date": "2026-04-21",
+    "segment": "VIP",
+    "member_count": 3262,
+    "gmv": 1049413,
+    "repurchase_rate": 44.9,
+    "ltv": 5200
+  },
+  {
+    "date": "2026-04-21",
+    "segment": "Loyal",
+    "member_count": 6334,
+    "gmv": 560010,
+    "repurchase_rate": 32.0,
+    "ltv": 2681
+  },
+  {
+    "date": "2026-04-21",
+    "segment": "Potential",
+    "member_count": 5517,
+    "gmv": 225791,
+    "repurchase_rate": 16.4,
+    "ltv": 1135
+  },
+  {
+    "date": "2026-04-21",
+    "segment": "Churn Risk",
+    "member_count": 2145,
+    "gmv": 79464,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-21",
+    "segment": "New Member",
+    "member_count": 2850,
+    "gmv": 128738,
+    "repurchase_rate": 6.2,
+    "ltv": 324
+  },
+  {
+    "date": "2026-04-22",
+    "segment": "VIP",
+    "member_count": 3271,
+    "gmv": 1067381,
+    "repurchase_rate": 45.1,
+    "ltv": 5210
+  },
+  {
+    "date": "2026-04-22",
+    "segment": "Loyal",
+    "member_count": 6341,
+    "gmv": 562026,
+    "repurchase_rate": 32.2,
+    "ltv": 2693
+  },
+  {
+    "date": "2026-04-22",
+    "segment": "Potential",
+    "member_count": 5523,
+    "gmv": 228367,
+    "repurchase_rate": 16.4,
+    "ltv": 1138
+  },
+  {
+    "date": "2026-04-22",
+    "segment": "Churn Risk",
+    "member_count": 2148,
+    "gmv": 80455,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-22",
+    "segment": "New Member",
+    "member_count": 2853,
+    "gmv": 129545,
+    "repurchase_rate": 6.2,
+    "ltv": 325
+  },
+  {
+    "date": "2026-04-23",
+    "segment": "VIP",
+    "member_count": 3277,
+    "gmv": 1072076,
+    "repurchase_rate": 45.3,
+    "ltv": 5206
+  },
+  {
+    "date": "2026-04-23",
+    "segment": "Loyal",
+    "member_count": 6349,
+    "gmv": 566468,
+    "repurchase_rate": 32.0,
+    "ltv": 2696
+  },
+  {
+    "date": "2026-04-23",
+    "segment": "Potential",
+    "member_count": 5530,
+    "gmv": 229726,
+    "repurchase_rate": 16.5,
+    "ltv": 1140
+  },
+  {
+    "date": "2026-04-23",
+    "segment": "Churn Risk",
+    "member_count": 2150,
+    "gmv": 80884,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-04-23",
+    "segment": "New Member",
+    "member_count": 2856,
+    "gmv": 129067,
+    "repurchase_rate": 6.2,
+    "ltv": 325
+  },
+  {
+    "date": "2026-04-24",
+    "segment": "VIP",
+    "member_count": 3278,
+    "gmv": 1072700,
+    "repurchase_rate": 45.3,
+    "ltv": 5177
+  },
+  {
+    "date": "2026-04-24",
+    "segment": "Loyal",
+    "member_count": 6356,
+    "gmv": 568777,
+    "repurchase_rate": 31.8,
+    "ltv": 2692
+  },
+  {
+    "date": "2026-04-24",
+    "segment": "Potential",
+    "member_count": 5536,
+    "gmv": 229245,
+    "repurchase_rate": 16.4,
+    "ltv": 1143
+  },
+  {
+    "date": "2026-04-24",
+    "segment": "Churn Risk",
+    "member_count": 2153,
+    "gmv": 80476,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-04-24",
+    "segment": "New Member",
+    "member_count": 2859,
+    "gmv": 129325,
+    "repurchase_rate": 6.2,
+    "ltv": 326
+  },
+  {
+    "date": "2026-04-25",
+    "segment": "VIP",
+    "member_count": 3281,
+    "gmv": 1071763,
+    "repurchase_rate": 45.2,
+    "ltv": 5202
+  },
+  {
+    "date": "2026-04-25",
+    "segment": "Loyal",
+    "member_count": 6364,
+    "gmv": 569811,
+    "repurchase_rate": 32.1,
+    "ltv": 2699
+  },
+  {
+    "date": "2026-04-25",
+    "segment": "Potential",
+    "member_count": 5543,
+    "gmv": 229119,
+    "repurchase_rate": 16.4,
+    "ltv": 1143
+  },
+  {
+    "date": "2026-04-25",
+    "segment": "Churn Risk",
+    "member_count": 2155,
+    "gmv": 80975,
+    "repurchase_rate": 7.6,
+    "ltv": 625
+  },
+  {
+    "date": "2026-04-25",
+    "segment": "New Member",
+    "member_count": 3038,
+    "gmv": 129563,
+    "repurchase_rate": 6.2,
+    "ltv": 326
+  },
+  {
+    "date": "2026-04-26",
+    "segment": "VIP",
+    "member_count": 3288,
+    "gmv": 1083856,
+    "repurchase_rate": 45.4,
+    "ltv": 5220
+  },
+  {
+    "date": "2026-04-26",
+    "segment": "Loyal",
+    "member_count": 6371,
+    "gmv": 573067,
+    "repurchase_rate": 32.2,
+    "ltv": 2709
+  },
+  {
+    "date": "2026-04-26",
+    "segment": "Potential",
+    "member_count": 5549,
+    "gmv": 233345,
+    "repurchase_rate": 16.5,
+    "ltv": 1145
+  },
+  {
+    "date": "2026-04-26",
+    "segment": "Churn Risk",
+    "member_count": 2158,
+    "gmv": 81690,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-26",
+    "segment": "New Member",
+    "member_count": 3040,
+    "gmv": 132067,
+    "repurchase_rate": 6.2,
+    "ltv": 326
+  },
+  {
+    "date": "2026-04-27",
+    "segment": "VIP",
+    "member_count": 3296,
+    "gmv": 1078415,
+    "repurchase_rate": 45.0,
+    "ltv": 5203
+  },
+  {
+    "date": "2026-04-27",
+    "segment": "Loyal",
+    "member_count": 6379,
+    "gmv": 576376,
+    "repurchase_rate": 31.9,
+    "ltv": 2716
+  },
+  {
+    "date": "2026-04-27",
+    "segment": "Potential",
+    "member_count": 5556,
+    "gmv": 231929,
+    "repurchase_rate": 16.4,
+    "ltv": 1146
+  },
+  {
+    "date": "2026-04-27",
+    "segment": "Churn Risk",
+    "member_count": 2160,
+    "gmv": 81658,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-27",
+    "segment": "New Member",
+    "member_count": 2867,
+    "gmv": 131121,
+    "repurchase_rate": 6.2,
+    "ltv": 327
+  },
+  {
+    "date": "2026-04-28",
+    "segment": "VIP",
+    "member_count": 3289,
+    "gmv": 1081138,
+    "repurchase_rate": 45.1,
+    "ltv": 5195
+  },
+  {
+    "date": "2026-04-28",
+    "segment": "Loyal",
+    "member_count": 6386,
+    "gmv": 573677,
+    "repurchase_rate": 31.9,
+    "ltv": 2706
+  },
+  {
+    "date": "2026-04-28",
+    "segment": "Potential",
+    "member_count": 5562,
+    "gmv": 232627,
+    "repurchase_rate": 16.3,
+    "ltv": 1146
+  },
+  {
+    "date": "2026-04-28",
+    "segment": "Churn Risk",
+    "member_count": 2163,
+    "gmv": 80756,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-04-28",
+    "segment": "New Member",
+    "member_count": 2870,
+    "gmv": 132043,
+    "repurchase_rate": 6.2,
+    "ltv": 326
+  },
+  {
+    "date": "2026-04-29",
+    "segment": "VIP",
+    "member_count": 3301,
+    "gmv": 1093140,
+    "repurchase_rate": 45.5,
+    "ltv": 5216
+  },
+  {
+    "date": "2026-04-29",
+    "segment": "Loyal",
+    "member_count": 6393,
+    "gmv": 581256,
+    "repurchase_rate": 32.2,
+    "ltv": 2720
+  },
+  {
+    "date": "2026-04-29",
+    "segment": "Potential",
+    "member_count": 5568,
+    "gmv": 234022,
+    "repurchase_rate": 16.3,
+    "ltv": 1151
+  },
+  {
+    "date": "2026-04-29",
+    "segment": "Churn Risk",
+    "member_count": 2166,
+    "gmv": 82051,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-29",
+    "segment": "New Member",
+    "member_count": 2873,
+    "gmv": 132201,
+    "repurchase_rate": 6.2,
+    "ltv": 327
+  },
+  {
+    "date": "2026-04-30",
+    "segment": "VIP",
+    "member_count": 3310,
+    "gmv": 1106262,
+    "repurchase_rate": 45.4,
+    "ltv": 5224
+  },
+  {
+    "date": "2026-04-30",
+    "segment": "Loyal",
+    "member_count": 6401,
+    "gmv": 584500,
+    "repurchase_rate": 32.1,
+    "ltv": 2727
+  },
+  {
+    "date": "2026-04-30",
+    "segment": "Potential",
+    "member_count": 5575,
+    "gmv": 235050,
+    "repurchase_rate": 16.5,
+    "ltv": 1159
+  },
+  {
+    "date": "2026-04-30",
+    "segment": "Churn Risk",
+    "member_count": 2168,
+    "gmv": 82600,
+    "repurchase_rate": 7.6,
+    "ltv": 629
+  },
+  {
+    "date": "2026-04-30",
+    "segment": "New Member",
+    "member_count": 2876,
+    "gmv": 132896,
+    "repurchase_rate": 6.2,
+    "ltv": 328
+  },
+  {
+    "date": "2026-05-01",
+    "segment": "VIP",
+    "member_count": 3309,
+    "gmv": 1100453,
+    "repurchase_rate": 45.3,
+    "ltv": 5186
+  },
+  {
+    "date": "2026-05-01",
+    "segment": "Loyal",
+    "member_count": 6408,
+    "gmv": 585027,
+    "repurchase_rate": 32.1,
+    "ltv": 2730
+  },
+  {
+    "date": "2026-05-01",
+    "segment": "Potential",
+    "member_count": 5581,
+    "gmv": 235462,
+    "repurchase_rate": 16.4,
+    "ltv": 1153
+  },
+  {
+    "date": "2026-05-01",
+    "segment": "Churn Risk",
+    "member_count": 2171,
+    "gmv": 82471,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-05-01",
+    "segment": "New Member",
+    "member_count": 2878,
+    "gmv": 133872,
+    "repurchase_rate": 6.2,
+    "ltv": 328
+  },
+  {
+    "date": "2026-05-02",
+    "segment": "VIP",
+    "member_count": 3308,
+    "gmv": 1101636,
+    "repurchase_rate": 44.9,
+    "ltv": 5195
+  },
+  {
+    "date": "2026-05-02",
+    "segment": "Loyal",
+    "member_count": 6416,
+    "gmv": 582610,
+    "repurchase_rate": 32.2,
+    "ltv": 2732
+  },
+  {
+    "date": "2026-05-02",
+    "segment": "Potential",
+    "member_count": 5588,
+    "gmv": 236908,
+    "repurchase_rate": 16.3,
+    "ltv": 1156
+  },
+  {
+    "date": "2026-05-02",
+    "segment": "Churn Risk",
+    "member_count": 2173,
+    "gmv": 81981,
+    "repurchase_rate": 7.6,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-02",
+    "segment": "New Member",
+    "member_count": 3058,
+    "gmv": 133420,
+    "repurchase_rate": 6.1,
+    "ltv": 328
+  },
+  {
+    "date": "2026-05-03",
+    "segment": "VIP",
+    "member_count": 3320,
+    "gmv": 1112570,
+    "repurchase_rate": 45.5,
+    "ltv": 5220
+  },
+  {
+    "date": "2026-05-03",
+    "segment": "Loyal",
+    "member_count": 6423,
+    "gmv": 589645,
+    "repurchase_rate": 31.9,
+    "ltv": 2745
+  },
+  {
+    "date": "2026-05-03",
+    "segment": "Potential",
+    "member_count": 5594,
+    "gmv": 237699,
+    "repurchase_rate": 16.2,
+    "ltv": 1159
+  },
+  {
+    "date": "2026-05-03",
+    "segment": "Churn Risk",
+    "member_count": 2176,
+    "gmv": 83264,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-05-03",
+    "segment": "New Member",
+    "member_count": 3061,
+    "gmv": 134153,
+    "repurchase_rate": 6.2,
+    "ltv": 328
+  },
+  {
+    "date": "2026-05-04",
+    "segment": "VIP",
+    "member_count": 3321,
+    "gmv": 1121812,
+    "repurchase_rate": 45.3,
+    "ltv": 5212
+  },
+  {
+    "date": "2026-05-04",
+    "segment": "Loyal",
+    "member_count": 6431,
+    "gmv": 594193,
+    "repurchase_rate": 31.6,
+    "ltv": 2754
+  },
+  {
+    "date": "2026-05-04",
+    "segment": "Potential",
+    "member_count": 5601,
+    "gmv": 240770,
+    "repurchase_rate": 16.2,
+    "ltv": 1163
+  },
+  {
+    "date": "2026-05-04",
+    "segment": "Churn Risk",
+    "member_count": 2178,
+    "gmv": 82718,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-04",
+    "segment": "New Member",
+    "member_count": 2887,
+    "gmv": 135549,
+    "repurchase_rate": 6.2,
+    "ltv": 329
+  },
+  {
+    "date": "2026-05-05",
+    "segment": "VIP",
+    "member_count": 3321,
+    "gmv": 1115739,
+    "repurchase_rate": 45.1,
+    "ltv": 5178
+  },
+  {
+    "date": "2026-05-05",
+    "segment": "Loyal",
+    "member_count": 6438,
+    "gmv": 588403,
+    "repurchase_rate": 31.3,
+    "ltv": 2752
+  },
+  {
+    "date": "2026-05-05",
+    "segment": "Potential",
+    "member_count": 5607,
+    "gmv": 239450,
+    "repurchase_rate": 16.0,
+    "ltv": 1161
+  },
+  {
+    "date": "2026-05-05",
+    "segment": "Churn Risk",
+    "member_count": 2181,
+    "gmv": 83116,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-05",
+    "segment": "New Member",
+    "member_count": 2890,
+    "gmv": 134082,
+    "repurchase_rate": 6.2,
+    "ltv": 327
+  },
+  {
+    "date": "2026-05-06",
+    "segment": "VIP",
+    "member_count": 3323,
+    "gmv": 1123034,
+    "repurchase_rate": 45.2,
+    "ltv": 5199
+  },
+  {
+    "date": "2026-05-06",
+    "segment": "Loyal",
+    "member_count": 6446,
+    "gmv": 594933,
+    "repurchase_rate": 31.0,
+    "ltv": 2744
+  },
+  {
+    "date": "2026-05-06",
+    "segment": "Potential",
+    "member_count": 5614,
+    "gmv": 240459,
+    "repurchase_rate": 15.7,
+    "ltv": 1165
+  },
+  {
+    "date": "2026-05-06",
+    "segment": "Churn Risk",
+    "member_count": 2183,
+    "gmv": 82904,
+    "repurchase_rate": 7.7,
+    "ltv": 625
+  },
+  {
+    "date": "2026-05-06",
+    "segment": "New Member",
+    "member_count": 2892,
+    "gmv": 136098,
+    "repurchase_rate": 6.2,
+    "ltv": 329
+  },
+  {
+    "date": "2026-05-07",
+    "segment": "VIP",
+    "member_count": 3335,
+    "gmv": 1137705,
+    "repurchase_rate": 45.2,
+    "ltv": 5197
+  },
+  {
+    "date": "2026-05-07",
+    "segment": "Loyal",
+    "member_count": 6453,
+    "gmv": 598216,
+    "repurchase_rate": 30.8,
+    "ltv": 2765
+  },
+  {
+    "date": "2026-05-07",
+    "segment": "Potential",
+    "member_count": 5620,
+    "gmv": 243520,
+    "repurchase_rate": 15.7,
+    "ltv": 1169
+  },
+  {
+    "date": "2026-05-07",
+    "segment": "Churn Risk",
+    "member_count": 2186,
+    "gmv": 83683,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-05-07",
+    "segment": "New Member",
+    "member_count": 2895,
+    "gmv": 137634,
+    "repurchase_rate": 6.2,
+    "ltv": 330
+  },
+  {
+    "date": "2026-05-08",
+    "segment": "VIP",
+    "member_count": 3336,
+    "gmv": 1137948,
+    "repurchase_rate": 45.3,
+    "ltv": 5213
+  },
+  {
+    "date": "2026-05-08",
+    "segment": "Loyal",
+    "member_count": 6460,
+    "gmv": 603172,
+    "repurchase_rate": 30.9,
+    "ltv": 2763
+  },
+  {
+    "date": "2026-05-08",
+    "segment": "Potential",
+    "member_count": 5627,
+    "gmv": 242986,
+    "repurchase_rate": 15.8,
+    "ltv": 1166
+  },
+  {
+    "date": "2026-05-08",
+    "segment": "Churn Risk",
+    "member_count": 2188,
+    "gmv": 83447,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-08",
+    "segment": "New Member",
+    "member_count": 2898,
+    "gmv": 137377,
+    "repurchase_rate": 6.2,
+    "ltv": 330
+  },
+  {
+    "date": "2026-05-09",
+    "segment": "VIP",
+    "member_count": 3337,
+    "gmv": 1126801,
+    "repurchase_rate": 45.0,
+    "ltv": 5175
+  },
+  {
+    "date": "2026-05-09",
+    "segment": "Loyal",
+    "member_count": 6468,
+    "gmv": 598735,
+    "repurchase_rate": 31.3,
+    "ltv": 2769
+  },
+  {
+    "date": "2026-05-09",
+    "segment": "Potential",
+    "member_count": 5633,
+    "gmv": 242569,
+    "repurchase_rate": 15.9,
+    "ltv": 1166
+  },
+  {
+    "date": "2026-05-09",
+    "segment": "Churn Risk",
+    "member_count": 2191,
+    "gmv": 84028,
+    "repurchase_rate": 7.7,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-09",
+    "segment": "New Member",
+    "member_count": 3079,
+    "gmv": 135981,
+    "repurchase_rate": 6.2,
+    "ltv": 328
+  },
+  {
+    "date": "2026-05-10",
+    "segment": "VIP",
+    "member_count": 3342,
+    "gmv": 1147996,
+    "repurchase_rate": 45.3,
+    "ltv": 5209
+  },
+  {
+    "date": "2026-05-10",
+    "segment": "Loyal",
+    "member_count": 6475,
+    "gmv": 607333,
+    "repurchase_rate": 31.6,
+    "ltv": 2766
+  },
+  {
+    "date": "2026-05-10",
+    "segment": "Potential",
+    "member_count": 5640,
+    "gmv": 243654,
+    "repurchase_rate": 16.1,
+    "ltv": 1176
+  },
+  {
+    "date": "2026-05-10",
+    "segment": "Churn Risk",
+    "member_count": 2193,
+    "gmv": 84066,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-10",
+    "segment": "New Member",
+    "member_count": 3082,
+    "gmv": 138253,
+    "repurchase_rate": 6.2,
+    "ltv": 330
+  },
+  {
+    "date": "2026-05-11",
+    "segment": "VIP",
+    "member_count": 3349,
+    "gmv": 1153454,
+    "repurchase_rate": 45.4,
+    "ltv": 5225
+  },
+  {
+    "date": "2026-05-11",
+    "segment": "Loyal",
+    "member_count": 6483,
+    "gmv": 607145,
+    "repurchase_rate": 31.9,
+    "ltv": 2789
+  },
+  {
+    "date": "2026-05-11",
+    "segment": "Potential",
+    "member_count": 5646,
+    "gmv": 246039,
+    "repurchase_rate": 16.4,
+    "ltv": 1181
+  },
+  {
+    "date": "2026-05-11",
+    "segment": "Churn Risk",
+    "member_count": 2196,
+    "gmv": 84602,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-11",
+    "segment": "New Member",
+    "member_count": 2906,
+    "gmv": 138453,
+    "repurchase_rate": 6.3,
+    "ltv": 330
+  },
+  {
+    "date": "2026-05-12",
+    "segment": "VIP",
+    "member_count": 3351,
+    "gmv": 1146931,
+    "repurchase_rate": 45.4,
+    "ltv": 5195
+  },
+  {
+    "date": "2026-05-12",
+    "segment": "Loyal",
+    "member_count": 6490,
+    "gmv": 610948,
+    "repurchase_rate": 32.1,
+    "ltv": 2774
+  },
+  {
+    "date": "2026-05-12",
+    "segment": "Potential",
+    "member_count": 5653,
+    "gmv": 246548,
+    "repurchase_rate": 16.4,
+    "ltv": 1178
+  },
+  {
+    "date": "2026-05-12",
+    "segment": "Churn Risk",
+    "member_count": 2198,
+    "gmv": 84063,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-05-12",
+    "segment": "New Member",
+    "member_count": 2909,
+    "gmv": 138826,
+    "repurchase_rate": 6.2,
+    "ltv": 329
+  },
+  {
+    "date": "2026-05-13",
+    "segment": "VIP",
+    "member_count": 3347,
+    "gmv": 1145325,
+    "repurchase_rate": 44.8,
+    "ltv": 5185
+  },
+  {
+    "date": "2026-05-13",
+    "segment": "Loyal",
+    "member_count": 6498,
+    "gmv": 609587,
+    "repurchase_rate": 31.9,
+    "ltv": 2776
+  },
+  {
+    "date": "2026-05-13",
+    "segment": "Potential",
+    "member_count": 5659,
+    "gmv": 245667,
+    "repurchase_rate": 16.3,
+    "ltv": 1177
+  },
+  {
+    "date": "2026-05-13",
+    "segment": "Churn Risk",
+    "member_count": 2201,
+    "gmv": 84418,
+    "repurchase_rate": 7.6,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-13",
+    "segment": "New Member",
+    "member_count": 2912,
+    "gmv": 138096,
+    "repurchase_rate": 6.2,
+    "ltv": 329
+  },
+  {
+    "date": "2026-05-14",
+    "segment": "VIP",
+    "member_count": 3356,
+    "gmv": 1160426,
+    "repurchase_rate": 45.2,
+    "ltv": 5202
+  },
+  {
+    "date": "2026-05-14",
+    "segment": "Loyal",
+    "member_count": 6505,
+    "gmv": 613518,
+    "repurchase_rate": 32.3,
+    "ltv": 2802
+  },
+  {
+    "date": "2026-05-14",
+    "segment": "Potential",
+    "member_count": 5666,
+    "gmv": 250431,
+    "repurchase_rate": 16.5,
+    "ltv": 1180
+  },
+  {
+    "date": "2026-05-14",
+    "segment": "Churn Risk",
+    "member_count": 2203,
+    "gmv": 85103,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-14",
+    "segment": "New Member",
+    "member_count": 2915,
+    "gmv": 140070,
+    "repurchase_rate": 6.2,
+    "ltv": 331
+  },
+  {
+    "date": "2026-05-15",
+    "segment": "VIP",
+    "member_count": 3362,
+    "gmv": 1166423,
+    "repurchase_rate": 45.3,
+    "ltv": 5195
+  },
+  {
+    "date": "2026-05-15",
+    "segment": "Loyal",
+    "member_count": 6512,
+    "gmv": 617663,
+    "repurchase_rate": 32.1,
+    "ltv": 2803
+  },
+  {
+    "date": "2026-05-15",
+    "segment": "Potential",
+    "member_count": 5672,
+    "gmv": 250465,
+    "repurchase_rate": 16.4,
+    "ltv": 1182
+  },
+  {
+    "date": "2026-05-15",
+    "segment": "Churn Risk",
+    "member_count": 2206,
+    "gmv": 85315,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-05-15",
+    "segment": "New Member",
+    "member_count": 2918,
+    "gmv": 140896,
+    "repurchase_rate": 6.2,
+    "ltv": 331
+  },
+  {
+    "date": "2026-05-16",
+    "segment": "VIP",
+    "member_count": 3362,
+    "gmv": 1162750,
+    "repurchase_rate": 45.2,
+    "ltv": 5203
+  },
+  {
+    "date": "2026-05-16",
+    "segment": "Loyal",
+    "member_count": 6520,
+    "gmv": 621728,
+    "repurchase_rate": 31.9,
+    "ltv": 2794
+  },
+  {
+    "date": "2026-05-16",
+    "segment": "Potential",
+    "member_count": 5679,
+    "gmv": 251001,
+    "repurchase_rate": 16.3,
+    "ltv": 1182
+  },
+  {
+    "date": "2026-05-16",
+    "segment": "Churn Risk",
+    "member_count": 2208,
+    "gmv": 85698,
+    "repurchase_rate": 7.7,
+    "ltv": 625
+  },
+  {
+    "date": "2026-05-16",
+    "segment": "New Member",
+    "member_count": 3100,
+    "gmv": 140676,
+    "repurchase_rate": 6.2,
+    "ltv": 331
+  },
+  {
+    "date": "2026-05-17",
+    "segment": "VIP",
+    "member_count": 3365,
+    "gmv": 1166850,
+    "repurchase_rate": 45.0,
+    "ltv": 5204
+  },
+  {
+    "date": "2026-05-17",
+    "segment": "Loyal",
+    "member_count": 6527,
+    "gmv": 620269,
+    "repurchase_rate": 31.9,
+    "ltv": 2804
+  },
+  {
+    "date": "2026-05-17",
+    "segment": "Potential",
+    "member_count": 5685,
+    "gmv": 251095,
+    "repurchase_rate": 16.4,
+    "ltv": 1187
+  },
+  {
+    "date": "2026-05-17",
+    "segment": "Churn Risk",
+    "member_count": 2211,
+    "gmv": 85556,
+    "repurchase_rate": 7.7,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-17",
+    "segment": "New Member",
+    "member_count": 3103,
+    "gmv": 141301,
+    "repurchase_rate": 6.2,
+    "ltv": 330
+  },
+  {
+    "date": "2026-05-18",
+    "segment": "VIP",
+    "member_count": 3372,
+    "gmv": 1184614,
+    "repurchase_rate": 45.5,
+    "ltv": 5219
+  },
+  {
+    "date": "2026-05-18",
+    "segment": "Loyal",
+    "member_count": 6535,
+    "gmv": 626444,
+    "repurchase_rate": 32.2,
+    "ltv": 2818
+  },
+  {
+    "date": "2026-05-18",
+    "segment": "Potential",
+    "member_count": 5692,
+    "gmv": 252481,
+    "repurchase_rate": 16.5,
+    "ltv": 1193
+  },
+  {
+    "date": "2026-05-18",
+    "segment": "Churn Risk",
+    "member_count": 2213,
+    "gmv": 86523,
+    "repurchase_rate": 7.6,
+    "ltv": 630
+  },
+  {
+    "date": "2026-05-18",
+    "segment": "New Member",
+    "member_count": 2926,
+    "gmv": 142235,
+    "repurchase_rate": 6.2,
+    "ltv": 332
+  },
+  {
+    "date": "2026-05-19",
+    "segment": "VIP",
+    "member_count": 3381,
+    "gmv": 1189804,
+    "repurchase_rate": 45.4,
+    "ltv": 5205
+  },
+  {
+    "date": "2026-05-19",
+    "segment": "Loyal",
+    "member_count": 6542,
+    "gmv": 630348,
+    "repurchase_rate": 32.1,
+    "ltv": 2824
+  },
+  {
+    "date": "2026-05-19",
+    "segment": "Potential",
+    "member_count": 5698,
+    "gmv": 253792,
+    "repurchase_rate": 16.4,
+    "ltv": 1189
+  },
+  {
+    "date": "2026-05-19",
+    "segment": "Churn Risk",
+    "member_count": 2216,
+    "gmv": 86531,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-19",
+    "segment": "New Member",
+    "member_count": 2929,
+    "gmv": 142705,
+    "repurchase_rate": 6.2,
+    "ltv": 333
+  },
+  {
+    "date": "2026-05-20",
+    "segment": "VIP",
+    "member_count": 3374,
+    "gmv": 1243969,
+    "repurchase_rate": 45.9,
+    "ltv": 5250
+  },
+  {
+    "date": "2026-05-20",
+    "segment": "Loyal",
+    "member_count": 6550,
+    "gmv": 630812,
+    "repurchase_rate": 32.3,
+    "ltv": 2806
+  },
+  {
+    "date": "2026-05-20",
+    "segment": "Potential",
+    "member_count": 5705,
+    "gmv": 252593,
+    "repurchase_rate": 16.5,
+    "ltv": 1191
+  },
+  {
+    "date": "2026-05-20",
+    "segment": "Churn Risk",
+    "member_count": 2218,
+    "gmv": 86104,
+    "repurchase_rate": 7.6,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-20",
+    "segment": "New Member",
+    "member_count": 2932,
+    "gmv": 142020,
+    "repurchase_rate": 6.2,
+    "ltv": 332
+  },
+  {
+    "date": "2026-05-21",
+    "segment": "VIP",
+    "member_count": 3379,
+    "gmv": 1310164,
+    "repurchase_rate": 46.9,
+    "ltv": 5288
+  },
+  {
+    "date": "2026-05-21",
+    "segment": "Loyal",
+    "member_count": 6557,
+    "gmv": 628987,
+    "repurchase_rate": 32.8,
+    "ltv": 2832
+  },
+  {
+    "date": "2026-05-21",
+    "segment": "Potential",
+    "member_count": 5711,
+    "gmv": 254049,
+    "repurchase_rate": 16.9,
+    "ltv": 1192
+  },
+  {
+    "date": "2026-05-21",
+    "segment": "Churn Risk",
+    "member_count": 2221,
+    "gmv": 86356,
+    "repurchase_rate": 7.6,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-21",
+    "segment": "New Member",
+    "member_count": 2934,
+    "gmv": 143190,
+    "repurchase_rate": 6.2,
+    "ltv": 332
+  },
+  {
+    "date": "2026-05-22",
+    "segment": "VIP",
+    "member_count": 3387,
+    "gmv": 1384188,
+    "repurchase_rate": 48.0,
+    "ltv": 5360
+  },
+  {
+    "date": "2026-05-22",
+    "segment": "Loyal",
+    "member_count": 6565,
+    "gmv": 639531,
+    "repurchase_rate": 33.2,
+    "ltv": 2841
+  },
+  {
+    "date": "2026-05-22",
+    "segment": "Potential",
+    "member_count": 5718,
+    "gmv": 257773,
+    "repurchase_rate": 17.1,
+    "ltv": 1197
+  },
+  {
+    "date": "2026-05-22",
+    "segment": "Churn Risk",
+    "member_count": 2223,
+    "gmv": 87650,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-22",
+    "segment": "New Member",
+    "member_count": 2937,
+    "gmv": 143756,
+    "repurchase_rate": 6.2,
+    "ltv": 334
+  },
+  {
+    "date": "2026-05-23",
+    "segment": "VIP",
+    "member_count": 3389,
+    "gmv": 1435126,
+    "repurchase_rate": 48.7,
+    "ltv": 5396
+  },
+  {
+    "date": "2026-05-23",
+    "segment": "Loyal",
+    "member_count": 6572,
+    "gmv": 637703,
+    "repurchase_rate": 33.6,
+    "ltv": 2825
+  },
+  {
+    "date": "2026-05-23",
+    "segment": "Potential",
+    "member_count": 5724,
+    "gmv": 257453,
+    "repurchase_rate": 17.1,
+    "ltv": 1199
+  },
+  {
+    "date": "2026-05-23",
+    "segment": "Churn Risk",
+    "member_count": 2226,
+    "gmv": 86843,
+    "repurchase_rate": 7.7,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-23",
+    "segment": "New Member",
+    "member_count": 3121,
+    "gmv": 144605,
+    "repurchase_rate": 6.2,
+    "ltv": 332
+  },
+  {
+    "date": "2026-05-24",
+    "segment": "VIP",
+    "member_count": 3388,
+    "gmv": 1493633,
+    "repurchase_rate": 49.8,
+    "ltv": 5439
+  },
+  {
+    "date": "2026-05-24",
+    "segment": "Loyal",
+    "member_count": 6579,
+    "gmv": 635753,
+    "repurchase_rate": 33.8,
+    "ltv": 2829
+  },
+  {
+    "date": "2026-05-24",
+    "segment": "Potential",
+    "member_count": 5730,
+    "gmv": 258409,
+    "repurchase_rate": 17.3,
+    "ltv": 1200
+  },
+  {
+    "date": "2026-05-24",
+    "segment": "Churn Risk",
+    "member_count": 2229,
+    "gmv": 87009,
+    "repurchase_rate": 7.6,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-24",
+    "segment": "New Member",
+    "member_count": 3124,
+    "gmv": 143957,
+    "repurchase_rate": 6.2,
+    "ltv": 333
+  },
+  {
+    "date": "2026-05-25",
+    "segment": "VIP",
+    "member_count": 3401,
+    "gmv": 1459780,
+    "repurchase_rate": 49.0,
+    "ltv": 5406
+  },
+  {
+    "date": "2026-05-25",
+    "segment": "Loyal",
+    "member_count": 6587,
+    "gmv": 643946,
+    "repurchase_rate": 33.5,
+    "ltv": 2840
+  },
+  {
+    "date": "2026-05-25",
+    "segment": "Potential",
+    "member_count": 5737,
+    "gmv": 258510,
+    "repurchase_rate": 17.2,
+    "ltv": 1202
+  },
+  {
+    "date": "2026-05-25",
+    "segment": "Churn Risk",
+    "member_count": 2231,
+    "gmv": 87811,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-25",
+    "segment": "New Member",
+    "member_count": 2946,
+    "gmv": 144891,
+    "repurchase_rate": 6.2,
+    "ltv": 333
+  },
+  {
+    "date": "2026-05-26",
+    "segment": "VIP",
+    "member_count": 3409,
+    "gmv": 1403687,
+    "repurchase_rate": 48.2,
+    "ltv": 5370
+  },
+  {
+    "date": "2026-05-26",
+    "segment": "Loyal",
+    "member_count": 6594,
+    "gmv": 650482,
+    "repurchase_rate": 33.4,
+    "ltv": 2853
+  },
+  {
+    "date": "2026-05-26",
+    "segment": "Potential",
+    "member_count": 5743,
+    "gmv": 260010,
+    "repurchase_rate": 17.0,
+    "ltv": 1207
+  },
+  {
+    "date": "2026-05-26",
+    "segment": "Churn Risk",
+    "member_count": 2234,
+    "gmv": 87508,
+    "repurchase_rate": 7.7,
+    "ltv": 626
+  },
+  {
+    "date": "2026-05-26",
+    "segment": "New Member",
+    "member_count": 2948,
+    "gmv": 145638,
+    "repurchase_rate": 6.2,
+    "ltv": 335
+  },
+  {
+    "date": "2026-05-27",
+    "segment": "VIP",
+    "member_count": 3405,
+    "gmv": 1337731,
+    "repurchase_rate": 46.9,
+    "ltv": 5303
+  },
+  {
+    "date": "2026-05-27",
+    "segment": "Loyal",
+    "member_count": 6602,
+    "gmv": 644591,
+    "repurchase_rate": 32.9,
+    "ltv": 2849
+  },
+  {
+    "date": "2026-05-27",
+    "segment": "Potential",
+    "member_count": 5750,
+    "gmv": 259272,
+    "repurchase_rate": 16.7,
+    "ltv": 1207
+  },
+  {
+    "date": "2026-05-27",
+    "segment": "Churn Risk",
+    "member_count": 2236,
+    "gmv": 87457,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-27",
+    "segment": "New Member",
+    "member_count": 2951,
+    "gmv": 145330,
+    "repurchase_rate": 6.2,
+    "ltv": 334
+  },
+  {
+    "date": "2026-05-28",
+    "segment": "VIP",
+    "member_count": 3408,
+    "gmv": 1285601,
+    "repurchase_rate": 46.0,
+    "ltv": 5233
+  },
+  {
+    "date": "2026-05-28",
+    "segment": "Loyal",
+    "member_count": 6609,
+    "gmv": 644594,
+    "repurchase_rate": 32.5,
+    "ltv": 2859
+  },
+  {
+    "date": "2026-05-28",
+    "segment": "Potential",
+    "member_count": 5756,
+    "gmv": 261112,
+    "repurchase_rate": 16.6,
+    "ltv": 1204
+  },
+  {
+    "date": "2026-05-28",
+    "segment": "Churn Risk",
+    "member_count": 2239,
+    "gmv": 88114,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-05-28",
+    "segment": "New Member",
+    "member_count": 2954,
+    "gmv": 145693,
+    "repurchase_rate": 6.2,
+    "ltv": 334
+  },
+  {
+    "date": "2026-05-29",
+    "segment": "VIP",
+    "member_count": 3418,
+    "gmv": 1229483,
+    "repurchase_rate": 45.6,
+    "ltv": 5207
+  },
+  {
+    "date": "2026-05-29",
+    "segment": "Loyal",
+    "member_count": 6617,
+    "gmv": 652777,
+    "repurchase_rate": 32.3,
+    "ltv": 2866
+  },
+  {
+    "date": "2026-05-29",
+    "segment": "Potential",
+    "member_count": 5763,
+    "gmv": 265660,
+    "repurchase_rate": 16.5,
+    "ltv": 1211
+  },
+  {
+    "date": "2026-05-29",
+    "segment": "Churn Risk",
+    "member_count": 2241,
+    "gmv": 88960,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-05-29",
+    "segment": "New Member",
+    "member_count": 2957,
+    "gmv": 148152,
+    "repurchase_rate": 6.2,
+    "ltv": 334
+  },
+  {
+    "date": "2026-05-30",
+    "segment": "VIP",
+    "member_count": 3425,
+    "gmv": 1230105,
+    "repurchase_rate": 45.1,
+    "ltv": 5196
+  },
+  {
+    "date": "2026-05-30",
+    "segment": "Loyal",
+    "member_count": 6624,
+    "gmv": 652082,
+    "repurchase_rate": 32.1,
+    "ltv": 2866
+  },
+  {
+    "date": "2026-05-30",
+    "segment": "Potential",
+    "member_count": 5769,
+    "gmv": 264861,
+    "repurchase_rate": 16.4,
+    "ltv": 1215
+  },
+  {
+    "date": "2026-05-30",
+    "segment": "Churn Risk",
+    "member_count": 2244,
+    "gmv": 88505,
+    "repurchase_rate": 7.6,
+    "ltv": 629
+  },
+  {
+    "date": "2026-05-30",
+    "segment": "New Member",
+    "member_count": 3142,
+    "gmv": 148946,
+    "repurchase_rate": 6.2,
+    "ltv": 334
+  },
+  {
+    "date": "2026-05-31",
+    "segment": "VIP",
+    "member_count": 3421,
+    "gmv": 1240037,
+    "repurchase_rate": 45.2,
+    "ltv": 5203
+  },
+  {
+    "date": "2026-05-31",
+    "segment": "Loyal",
+    "member_count": 6632,
+    "gmv": 658213,
+    "repurchase_rate": 32.1,
+    "ltv": 2860
+  },
+  {
+    "date": "2026-05-31",
+    "segment": "Potential",
+    "member_count": 5776,
+    "gmv": 265414,
+    "repurchase_rate": 16.3,
+    "ltv": 1214
+  },
+  {
+    "date": "2026-05-31",
+    "segment": "Churn Risk",
+    "member_count": 2246,
+    "gmv": 88801,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-05-31",
+    "segment": "New Member",
+    "member_count": 3145,
+    "gmv": 147741,
+    "repurchase_rate": 6.2,
+    "ltv": 334
+  },
+  {
+    "date": "2026-06-01",
+    "segment": "VIP",
+    "member_count": 3429,
+    "gmv": 1240060,
+    "repurchase_rate": 45.1,
+    "ltv": 5202
+  },
+  {
+    "date": "2026-06-01",
+    "segment": "Loyal",
+    "member_count": 6639,
+    "gmv": 661677,
+    "repurchase_rate": 31.9,
+    "ltv": 2875
+  },
+  {
+    "date": "2026-06-01",
+    "segment": "Potential",
+    "member_count": 5782,
+    "gmv": 265293,
+    "repurchase_rate": 16.5,
+    "ltv": 1215
+  },
+  {
+    "date": "2026-06-01",
+    "segment": "Churn Risk",
+    "member_count": 2249,
+    "gmv": 89403,
+    "repurchase_rate": 7.6,
+    "ltv": 625
+  },
+  {
+    "date": "2026-06-01",
+    "segment": "New Member",
+    "member_count": 2965,
+    "gmv": 149177,
+    "repurchase_rate": 6.2,
+    "ltv": 335
+  },
+  {
+    "date": "2026-06-02",
+    "segment": "VIP",
+    "member_count": 3437,
+    "gmv": 1251505,
+    "repurchase_rate": 45.5,
+    "ltv": 5206
+  },
+  {
+    "date": "2026-06-02",
+    "segment": "Loyal",
+    "member_count": 6646,
+    "gmv": 660926,
+    "repurchase_rate": 32.2,
+    "ltv": 2882
+  },
+  {
+    "date": "2026-06-02",
+    "segment": "Potential",
+    "member_count": 5789,
+    "gmv": 268087,
+    "repurchase_rate": 16.4,
+    "ltv": 1220
+  },
+  {
+    "date": "2026-06-02",
+    "segment": "Churn Risk",
+    "member_count": 2251,
+    "gmv": 89931,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-06-02",
+    "segment": "New Member",
+    "member_count": 2968,
+    "gmv": 150046,
+    "repurchase_rate": 6.2,
+    "ltv": 336
+  },
+  {
+    "date": "2026-06-03",
+    "segment": "VIP",
+    "member_count": 3431,
+    "gmv": 1254464,
+    "repurchase_rate": 45.0,
+    "ltv": 5187
+  },
+  {
+    "date": "2026-06-03",
+    "segment": "Loyal",
+    "member_count": 6654,
+    "gmv": 666442,
+    "repurchase_rate": 32.1,
+    "ltv": 2879
+  },
+  {
+    "date": "2026-06-03",
+    "segment": "Potential",
+    "member_count": 5795,
+    "gmv": 269377,
+    "repurchase_rate": 16.4,
+    "ltv": 1217
+  },
+  {
+    "date": "2026-06-03",
+    "segment": "Churn Risk",
+    "member_count": 2254,
+    "gmv": 89926,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-03",
+    "segment": "New Member",
+    "member_count": 2971,
+    "gmv": 149165,
+    "repurchase_rate": 6.2,
+    "ltv": 335
+  },
+  {
+    "date": "2026-06-04",
+    "segment": "VIP",
+    "member_count": 3432,
+    "gmv": 1258123,
+    "repurchase_rate": 44.9,
+    "ltv": 5195
+  },
+  {
+    "date": "2026-06-04",
+    "segment": "Loyal",
+    "member_count": 6661,
+    "gmv": 662116,
+    "repurchase_rate": 31.9,
+    "ltv": 2891
+  },
+  {
+    "date": "2026-06-04",
+    "segment": "Potential",
+    "member_count": 5802,
+    "gmv": 267119,
+    "repurchase_rate": 16.3,
+    "ltv": 1219
+  },
+  {
+    "date": "2026-06-04",
+    "segment": "Churn Risk",
+    "member_count": 2256,
+    "gmv": 89525,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-04",
+    "segment": "New Member",
+    "member_count": 2974,
+    "gmv": 150127,
+    "repurchase_rate": 6.1,
+    "ltv": 335
+  },
+  {
+    "date": "2026-06-05",
+    "segment": "VIP",
+    "member_count": 3441,
+    "gmv": 1257137,
+    "repurchase_rate": 45.1,
+    "ltv": 5209
+  },
+  {
+    "date": "2026-06-05",
+    "segment": "Loyal",
+    "member_count": 6669,
+    "gmv": 666061,
+    "repurchase_rate": 32.2,
+    "ltv": 2902
+  },
+  {
+    "date": "2026-06-05",
+    "segment": "Potential",
+    "member_count": 5808,
+    "gmv": 272161,
+    "repurchase_rate": 16.4,
+    "ltv": 1223
+  },
+  {
+    "date": "2026-06-05",
+    "segment": "Churn Risk",
+    "member_count": 2259,
+    "gmv": 89524,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-05",
+    "segment": "New Member",
+    "member_count": 2976,
+    "gmv": 150316,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-06",
+    "segment": "VIP",
+    "member_count": 3448,
+    "gmv": 1265114,
+    "repurchase_rate": 45.5,
+    "ltv": 5217
+  },
+  {
+    "date": "2026-06-06",
+    "segment": "Loyal",
+    "member_count": 6676,
+    "gmv": 671253,
+    "repurchase_rate": 32.4,
+    "ltv": 2899
+  },
+  {
+    "date": "2026-06-06",
+    "segment": "Potential",
+    "member_count": 5815,
+    "gmv": 272377,
+    "repurchase_rate": 16.4,
+    "ltv": 1230
+  },
+  {
+    "date": "2026-06-06",
+    "segment": "Churn Risk",
+    "member_count": 2261,
+    "gmv": 90371,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-06-06",
+    "segment": "New Member",
+    "member_count": 3162,
+    "gmv": 151298,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-07",
+    "segment": "VIP",
+    "member_count": 3451,
+    "gmv": 1273578,
+    "repurchase_rate": 44.9,
+    "ltv": 5182
+  },
+  {
+    "date": "2026-06-07",
+    "segment": "Loyal",
+    "member_count": 6684,
+    "gmv": 674906,
+    "repurchase_rate": 32.1,
+    "ltv": 2899
+  },
+  {
+    "date": "2026-06-07",
+    "segment": "Potential",
+    "member_count": 5821,
+    "gmv": 273247,
+    "repurchase_rate": 16.3,
+    "ltv": 1225
+  },
+  {
+    "date": "2026-06-07",
+    "segment": "Churn Risk",
+    "member_count": 2264,
+    "gmv": 89897,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-07",
+    "segment": "New Member",
+    "member_count": 3165,
+    "gmv": 151758,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-08",
+    "segment": "VIP",
+    "member_count": 3449,
+    "gmv": 1274383,
+    "repurchase_rate": 45.2,
+    "ltv": 5197
+  },
+  {
+    "date": "2026-06-08",
+    "segment": "Loyal",
+    "member_count": 6691,
+    "gmv": 673045,
+    "repurchase_rate": 32.0,
+    "ltv": 2904
+  },
+  {
+    "date": "2026-06-08",
+    "segment": "Potential",
+    "member_count": 5828,
+    "gmv": 273270,
+    "repurchase_rate": 16.3,
+    "ltv": 1225
+  },
+  {
+    "date": "2026-06-08",
+    "segment": "Churn Risk",
+    "member_count": 2266,
+    "gmv": 90696,
+    "repurchase_rate": 7.7,
+    "ltv": 626
+  },
+  {
+    "date": "2026-06-08",
+    "segment": "New Member",
+    "member_count": 2985,
+    "gmv": 151219,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-09",
+    "segment": "VIP",
+    "member_count": 3462,
+    "gmv": 1284316,
+    "repurchase_rate": 45.6,
+    "ltv": 5223
+  },
+  {
+    "date": "2026-06-09",
+    "segment": "Loyal",
+    "member_count": 6698,
+    "gmv": 684781,
+    "repurchase_rate": 32.1,
+    "ltv": 2924
+  },
+  {
+    "date": "2026-06-09",
+    "segment": "Potential",
+    "member_count": 5834,
+    "gmv": 275343,
+    "repurchase_rate": 16.4,
+    "ltv": 1236
+  },
+  {
+    "date": "2026-06-09",
+    "segment": "Churn Risk",
+    "member_count": 2269,
+    "gmv": 91314,
+    "repurchase_rate": 7.7,
+    "ltv": 629
+  },
+  {
+    "date": "2026-06-09",
+    "segment": "New Member",
+    "member_count": 2988,
+    "gmv": 152471,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-10",
+    "segment": "VIP",
+    "member_count": 3461,
+    "gmv": 1280919,
+    "repurchase_rate": 45.1,
+    "ltv": 5215
+  },
+  {
+    "date": "2026-06-10",
+    "segment": "Loyal",
+    "member_count": 6706,
+    "gmv": 683491,
+    "repurchase_rate": 32.2,
+    "ltv": 2922
+  },
+  {
+    "date": "2026-06-10",
+    "segment": "Potential",
+    "member_count": 5841,
+    "gmv": 275724,
+    "repurchase_rate": 16.5,
+    "ltv": 1233
+  },
+  {
+    "date": "2026-06-10",
+    "segment": "Churn Risk",
+    "member_count": 2271,
+    "gmv": 91244,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-10",
+    "segment": "New Member",
+    "member_count": 2990,
+    "gmv": 153449,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-11",
+    "segment": "VIP",
+    "member_count": 3465,
+    "gmv": 1289974,
+    "repurchase_rate": 45.1,
+    "ltv": 5188
+  },
+  {
+    "date": "2026-06-11",
+    "segment": "Loyal",
+    "member_count": 6713,
+    "gmv": 683049,
+    "repurchase_rate": 32.1,
+    "ltv": 2921
+  },
+  {
+    "date": "2026-06-11",
+    "segment": "Potential",
+    "member_count": 5847,
+    "gmv": 273962,
+    "repurchase_rate": 16.4,
+    "ltv": 1236
+  },
+  {
+    "date": "2026-06-11",
+    "segment": "Churn Risk",
+    "member_count": 2274,
+    "gmv": 91268,
+    "repurchase_rate": 7.6,
+    "ltv": 625
+  },
+  {
+    "date": "2026-06-11",
+    "segment": "New Member",
+    "member_count": 2993,
+    "gmv": 153290,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-12",
+    "segment": "VIP",
+    "member_count": 3463,
+    "gmv": 1289591,
+    "repurchase_rate": 45.3,
+    "ltv": 5204
+  },
+  {
+    "date": "2026-06-12",
+    "segment": "Loyal",
+    "member_count": 6721,
+    "gmv": 682708,
+    "repurchase_rate": 32.1,
+    "ltv": 2929
+  },
+  {
+    "date": "2026-06-12",
+    "segment": "Potential",
+    "member_count": 5854,
+    "gmv": 275857,
+    "repurchase_rate": 16.5,
+    "ltv": 1238
+  },
+  {
+    "date": "2026-06-12",
+    "segment": "Churn Risk",
+    "member_count": 2276,
+    "gmv": 91603,
+    "repurchase_rate": 7.7,
+    "ltv": 625
+  },
+  {
+    "date": "2026-06-12",
+    "segment": "New Member",
+    "member_count": 2996,
+    "gmv": 153544,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-13",
+    "segment": "VIP",
+    "member_count": 3477,
+    "gmv": 1310309,
+    "repurchase_rate": 45.5,
+    "ltv": 5195
+  },
+  {
+    "date": "2026-06-13",
+    "segment": "Loyal",
+    "member_count": 6728,
+    "gmv": 694610,
+    "repurchase_rate": 32.1,
+    "ltv": 2930
+  },
+  {
+    "date": "2026-06-13",
+    "segment": "Potential",
+    "member_count": 5860,
+    "gmv": 280199,
+    "repurchase_rate": 16.5,
+    "ltv": 1240
+  },
+  {
+    "date": "2026-06-13",
+    "segment": "Churn Risk",
+    "member_count": 2279,
+    "gmv": 91954,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-13",
+    "segment": "New Member",
+    "member_count": 3183,
+    "gmv": 155707,
+    "repurchase_rate": 6.2,
+    "ltv": 338
+  },
+  {
+    "date": "2026-06-14",
+    "segment": "VIP",
+    "member_count": 3477,
+    "gmv": 1298456,
+    "repurchase_rate": 45.3,
+    "ltv": 5208
+  },
+  {
+    "date": "2026-06-14",
+    "segment": "Loyal",
+    "member_count": 6736,
+    "gmv": 690018,
+    "repurchase_rate": 31.7,
+    "ltv": 2930
+  },
+  {
+    "date": "2026-06-14",
+    "segment": "Potential",
+    "member_count": 5867,
+    "gmv": 280789,
+    "repurchase_rate": 16.1,
+    "ltv": 1243
+  },
+  {
+    "date": "2026-06-14",
+    "segment": "Churn Risk",
+    "member_count": 2510,
+    "gmv": 91785,
+    "repurchase_rate": 7.6,
+    "ltv": 629
+  },
+  {
+    "date": "2026-06-14",
+    "segment": "New Member",
+    "member_count": 3186,
+    "gmv": 156243,
+    "repurchase_rate": 6.2,
+    "ltv": 339
+  },
+  {
+    "date": "2026-06-15",
+    "segment": "VIP",
+    "member_count": 3477,
+    "gmv": 1307370,
+    "repurchase_rate": 45.0,
+    "ltv": 5184
+  },
+  {
+    "date": "2026-06-15",
+    "segment": "Loyal",
+    "member_count": 6743,
+    "gmv": 691003,
+    "repurchase_rate": 31.2,
+    "ltv": 2932
+  },
+  {
+    "date": "2026-06-15",
+    "segment": "Potential",
+    "member_count": 5873,
+    "gmv": 277920,
+    "repurchase_rate": 15.9,
+    "ltv": 1242
+  },
+  {
+    "date": "2026-06-15",
+    "segment": "Churn Risk",
+    "member_count": 2741,
+    "gmv": 92165,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-15",
+    "segment": "New Member",
+    "member_count": 3004,
+    "gmv": 156296,
+    "repurchase_rate": 6.2,
+    "ltv": 337
+  },
+  {
+    "date": "2026-06-16",
+    "segment": "VIP",
+    "member_count": 3490,
+    "gmv": 1313788,
+    "repurchase_rate": 45.1,
+    "ltv": 5212
+  },
+  {
+    "date": "2026-06-16",
+    "segment": "Loyal",
+    "member_count": 6751,
+    "gmv": 695959,
+    "repurchase_rate": 30.8,
+    "ltv": 2938
+  },
+  {
+    "date": "2026-06-16",
+    "segment": "Potential",
+    "member_count": 5880,
+    "gmv": 280633,
+    "repurchase_rate": 15.8,
+    "ltv": 1245
+  },
+  {
+    "date": "2026-06-16",
+    "segment": "Churn Risk",
+    "member_count": 2972,
+    "gmv": 92496,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-16",
+    "segment": "New Member",
+    "member_count": 3007,
+    "gmv": 156610,
+    "repurchase_rate": 6.2,
+    "ltv": 338
+  },
+  {
+    "date": "2026-06-17",
+    "segment": "VIP",
+    "member_count": 3491,
+    "gmv": 1329855,
+    "repurchase_rate": 45.5,
+    "ltv": 5202
+  },
+  {
+    "date": "2026-06-17",
+    "segment": "Loyal",
+    "member_count": 6758,
+    "gmv": 698132,
+    "repurchase_rate": 30.9,
+    "ltv": 2952
+  },
+  {
+    "date": "2026-06-17",
+    "segment": "Potential",
+    "member_count": 5886,
+    "gmv": 283091,
+    "repurchase_rate": 15.9,
+    "ltv": 1254
+  },
+  {
+    "date": "2026-06-17",
+    "segment": "Churn Risk",
+    "member_count": 2976,
+    "gmv": 93388,
+    "repurchase_rate": 7.6,
+    "ltv": 629
+  },
+  {
+    "date": "2026-06-17",
+    "segment": "New Member",
+    "member_count": 3010,
+    "gmv": 158321,
+    "repurchase_rate": 6.2,
+    "ltv": 339
+  },
+  {
+    "date": "2026-06-18",
+    "segment": "VIP",
+    "member_count": 3489,
+    "gmv": 1321684,
+    "repurchase_rate": 45.0,
+    "ltv": 5196
+  },
+  {
+    "date": "2026-06-18",
+    "segment": "Loyal",
+    "member_count": 6765,
+    "gmv": 697342,
+    "repurchase_rate": 30.9,
+    "ltv": 2957
+  },
+  {
+    "date": "2026-06-18",
+    "segment": "Potential",
+    "member_count": 5892,
+    "gmv": 281732,
+    "repurchase_rate": 15.8,
+    "ltv": 1252
+  },
+  {
+    "date": "2026-06-18",
+    "segment": "Churn Risk",
+    "member_count": 2979,
+    "gmv": 92630,
+    "repurchase_rate": 7.7,
+    "ltv": 626
+  },
+  {
+    "date": "2026-06-18",
+    "segment": "New Member",
+    "member_count": 3013,
+    "gmv": 158233,
+    "repurchase_rate": 6.2,
+    "ltv": 338
+  },
+  {
+    "date": "2026-06-19",
+    "segment": "VIP",
+    "member_count": 3495,
+    "gmv": 1317628,
+    "repurchase_rate": 45.2,
+    "ltv": 5178
+  },
+  {
+    "date": "2026-06-19",
+    "segment": "Loyal",
+    "member_count": 6773,
+    "gmv": 702822,
+    "repurchase_rate": 30.7,
+    "ltv": 2963
+  },
+  {
+    "date": "2026-06-19",
+    "segment": "Potential",
+    "member_count": 5899,
+    "gmv": 282701,
+    "repurchase_rate": 15.6,
+    "ltv": 1249
+  },
+  {
+    "date": "2026-06-19",
+    "segment": "Churn Risk",
+    "member_count": 2982,
+    "gmv": 92984,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-19",
+    "segment": "New Member",
+    "member_count": 3016,
+    "gmv": 157207,
+    "repurchase_rate": 6.2,
+    "ltv": 338
+  },
+  {
+    "date": "2026-06-20",
+    "segment": "VIP",
+    "member_count": 3499,
+    "gmv": 1331384,
+    "repurchase_rate": 45.5,
+    "ltv": 5209
+  },
+  {
+    "date": "2026-06-20",
+    "segment": "Loyal",
+    "member_count": 6780,
+    "gmv": 706047,
+    "repurchase_rate": 30.7,
+    "ltv": 2968
+  },
+  {
+    "date": "2026-06-20",
+    "segment": "Potential",
+    "member_count": 5905,
+    "gmv": 285995,
+    "repurchase_rate": 15.8,
+    "ltv": 1259
+  },
+  {
+    "date": "2026-06-20",
+    "segment": "Churn Risk",
+    "member_count": 2986,
+    "gmv": 93091,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-20",
+    "segment": "New Member",
+    "member_count": 3204,
+    "gmv": 158283,
+    "repurchase_rate": 6.2,
+    "ltv": 341
+  },
+  {
+    "date": "2026-06-21",
+    "segment": "VIP",
+    "member_count": 3509,
+    "gmv": 1346772,
+    "repurchase_rate": 45.4,
+    "ltv": 5193
+  },
+  {
+    "date": "2026-06-21",
+    "segment": "Loyal",
+    "member_count": 6788,
+    "gmv": 714695,
+    "repurchase_rate": 30.8,
+    "ltv": 2967
+  },
+  {
+    "date": "2026-06-21",
+    "segment": "Potential",
+    "member_count": 5912,
+    "gmv": 286605,
+    "repurchase_rate": 15.7,
+    "ltv": 1258
+  },
+  {
+    "date": "2026-06-21",
+    "segment": "Churn Risk",
+    "member_count": 2989,
+    "gmv": 93875,
+    "repurchase_rate": 7.6,
+    "ltv": 630
+  },
+  {
+    "date": "2026-06-21",
+    "segment": "New Member",
+    "member_count": 3207,
+    "gmv": 158700,
+    "repurchase_rate": 6.2,
+    "ltv": 341
+  },
+  {
+    "date": "2026-06-22",
+    "segment": "VIP",
+    "member_count": 3507,
+    "gmv": 1342336,
+    "repurchase_rate": 44.9,
+    "ltv": 5191
+  },
+  {
+    "date": "2026-06-22",
+    "segment": "Loyal",
+    "member_count": 6795,
+    "gmv": 712737,
+    "repurchase_rate": 30.6,
+    "ltv": 2961
+  },
+  {
+    "date": "2026-06-22",
+    "segment": "Potential",
+    "member_count": 5918,
+    "gmv": 287928,
+    "repurchase_rate": 15.8,
+    "ltv": 1254
+  },
+  {
+    "date": "2026-06-22",
+    "segment": "Churn Risk",
+    "member_count": 2992,
+    "gmv": 93700,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-22",
+    "segment": "New Member",
+    "member_count": 3024,
+    "gmv": 159440,
+    "repurchase_rate": 6.2,
+    "ltv": 339
+  },
+  {
+    "date": "2026-06-23",
+    "segment": "VIP",
+    "member_count": 3511,
+    "gmv": 1349771,
+    "repurchase_rate": 44.8,
+    "ltv": 5181
+  },
+  {
+    "date": "2026-06-23",
+    "segment": "Loyal",
+    "member_count": 6803,
+    "gmv": 716975,
+    "repurchase_rate": 30.7,
+    "ltv": 2969
+  },
+  {
+    "date": "2026-06-23",
+    "segment": "Potential",
+    "member_count": 5925,
+    "gmv": 289556,
+    "repurchase_rate": 15.8,
+    "ltv": 1258
+  },
+  {
+    "date": "2026-06-23",
+    "segment": "Churn Risk",
+    "member_count": 2995,
+    "gmv": 93148,
+    "repurchase_rate": 7.6,
+    "ltv": 625
+  },
+  {
+    "date": "2026-06-23",
+    "segment": "New Member",
+    "member_count": 3027,
+    "gmv": 160009,
+    "repurchase_rate": 6.2,
+    "ltv": 340
+  },
+  {
+    "date": "2026-06-24",
+    "segment": "VIP",
+    "member_count": 3520,
+    "gmv": 1349646,
+    "repurchase_rate": 45.5,
+    "ltv": 5199
+  },
+  {
+    "date": "2026-06-24",
+    "segment": "Loyal",
+    "member_count": 6810,
+    "gmv": 717734,
+    "repurchase_rate": 30.8,
+    "ltv": 2985
+  },
+  {
+    "date": "2026-06-24",
+    "segment": "Potential",
+    "member_count": 5931,
+    "gmv": 292179,
+    "repurchase_rate": 15.7,
+    "ltv": 1266
+  },
+  {
+    "date": "2026-06-24",
+    "segment": "Churn Risk",
+    "member_count": 2999,
+    "gmv": 94132,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-24",
+    "segment": "New Member",
+    "member_count": 3030,
+    "gmv": 161406,
+    "repurchase_rate": 6.2,
+    "ltv": 341
+  },
+  {
+    "date": "2026-06-25",
+    "segment": "VIP",
+    "member_count": 3516,
+    "gmv": 1352721,
+    "repurchase_rate": 45.1,
+    "ltv": 5215
+  },
+  {
+    "date": "2026-06-25",
+    "segment": "Loyal",
+    "member_count": 6818,
+    "gmv": 721128,
+    "repurchase_rate": 30.9,
+    "ltv": 2995
+  },
+  {
+    "date": "2026-06-25",
+    "segment": "Potential",
+    "member_count": 5938,
+    "gmv": 292164,
+    "repurchase_rate": 15.8,
+    "ltv": 1267
+  },
+  {
+    "date": "2026-06-25",
+    "segment": "Churn Risk",
+    "member_count": 3002,
+    "gmv": 94235,
+    "repurchase_rate": 7.7,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-25",
+    "segment": "New Member",
+    "member_count": 3032,
+    "gmv": 162213,
+    "repurchase_rate": 6.2,
+    "ltv": 341
+  },
+  {
+    "date": "2026-06-26",
+    "segment": "VIP",
+    "member_count": 3524,
+    "gmv": 1351424,
+    "repurchase_rate": 44.9,
+    "ltv": 5181
+  },
+  {
+    "date": "2026-06-26",
+    "segment": "Loyal",
+    "member_count": 6825,
+    "gmv": 723291,
+    "repurchase_rate": 30.8,
+    "ltv": 2979
+  },
+  {
+    "date": "2026-06-26",
+    "segment": "Potential",
+    "member_count": 5944,
+    "gmv": 292434,
+    "repurchase_rate": 15.7,
+    "ltv": 1266
+  },
+  {
+    "date": "2026-06-26",
+    "segment": "Churn Risk",
+    "member_count": 3005,
+    "gmv": 94706,
+    "repurchase_rate": 7.7,
+    "ltv": 624
+  },
+  {
+    "date": "2026-06-26",
+    "segment": "New Member",
+    "member_count": 3035,
+    "gmv": 161431,
+    "repurchase_rate": 6.2,
+    "ltv": 341
+  },
+  {
+    "date": "2026-06-27",
+    "segment": "VIP",
+    "member_count": 3522,
+    "gmv": 1373709,
+    "repurchase_rate": 45.0,
+    "ltv": 5215
+  },
+  {
+    "date": "2026-06-27",
+    "segment": "Loyal",
+    "member_count": 6832,
+    "gmv": 722833,
+    "repurchase_rate": 30.9,
+    "ltv": 3003
+  },
+  {
+    "date": "2026-06-27",
+    "segment": "Potential",
+    "member_count": 5951,
+    "gmv": 292389,
+    "repurchase_rate": 15.8,
+    "ltv": 1271
+  },
+  {
+    "date": "2026-06-27",
+    "segment": "Churn Risk",
+    "member_count": 3008,
+    "gmv": 94361,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-27",
+    "segment": "New Member",
+    "member_count": 3225,
+    "gmv": 162671,
+    "repurchase_rate": 6.2,
+    "ltv": 341
+  },
+  {
+    "date": "2026-06-28",
+    "segment": "VIP",
+    "member_count": 3530,
+    "gmv": 1380583,
+    "repurchase_rate": 45.6,
+    "ltv": 5212
+  },
+  {
+    "date": "2026-06-28",
+    "segment": "Loyal",
+    "member_count": 6840,
+    "gmv": 731354,
+    "repurchase_rate": 30.8,
+    "ltv": 3017
+  },
+  {
+    "date": "2026-06-28",
+    "segment": "Potential",
+    "member_count": 5957,
+    "gmv": 296478,
+    "repurchase_rate": 15.8,
+    "ltv": 1271
+  },
+  {
+    "date": "2026-06-28",
+    "segment": "Churn Risk",
+    "member_count": 3012,
+    "gmv": 95321,
+    "repurchase_rate": 7.6,
+    "ltv": 627
+  },
+  {
+    "date": "2026-06-28",
+    "segment": "New Member",
+    "member_count": 3228,
+    "gmv": 162919,
+    "repurchase_rate": 6.2,
+    "ltv": 342
+  },
+  {
+    "date": "2026-06-29",
+    "segment": "VIP",
+    "member_count": 3537,
+    "gmv": 1382301,
+    "repurchase_rate": 45.0,
+    "ltv": 5186
+  },
+  {
+    "date": "2026-06-29",
+    "segment": "Loyal",
+    "member_count": 6847,
+    "gmv": 731704,
+    "repurchase_rate": 30.9,
+    "ltv": 3012
+  },
+  {
+    "date": "2026-06-29",
+    "segment": "Potential",
+    "member_count": 5964,
+    "gmv": 294103,
+    "repurchase_rate": 15.6,
+    "ltv": 1272
+  },
+  {
+    "date": "2026-06-29",
+    "segment": "Churn Risk",
+    "member_count": 3015,
+    "gmv": 95559,
+    "repurchase_rate": 7.7,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-29",
+    "segment": "New Member",
+    "member_count": 3044,
+    "gmv": 163898,
+    "repurchase_rate": 6.2,
+    "ltv": 342
+  },
+  {
+    "date": "2026-06-30",
+    "segment": "VIP",
+    "member_count": 3537,
+    "gmv": 1383827,
+    "repurchase_rate": 45.0,
+    "ltv": 5178
+  },
+  {
+    "date": "2026-06-30",
+    "segment": "Loyal",
+    "member_count": 6855,
+    "gmv": 728644,
+    "repurchase_rate": 30.5,
+    "ltv": 3000
+  },
+  {
+    "date": "2026-06-30",
+    "segment": "Potential",
+    "member_count": 5970,
+    "gmv": 296558,
+    "repurchase_rate": 15.7,
+    "ltv": 1275
+  },
+  {
+    "date": "2026-06-30",
+    "segment": "Churn Risk",
+    "member_count": 3018,
+    "gmv": 95211,
+    "repurchase_rate": 7.6,
+    "ltv": 628
+  },
+  {
+    "date": "2026-06-30",
+    "segment": "New Member",
+    "member_count": 3046,
+    "gmv": 163649,
+    "repurchase_rate": 6.2,
+    "ltv": 342
+  },
+  {
+    "date": "2026-07-01",
+    "segment": "VIP",
+    "member_count": 3548,
+    "gmv": 1384633,
+    "repurchase_rate": 45.3,
+    "ltv": 5195
+  },
+  {
+    "date": "2026-07-01",
+    "segment": "Loyal",
+    "member_count": 6862,
+    "gmv": 735441,
+    "repurchase_rate": 30.9,
+    "ltv": 3013
+  },
+  {
+    "date": "2026-07-01",
+    "segment": "Potential",
+    "member_count": 5977,
+    "gmv": 298510,
+    "repurchase_rate": 15.8,
+    "ltv": 1281
+  },
+  {
+    "date": "2026-07-01",
+    "segment": "Churn Risk",
+    "member_count": 3022,
+    "gmv": 95676,
+    "repurchase_rate": 7.7,
+    "ltv": 630
+  },
+  {
+    "date": "2026-07-01",
+    "segment": "New Member",
+    "member_count": 3049,
+    "gmv": 163803,
+    "repurchase_rate": 6.2,
+    "ltv": 344
+  }
+]

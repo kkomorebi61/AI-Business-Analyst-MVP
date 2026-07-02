@@ -1,0 +1,37 @@
+[
+  {
+    "source_system": "OMS",
+    "update_time": "2026-07-01 07:30",
+    "health_status": "Warning",
+    "coverage": 95,
+    "owner": "Commerce Team"
+  },
+  {
+    "source_system": "CRM",
+    "update_time": "2026-07-01 10:05",
+    "health_status": "Healthy",
+    "coverage": 92,
+    "owner": "CRM Team"
+  },
+  {
+    "source_system": "CDP",
+    "update_time": "2026-07-01 09:58",
+    "health_status": "Healthy",
+    "coverage": 88,
+    "owner": "Data Team"
+  },
+  {
+    "source_system": "Marketing Platform",
+    "update_time": "2026-07-01 08:40",
+    "health_status": "Healthy",
+    "coverage": 90,
+    "owner": "Marketing Team"
+  },
+  {
+    "source_system": "Enterprise WeChat",
+    "update_time": "2026-06-30 23:10",
+    "health_status": "Delayed",
+    "coverage": 76,
+    "owner": "SCRM Team"
+  }
+]

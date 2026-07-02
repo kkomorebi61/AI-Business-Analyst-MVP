@@ -1,0 +1,722 @@
+[
+  {
+    "date": "2026-04-03",
+    "new_friends": 121,
+    "reach_rate": 81.7,
+    "reply_rate": 38.0,
+    "group_activity_rate": 45.4,
+    "consultation_count": 535
+  },
+  {
+    "date": "2026-04-04",
+    "new_friends": 122,
+    "reach_rate": 82.1,
+    "reply_rate": 38.6,
+    "group_activity_rate": 45.0,
+    "consultation_count": 551
+  },
+  {
+    "date": "2026-04-05",
+    "new_friends": 119,
+    "reach_rate": 82.2,
+    "reply_rate": 38.1,
+    "group_activity_rate": 45.2,
+    "consultation_count": 541
+  },
+  {
+    "date": "2026-04-06",
+    "new_friends": 119,
+    "reach_rate": 81.6,
+    "reply_rate": 37.5,
+    "group_activity_rate": 44.6,
+    "consultation_count": 536
+  },
+  {
+    "date": "2026-04-07",
+    "new_friends": 120,
+    "reach_rate": 82.2,
+    "reply_rate": 38.3,
+    "group_activity_rate": 45.5,
+    "consultation_count": 553
+  },
+  {
+    "date": "2026-04-08",
+    "new_friends": 122,
+    "reach_rate": 82.3,
+    "reply_rate": 38.3,
+    "group_activity_rate": 44.9,
+    "consultation_count": 551
+  },
+  {
+    "date": "2026-04-09",
+    "new_friends": 122,
+    "reach_rate": 82.2,
+    "reply_rate": 38.1,
+    "group_activity_rate": 44.5,
+    "consultation_count": 541
+  },
+  {
+    "date": "2026-04-10",
+    "new_friends": 123,
+    "reach_rate": 81.9,
+    "reply_rate": 37.9,
+    "group_activity_rate": 45.2,
+    "consultation_count": 543
+  },
+  {
+    "date": "2026-04-11",
+    "new_friends": 123,
+    "reach_rate": 82.5,
+    "reply_rate": 38.5,
+    "group_activity_rate": 45.3,
+    "consultation_count": 562
+  },
+  {
+    "date": "2026-04-12",
+    "new_friends": 122,
+    "reach_rate": 82.6,
+    "reply_rate": 38.3,
+    "group_activity_rate": 45.1,
+    "consultation_count": 550
+  },
+  {
+    "date": "2026-04-13",
+    "new_friends": 124,
+    "reach_rate": 81.8,
+    "reply_rate": 38.2,
+    "group_activity_rate": 44.5,
+    "consultation_count": 546
+  },
+  {
+    "date": "2026-04-14",
+    "new_friends": 123,
+    "reach_rate": 82.1,
+    "reply_rate": 38.3,
+    "group_activity_rate": 45.1,
+    "consultation_count": 560
+  },
+  {
+    "date": "2026-04-15",
+    "new_friends": 124,
+    "reach_rate": 82.6,
+    "reply_rate": 38.3,
+    "group_activity_rate": 44.9,
+    "consultation_count": 564
+  },
+  {
+    "date": "2026-04-16",
+    "new_friends": 125,
+    "reach_rate": 82.2,
+    "reply_rate": 38.1,
+    "group_activity_rate": 44.9,
+    "consultation_count": 557
+  },
+  {
+    "date": "2026-04-17",
+    "new_friends": 124,
+    "reach_rate": 82.4,
+    "reply_rate": 37.8,
+    "group_activity_rate": 44.4,
+    "consultation_count": 553
+  },
+  {
+    "date": "2026-04-18",
+    "new_friends": 125,
+    "reach_rate": 82.3,
+    "reply_rate": 38.6,
+    "group_activity_rate": 44.9,
+    "consultation_count": 564
+  },
+  {
+    "date": "2026-04-19",
+    "new_friends": 126,
+    "reach_rate": 83.1,
+    "reply_rate": 38.2,
+    "group_activity_rate": 45.3,
+    "consultation_count": 565
+  },
+  {
+    "date": "2026-04-20",
+    "new_friends": 126,
+    "reach_rate": 82.4,
+    "reply_rate": 38.2,
+    "group_activity_rate": 44.7,
+    "consultation_count": 563
+  },
+  {
+    "date": "2026-04-21",
+    "new_friends": 125,
+    "reach_rate": 82.3,
+    "reply_rate": 37.9,
+    "group_activity_rate": 45.0,
+    "consultation_count": 567
+  },
+  {
+    "date": "2026-04-22",
+    "new_friends": 126,
+    "reach_rate": 82.9,
+    "reply_rate": 38.6,
+    "group_activity_rate": 45.6,
+    "consultation_count": 575
+  },
+  {
+    "date": "2026-04-23",
+    "new_friends": 128,
+    "reach_rate": 83.3,
+    "reply_rate": 38.7,
+    "group_activity_rate": 45.1,
+    "consultation_count": 574
+  },
+  {
+    "date": "2026-04-24",
+    "new_friends": 128,
+    "reach_rate": 82.5,
+    "reply_rate": 38.5,
+    "group_activity_rate": 44.7,
+    "consultation_count": 563
+  },
+  {
+    "date": "2026-04-25",
+    "new_friends": 129,
+    "reach_rate": 83.0,
+    "reply_rate": 38.4,
+    "group_activity_rate": 45.2,
+    "consultation_count": 577
+  },
+  {
+    "date": "2026-04-26",
+    "new_friends": 130,
+    "reach_rate": 83.4,
+    "reply_rate": 38.4,
+    "group_activity_rate": 45.5,
+    "consultation_count": 576
+  },
+  {
+    "date": "2026-04-27",
+    "new_friends": 130,
+    "reach_rate": 83.5,
+    "reply_rate": 38.7,
+    "group_activity_rate": 44.7,
+    "consultation_count": 577
+  },
+  {
+    "date": "2026-04-28",
+    "new_friends": 129,
+    "reach_rate": 82.6,
+    "reply_rate": 38.6,
+    "group_activity_rate": 44.8,
+    "consultation_count": 579
+  },
+  {
+    "date": "2026-04-29",
+    "new_friends": 129,
+    "reach_rate": 83.5,
+    "reply_rate": 38.8,
+    "group_activity_rate": 44.7,
+    "consultation_count": 580
+  },
+  {
+    "date": "2026-04-30",
+    "new_friends": 130,
+    "reach_rate": 83.2,
+    "reply_rate": 38.6,
+    "group_activity_rate": 45.2,
+    "consultation_count": 592
+  },
+  {
+    "date": "2026-05-01",
+    "new_friends": 130,
+    "reach_rate": 83.1,
+    "reply_rate": 38.4,
+    "group_activity_rate": 44.8,
+    "consultation_count": 581
+  },
+  {
+    "date": "2026-05-02",
+    "new_friends": 128,
+    "reach_rate": 83.0,
+    "reply_rate": 38.5,
+    "group_activity_rate": 45.1,
+    "consultation_count": 588
+  },
+  {
+    "date": "2026-05-03",
+    "new_friends": 131,
+    "reach_rate": 83.1,
+    "reply_rate": 38.6,
+    "group_activity_rate": 45.2,
+    "consultation_count": 588
+  },
+  {
+    "date": "2026-05-04",
+    "new_friends": 131,
+    "reach_rate": 83.4,
+    "reply_rate": 38.7,
+    "group_activity_rate": 45.3,
+    "consultation_count": 585
+  },
+  {
+    "date": "2026-05-05",
+    "new_friends": 130,
+    "reach_rate": 82.7,
+    "reply_rate": 38.5,
+    "group_activity_rate": 44.9,
+    "consultation_count": 580
+  },
+  {
+    "date": "2026-05-06",
+    "new_friends": 132,
+    "reach_rate": 83.0,
+    "reply_rate": 38.3,
+    "group_activity_rate": 45.1,
+    "consultation_count": 596
+  },
+  {
+    "date": "2026-05-07",
+    "new_friends": 134,
+    "reach_rate": 83.2,
+    "reply_rate": 39.1,
+    "group_activity_rate": 45.1,
+    "consultation_count": 595
+  },
+  {
+    "date": "2026-05-08",
+    "new_friends": 132,
+    "reach_rate": 83.7,
+    "reply_rate": 38.4,
+    "group_activity_rate": 45.3,
+    "consultation_count": 590
+  },
+  {
+    "date": "2026-05-09",
+    "new_friends": 133,
+    "reach_rate": 83.1,
+    "reply_rate": 38.7,
+    "group_activity_rate": 44.5,
+    "consultation_count": 590
+  },
+  {
+    "date": "2026-05-10",
+    "new_friends": 133,
+    "reach_rate": 83.2,
+    "reply_rate": 38.5,
+    "group_activity_rate": 45.3,
+    "consultation_count": 602
+  },
+  {
+    "date": "2026-05-11",
+    "new_friends": 135,
+    "reach_rate": 84.3,
+    "reply_rate": 39.2,
+    "group_activity_rate": 45.3,
+    "consultation_count": 599
+  },
+  {
+    "date": "2026-05-12",
+    "new_friends": 133,
+    "reach_rate": 83.5,
+    "reply_rate": 38.4,
+    "group_activity_rate": 45.2,
+    "consultation_count": 605
+  },
+  {
+    "date": "2026-05-13",
+    "new_friends": 131,
+    "reach_rate": 83.0,
+    "reply_rate": 38.8,
+    "group_activity_rate": 45.0,
+    "consultation_count": 595
+  },
+  {
+    "date": "2026-05-14",
+    "new_friends": 135,
+    "reach_rate": 84.3,
+    "reply_rate": 39.1,
+    "group_activity_rate": 45.0,
+    "consultation_count": 612
+  },
+  {
+    "date": "2026-05-15",
+    "new_friends": 135,
+    "reach_rate": 84.1,
+    "reply_rate": 38.7,
+    "group_activity_rate": 44.8,
+    "consultation_count": 608
+  },
+  {
+    "date": "2026-05-16",
+    "new_friends": 134,
+    "reach_rate": 83.2,
+    "reply_rate": 38.9,
+    "group_activity_rate": 44.9,
+    "consultation_count": 602
+  },
+  {
+    "date": "2026-05-17",
+    "new_friends": 134,
+    "reach_rate": 84.0,
+    "reply_rate": 38.9,
+    "group_activity_rate": 45.0,
+    "consultation_count": 603
+  },
+  {
+    "date": "2026-05-18",
+    "new_friends": 136,
+    "reach_rate": 83.8,
+    "reply_rate": 39.1,
+    "group_activity_rate": 45.6,
+    "consultation_count": 620
+  },
+  {
+    "date": "2026-05-19",
+    "new_friends": 137,
+    "reach_rate": 84.2,
+    "reply_rate": 38.8,
+    "group_activity_rate": 45.0,
+    "consultation_count": 607
+  },
+  {
+    "date": "2026-05-20",
+    "new_friends": 136,
+    "reach_rate": 83.9,
+    "reply_rate": 38.3,
+    "group_activity_rate": 45.1,
+    "consultation_count": 611
+  },
+  {
+    "date": "2026-05-21",
+    "new_friends": 137,
+    "reach_rate": 83.4,
+    "reply_rate": 38.7,
+    "group_activity_rate": 45.2,
+    "consultation_count": 612
+  },
+  {
+    "date": "2026-05-22",
+    "new_friends": 140,
+    "reach_rate": 84.5,
+    "reply_rate": 39.1,
+    "group_activity_rate": 45.2,
+    "consultation_count": 619
+  },
+  {
+    "date": "2026-05-23",
+    "new_friends": 136,
+    "reach_rate": 84.0,
+    "reply_rate": 39.0,
+    "group_activity_rate": 45.2,
+    "consultation_count": 616
+  },
+  {
+    "date": "2026-05-24",
+    "new_friends": 135,
+    "reach_rate": 83.8,
+    "reply_rate": 38.9,
+    "group_activity_rate": 45.0,
+    "consultation_count": 613
+  },
+  {
+    "date": "2026-05-25",
+    "new_friends": 139,
+    "reach_rate": 84.4,
+    "reply_rate": 38.9,
+    "group_activity_rate": 44.8,
+    "consultation_count": 617
+  },
+  {
+    "date": "2026-05-26",
+    "new_friends": 141,
+    "reach_rate": 84.6,
+    "reply_rate": 39.5,
+    "group_activity_rate": 45.0,
+    "consultation_count": 630
+  },
+  {
+    "date": "2026-05-27",
+    "new_friends": 139,
+    "reach_rate": 83.8,
+    "reply_rate": 38.6,
+    "group_activity_rate": 45.0,
+    "consultation_count": 627
+  },
+  {
+    "date": "2026-05-28",
+    "new_friends": 139,
+    "reach_rate": 84.3,
+    "reply_rate": 39.0,
+    "group_activity_rate": 44.9,
+    "consultation_count": 625
+  },
+  {
+    "date": "2026-05-29",
+    "new_friends": 141,
+    "reach_rate": 84.7,
+    "reply_rate": 39.6,
+    "group_activity_rate": 45.0,
+    "consultation_count": 631
+  },
+  {
+    "date": "2026-05-30",
+    "new_friends": 140,
+    "reach_rate": 84.0,
+    "reply_rate": 39.3,
+    "group_activity_rate": 45.2,
+    "consultation_count": 627
+  },
+  {
+    "date": "2026-05-31",
+    "new_friends": 140,
+    "reach_rate": 83.8,
+    "reply_rate": 38.9,
+    "group_activity_rate": 45.0,
+    "consultation_count": 632
+  },
+  {
+    "date": "2026-06-01",
+    "new_friends": 141,
+    "reach_rate": 84.3,
+    "reply_rate": 39.3,
+    "group_activity_rate": 45.2,
+    "consultation_count": 637
+  },
+  {
+    "date": "2026-06-02",
+    "new_friends": 141,
+    "reach_rate": 84.4,
+    "reply_rate": 39.1,
+    "group_activity_rate": 45.1,
+    "consultation_count": 644
+  },
+  {
+    "date": "2026-06-03",
+    "new_friends": 142,
+    "reach_rate": 84.2,
+    "reply_rate": 39.3,
+    "group_activity_rate": 44.9,
+    "consultation_count": 629
+  },
+  {
+    "date": "2026-06-04",
+    "new_friends": 140,
+    "reach_rate": 84.5,
+    "reply_rate": 38.8,
+    "group_activity_rate": 45.0,
+    "consultation_count": 629
+  },
+  {
+    "date": "2026-06-05",
+    "new_friends": 141,
+    "reach_rate": 84.5,
+    "reply_rate": 39.5,
+    "group_activity_rate": 45.1,
+    "consultation_count": 646
+  },
+  {
+    "date": "2026-06-06",
+    "new_friends": 144,
+    "reach_rate": 85.4,
+    "reply_rate": 39.1,
+    "group_activity_rate": 45.6,
+    "consultation_count": 645
+  },
+  {
+    "date": "2026-06-07",
+    "new_friends": 143,
+    "reach_rate": 84.4,
+    "reply_rate": 39.0,
+    "group_activity_rate": 44.5,
+    "consultation_count": 645
+  },
+  {
+    "date": "2026-06-08",
+    "new_friends": 141,
+    "reach_rate": 84.1,
+    "reply_rate": 39.0,
+    "group_activity_rate": 44.8,
+    "consultation_count": 646
+  },
+  {
+    "date": "2026-06-09",
+    "new_friends": 144,
+    "reach_rate": 84.8,
+    "reply_rate": 39.6,
+    "group_activity_rate": 45.4,
+    "consultation_count": 648
+  },
+  {
+    "date": "2026-06-10",
+    "new_friends": 145,
+    "reach_rate": 84.7,
+    "reply_rate": 39.5,
+    "group_activity_rate": 44.8,
+    "consultation_count": 646
+  },
+  {
+    "date": "2026-06-11",
+    "new_friends": 144,
+    "reach_rate": 84.2,
+    "reply_rate": 39.3,
+    "group_activity_rate": 44.8,
+    "consultation_count": 648
+  },
+  {
+    "date": "2026-06-12",
+    "new_friends": 143,
+    "reach_rate": 84.9,
+    "reply_rate": 39.3,
+    "group_activity_rate": 44.8,
+    "consultation_count": 655
+  },
+  {
+    "date": "2026-06-13",
+    "new_friends": 145,
+    "reach_rate": 84.8,
+    "reply_rate": 39.4,
+    "group_activity_rate": 45.2,
+    "consultation_count": 649
+  },
+  {
+    "date": "2026-06-14",
+    "new_friends": 139,
+    "reach_rate": 79.1,
+    "reply_rate": 35.9,
+    "group_activity_rate": 43.2,
+    "consultation_count": 631
+  },
+  {
+    "date": "2026-06-15",
+    "new_friends": 132,
+    "reach_rate": 72.4,
+    "reply_rate": 32.5,
+    "group_activity_rate": 40.4,
+    "consultation_count": 598
+  },
+  {
+    "date": "2026-06-16",
+    "new_friends": 129,
+    "reach_rate": 66.1,
+    "reply_rate": 29.8,
+    "group_activity_rate": 38.7,
+    "consultation_count": 577
+  },
+  {
+    "date": "2026-06-17",
+    "new_friends": 131,
+    "reach_rate": 66.7,
+    "reply_rate": 29.7,
+    "group_activity_rate": 39.3,
+    "consultation_count": 592
+  },
+  {
+    "date": "2026-06-18",
+    "new_friends": 128,
+    "reach_rate": 66.6,
+    "reply_rate": 29.4,
+    "group_activity_rate": 38.5,
+    "consultation_count": 586
+  },
+  {
+    "date": "2026-06-19",
+    "new_friends": 130,
+    "reach_rate": 66.1,
+    "reply_rate": 29.3,
+    "group_activity_rate": 38.7,
+    "consultation_count": 574
+  },
+  {
+    "date": "2026-06-20",
+    "new_friends": 131,
+    "reach_rate": 66.7,
+    "reply_rate": 29.5,
+    "group_activity_rate": 38.8,
+    "consultation_count": 590
+  },
+  {
+    "date": "2026-06-21",
+    "new_friends": 130,
+    "reach_rate": 67.0,
+    "reply_rate": 29.6,
+    "group_activity_rate": 39.0,
+    "consultation_count": 583
+  },
+  {
+    "date": "2026-06-22",
+    "new_friends": 131,
+    "reach_rate": 66.4,
+    "reply_rate": 29.6,
+    "group_activity_rate": 38.2,
+    "consultation_count": 587
+  },
+  {
+    "date": "2026-06-23",
+    "new_friends": 130,
+    "reach_rate": 66.3,
+    "reply_rate": 29.6,
+    "group_activity_rate": 38.6,
+    "consultation_count": 582
+  },
+  {
+    "date": "2026-06-24",
+    "new_friends": 133,
+    "reach_rate": 66.9,
+    "reply_rate": 29.7,
+    "group_activity_rate": 39.1,
+    "consultation_count": 597
+  },
+  {
+    "date": "2026-06-25",
+    "new_friends": 131,
+    "reach_rate": 66.8,
+    "reply_rate": 29.5,
+    "group_activity_rate": 39.1,
+    "consultation_count": 587
+  },
+  {
+    "date": "2026-06-26",
+    "new_friends": 131,
+    "reach_rate": 66.1,
+    "reply_rate": 29.3,
+    "group_activity_rate": 38.3,
+    "consultation_count": 584
+  },
+  {
+    "date": "2026-06-27",
+    "new_friends": 131,
+    "reach_rate": 66.5,
+    "reply_rate": 29.7,
+    "group_activity_rate": 38.6,
+    "consultation_count": 597
+  },
+  {
+    "date": "2026-06-28",
+    "new_friends": 133,
+    "reach_rate": 66.6,
+    "reply_rate": 29.9,
+    "group_activity_rate": 38.8,
+    "consultation_count": 607
+  },
+  {
+    "date": "2026-06-29",
+    "new_friends": 132,
+    "reach_rate": 66.3,
+    "reply_rate": 29.8,
+    "group_activity_rate": 39.0,
+    "consultation_count": 601
+  },
+  {
+    "date": "2026-06-30",
+    "new_friends": 133,
+    "reach_rate": 66.2,
+    "reply_rate": 29.4,
+    "group_activity_rate": 38.6,
+    "consultation_count": 597
+  },
+  {
+    "date": "2026-07-01",
+    "new_friends": 133,
+    "reach_rate": 66.7,
+    "reply_rate": 29.7,
+    "group_activity_rate": 39.2,
+    "consultation_count": 599
+  }
+]

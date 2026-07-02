@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 应用背景（截图 #F8F9FA） */
+    --background: 210 17% 98%;
+    --foreground: 222 14% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 14% 17%;
+
+    /* 主色：商务蓝（搜索按钮 #1E3A8A 附近） */
+    --primary: 224 76% 33%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 14% 17%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

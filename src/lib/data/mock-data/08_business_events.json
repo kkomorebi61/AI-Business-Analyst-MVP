@@ -1,0 +1,63 @@
+[
+  {
+    "event_date": "2026-04-23",
+    "event_name": "618预热活动",
+    "event_type": "Marketing",
+    "impact_metrics": [
+      "GMV",
+      "Orders",
+      "ROI"
+    ],
+    "impact_direction": "Positive",
+    "description": "618 预热启动, 主会场+跨店满减带动 GMV 环比 +30%、订单 +25%、营销 ROI +20%。"
+  },
+  {
+    "event_date": "2026-05-07",
+    "event_name": "库存缺货",
+    "event_type": "Supply Chain",
+    "impact_metrics": [
+      "GMV",
+      "Conversion Rate",
+      "Refund Rate",
+      "Repurchase Rate"
+    ],
+    "impact_direction": "Negative",
+    "description": "畅销品断货, GMV -20%、转化率下降、退款率飙升 80%、复购被动走弱。"
+  },
+  {
+    "event_date": "2026-05-24",
+    "event_name": "会员专属活动",
+    "event_type": "Member",
+    "impact_metrics": [
+      "Repurchase Rate",
+      "VIP GMV",
+      "LTV"
+    ],
+    "impact_direction": "Positive",
+    "description": "VIP 专享日, 复购率 +12%、VIP 贡献 GMV +25%、LTV 抬升。"
+  },
+  {
+    "event_date": "2026-06-14",
+    "event_name": "企微触达下降",
+    "event_type": "Channel",
+    "impact_metrics": [
+      "Reach Rate",
+      "Reply Rate",
+      "Repurchase Rate"
+    ],
+    "impact_direction": "Negative",
+    "description": "企微触达率/回复率持续下降, 拉低私域复购与社群活跃, 流失风险人群扩大。"
+  },
+  {
+    "event_date": "2026-06-26",
+    "event_name": "爆款新品上线",
+    "event_type": "Product",
+    "impact_metrics": [
+      "GMV",
+      "AOV",
+      "Conversion Rate"
+    ],
+    "impact_direction": "Positive",
+    "description": "新品首发私域+小程序, GMV +18%、客单价 +10%、转化率 +15%。"
+  }
+]

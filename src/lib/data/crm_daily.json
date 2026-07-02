@@ -1,0 +1,242 @@
+[
+  {
+    "date": "2026-05-28",
+    "newMembers": 114,
+    "activeMembers": 27951,
+    "repurchaseRate": 26.0,
+    "ltv": 1083,
+    "churnRate": 7.9
+  },
+  {
+    "date": "2026-05-29",
+    "newMembers": 169,
+    "activeMembers": 27327,
+    "repurchaseRate": 20.2,
+    "ltv": 1297,
+    "churnRate": 7.4
+  },
+  {
+    "date": "2026-05-30",
+    "newMembers": 143,
+    "activeMembers": 27109,
+    "repurchaseRate": 21.6,
+    "ltv": 1050,
+    "churnRate": 6.3
+  },
+  {
+    "date": "2026-05-31",
+    "newMembers": 162,
+    "activeMembers": 27474,
+    "repurchaseRate": 25.6,
+    "ltv": 1152,
+    "churnRate": 8.4
+  },
+  {
+    "date": "2026-06-01",
+    "newMembers": 142,
+    "activeMembers": 27352,
+    "repurchaseRate": 20.2,
+    "ltv": 1072,
+    "churnRate": 8.1
+  },
+  {
+    "date": "2026-06-02",
+    "newMembers": 177,
+    "activeMembers": 27921,
+    "repurchaseRate": 22.6,
+    "ltv": 1060,
+    "churnRate": 8.1
+  },
+  {
+    "date": "2026-06-03",
+    "newMembers": 140,
+    "activeMembers": 27350,
+    "repurchaseRate": 23.7,
+    "ltv": 1224,
+    "churnRate": 8.0
+  },
+  {
+    "date": "2026-06-04",
+    "newMembers": 92,
+    "activeMembers": 26577,
+    "repurchaseRate": 22.9,
+    "ltv": 1273,
+    "churnRate": 6.5
+  },
+  {
+    "date": "2026-06-05",
+    "newMembers": 142,
+    "activeMembers": 26797,
+    "repurchaseRate": 24.6,
+    "ltv": 1210,
+    "churnRate": 9.0
+  },
+  {
+    "date": "2026-06-06",
+    "newMembers": 82,
+    "activeMembers": 27957,
+    "repurchaseRate": 27.2,
+    "ltv": 1332,
+    "churnRate": 8.3
+  },
+  {
+    "date": "2026-06-07",
+    "newMembers": 133,
+    "activeMembers": 26525,
+    "repurchaseRate": 26.3,
+    "ltv": 1125,
+    "churnRate": 6.3
+  },
+  {
+    "date": "2026-06-08",
+    "newMembers": 91,
+    "activeMembers": 26521,
+    "repurchaseRate": 20.1,
+    "ltv": 1097,
+    "churnRate": 7.8
+  },
+  {
+    "date": "2026-06-09",
+    "newMembers": 127,
+    "activeMembers": 28192,
+    "repurchaseRate": 20.3,
+    "ltv": 1054,
+    "churnRate": 7.7
+  },
+  {
+    "date": "2026-06-10",
+    "newMembers": 173,
+    "activeMembers": 27993,
+    "repurchaseRate": 26.8,
+    "ltv": 1294,
+    "churnRate": 9.3
+  },
+  {
+    "date": "2026-06-11",
+    "newMembers": 146,
+    "activeMembers": 27894,
+    "repurchaseRate": 22.1,
+    "ltv": 1186,
+    "churnRate": 6.2
+  },
+  {
+    "date": "2026-06-12",
+    "newMembers": 108,
+    "activeMembers": 27687,
+    "repurchaseRate": 23.3,
+    "ltv": 1090,
+    "churnRate": 6.2
+  },
+  {
+    "date": "2026-06-13",
+    "newMembers": 154,
+    "activeMembers": 28199,
+    "repurchaseRate": 25.3,
+    "ltv": 1347,
+    "churnRate": 9.4
+  },
+  {
+    "date": "2026-06-14",
+    "newMembers": 155,
+    "activeMembers": 26657,
+    "repurchaseRate": 23.1,
+    "ltv": 1013,
+    "churnRate": 6.7
+  },
+  {
+    "date": "2026-06-15",
+    "newMembers": 141,
+    "activeMembers": 26580,
+    "repurchaseRate": 27.1,
+    "ltv": 1130,
+    "churnRate": 6.7
+  },
+  {
+    "date": "2026-06-16",
+    "newMembers": 164,
+    "activeMembers": 28180,
+    "repurchaseRate": 24.3,
+    "ltv": 1152,
+    "churnRate": 8.4
+  },
+  {
+    "date": "2026-06-17",
+    "newMembers": 156,
+    "activeMembers": 26922,
+    "repurchaseRate": 21.5,
+    "ltv": 1110,
+    "churnRate": 8.3
+  },
+  {
+    "date": "2026-06-18",
+    "newMembers": 89,
+    "activeMembers": 27426,
+    "repurchaseRate": 21.2,
+    "ltv": 1204,
+    "churnRate": 9.4
+  },
+  {
+    "date": "2026-06-19",
+    "newMembers": 102,
+    "activeMembers": 27224,
+    "repurchaseRate": 27.7,
+    "ltv": 1151,
+    "churnRate": 6.8
+  },
+  {
+    "date": "2026-06-20",
+    "newMembers": 154,
+    "activeMembers": 26987,
+    "repurchaseRate": 24.3,
+    "ltv": 1093,
+    "churnRate": 9.4
+  },
+  {
+    "date": "2026-06-21",
+    "newMembers": 150,
+    "activeMembers": 28158,
+    "repurchaseRate": 24.6,
+    "ltv": 1273,
+    "churnRate": 7.2
+  },
+  {
+    "date": "2026-06-22",
+    "newMembers": 180,
+    "activeMembers": 27471,
+    "repurchaseRate": 24.8,
+    "ltv": 1126,
+    "churnRate": 6.4
+  },
+  {
+    "date": "2026-06-23",
+    "newMembers": 180,
+    "activeMembers": 27890,
+    "repurchaseRate": 24.1,
+    "ltv": 1005,
+    "churnRate": 7.7
+  },
+  {
+    "date": "2026-06-24",
+    "newMembers": 148,
+    "activeMembers": 27671,
+    "repurchaseRate": 26.9,
+    "ltv": 1256,
+    "churnRate": 9.1
+  },
+  {
+    "date": "2026-06-25",
+    "newMembers": 147,
+    "activeMembers": 27393,
+    "repurchaseRate": 21.8,
+    "ltv": 1347,
+    "churnRate": 8.6
+  },
+  {
+    "date": "2026-06-26",
+    "newMembers": 129,
+    "activeMembers": 27065,
+    "repurchaseRate": 27.0,
+    "ltv": 1252,
+    "churnRate": 8.4
+  }
+]
