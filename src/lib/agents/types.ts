@@ -173,6 +173,6 @@ export interface AnalysisResult {
   hasComparison: boolean; // 是否有上一期可比（30 天档为 false）
   dataSources: number; // 4
   /** V1.1：查询治理结论（分级 / 覆盖率 / 风险 / 响应策略 / 事件归因） */
-  governance?: GovernanceVerdict;
+  governance: GovernanceVerdict;
   trace: AgentTrace;
 }
