@@ -169,23 +169,42 @@ const CHANNELS = channelRows as ChannelRow[];
 
 export function aggregateChannels(range: Range): ChannelAggregate[] {
   const { current, previous, hasComparison } = windowOf(CHANNELS, range);
+
+  // 单一数据源对账：业务表(01) 为 GMV/订单的权威总量，渠道表(04) 只提供「分布结构」。
+  // 两份 mock 数据集独立生成、量级不一致（渠道表仅占业务表 ~15%），
+  // 故按各渠道占比把业务总量分摊回渠道，确保 Σ渠道 GMV = KPI GMV、Σ渠道订单 = KPI 订单，
+  // 同时保留各渠道的份额结构、环比趋势与 ROI（rate 类不受分摊影响）。
+  const biz = windowOf(BIZ, range);
+  const bizGmv = sum(biz.current, "gmv");
+  const bizOrders = sum(biz.current, "orders");
+  const bizPrevGmv = hasComparison ? sum(biz.previous, "gmv") : 0;
+  const bizPrevOrders = hasComparison ? sum(biz.previous, "orders") : 0;
+
+  const chGmvTotal = sum(current, "gmv") || 1;
+  const chOrdersTotal = sum(current, "orders") || 1;
+  const chPrevGmvTotal = hasComparison ? sum(previous, "gmv") || 1 : 1;
+  const chPrevOrdersTotal = hasComparison ? sum(previous, "orders") || 1 : 1;
+
   const names = Array.from(new Set(current.map((r) => r.channel)));
   return names.map((name) => {
     const cur = current.filter((r) => r.channel === name);
-    const gmv = sum(cur, "gmv");
+    const rawGmv = sum(cur, "gmv");
+    // 按占比分摊业务总量
+    const gmv = (rawGmv / chGmvTotal) * bizGmv;
+    const orders = Math.round((sum(cur, "orders") / chOrdersTotal) * bizOrders);
+
     let prevGmv: number | null = null;
     let gmvDelta: number | null = null;
     if (hasComparison) {
       const prev = previous.filter((r) => r.channel === name);
-      if (prev.length) {
-        prevGmv = sum(prev, "gmv");
-        gmvDelta = pct(gmv, prevGmv);
-      }
+      const rawPrevGmv = sum(prev, "gmv");
+      prevGmv = (rawPrevGmv / chPrevGmvTotal) * bizPrevGmv;
+      gmvDelta = pct(gmv, prevGmv);
     }
     return {
       channel: CHANNEL_NAME[name] ?? name,
       gmv,
-      orders: sum(cur, "orders"),
+      orders,
       conversion: avg(cur, "conversion_rate"),
       roi: avg(cur, "roi"),
       prevGmv,
@@ -223,6 +242,13 @@ export function aggregateCrm(range: Range): CrmAggregate {
   const { current, previous, hasComparison } = windowOf(MEMBERS, range);
   const repurchaseRate = avg(current, "repurchase_rate");
   const prevRepurchaseRate = hasComparison ? avg(previous, "repurchase_rate") : null;
+  // LTV 按 02A 字典 demo 公式「90天GMV / 活跃会员数」对账推导（单一数据源 = 业务表 + 会员表）。
+  // 锚定 90 天口径、与所选 range 无关（生命周期指标本就不应随 7/30 天窗口剧烈波动），
+  // 确保指标详情抽屉展示的公式与 KPI 数值可验证一致。
+  const w90biz = windowOf(BIZ, 90);
+  const w90mem = windowOf(MEMBERS, 90);
+  const active90 = avg(w90mem.current, "active_members") || 1;
+  const ltv = Math.round(sum(w90biz.current, "gmv") / active90);
   return {
     newMembers: sum(current, "new_members"),
     activeMembers: Math.round(avg(current, "active_members")),
@@ -230,7 +256,7 @@ export function aggregateCrm(range: Range): CrmAggregate {
     prevRepurchaseRate,
     repurchaseDelta:
       prevRepurchaseRate !== null ? repurchaseRate - prevRepurchaseRate : null,
-    ltv: Math.round(avg(current, "ltv")),
+    ltv,
     churnRate: avg(current, "churn_rate"),
     vipMembers: Math.round(avg(current, "vip_members")),
   };
