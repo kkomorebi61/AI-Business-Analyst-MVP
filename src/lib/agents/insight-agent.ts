@@ -12,7 +12,7 @@
  * 归因到具体经营事件的能力在 Query Governance 阶段（接入 08_business_events）补齐。
  */
 
-import type { ChannelAggregate } from "@/lib/data/daily";
+import type { ChannelAggregate } from "@/lib/data/csv-engine";
 import { RECOMMENDATIONS, type Role } from "@/lib/kb/metric-kb";
 import type { DataAgentOutput } from "./data-agent";
 import { buildChannelEvidence, buildMetricEvidence } from "./evidence-engine";

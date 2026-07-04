@@ -22,28 +22,29 @@ describe("resolveKey (中英展示名 → MetricKey 统一解析)", () => {
   });
 });
 
-// 事件日期：618预热 04-23 / 库存缺货 05-07 / 会员专属 05-24 / 企微触达 06-14 / 爆款新品 06-26
+// CSV 事件（business_events.csv）：618预热 04-21 / 核心商品缺货 05-05 / VIP专属 05-18 /
+//                                企微触达异常 06-01 / 新品上市 06-10 / 618大促 06-18
 const JUNE = { windowStart: "2026-06-01", windowEnd: "2026-06-30" };
 
 describe("attributeEvents (窗口 + 方向匹配)", () => {
-  it("GMV 上涨 + 6 月窗口 → 命中爆款新品（Positive↔up）", () => {
+  it("GMV 上涨 + 6 月窗口 → 命中新品上市 / 618大促（Positive↔up）", () => {
     const r = attributeEvents({ movements: [{ metric: "gmv", direction: "up" }], ...JUNE });
     const names = r.map((e) => e.event_name);
-    expect(names).toContain("爆款新品上线");
-    expect(r.find((e) => e.event_name === "爆款新品上线")?.matched_metrics).toContain("gmv");
+    expect(names).toContain("新品上市");
+    expect(r.find((e) => e.event_name === "新品上市")?.matched_metrics).toContain("gmv");
   });
 
-  it("复购下降 + 6 月窗口 → 命中企微触达下降（Negative↔down）", () => {
+  it("复购下降 + 6 月窗口 → 命中企微触达异常（Negative↔down）", () => {
     const r = attributeEvents({ movements: [{ metric: "repurchaseRate", direction: "down" }], ...JUNE });
-    expect(r.map((e) => e.event_name)).toContain("企微触达下降");
+    expect(r.map((e) => e.event_name)).toContain("企微触达异常");
   });
 
-  it("方向不一致 → 不匹配（GMV 下降 ≠ 爆款新品 Positive）", () => {
+  it("方向不一致 → 不匹配（GMV 下降 ≠ 新品上市 Positive）", () => {
     const r = attributeEvents({ movements: [{ metric: "gmv", direction: "down" }], ...JUNE });
-    expect(r.map((e) => e.event_name)).not.toContain("爆款新品上线");
+    expect(r.map((e) => e.event_name)).not.toContain("新品上市");
   });
 
-  it("事件不在窗口内 → 不匹配（6 月窗口不含 04-23 618预热）", () => {
+  it("事件不在窗口内 → 不匹配（6 月窗口不含 04-21 618预热）", () => {
     const r = attributeEvents({ movements: [{ metric: "gmv", direction: "up" }], ...JUNE });
     expect(r.map((e) => e.event_name)).not.toContain("618预热活动");
   });

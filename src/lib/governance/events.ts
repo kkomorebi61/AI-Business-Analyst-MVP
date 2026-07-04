@@ -1,8 +1,13 @@
 /**
  * Query Governance —— 业务事件归因（doc 11 + 05 Mock Data V2「经营剧情」）
  *
- * 数据源：08_business_events.json（5 条事件：618预热 / 库存缺货 / 会员专属 / 企微触达下降 / 爆款新品）。
+ * 数据源：data/business_events.csv（03A Schema · 6 条事件：
+ *   618预热 / 核心商品缺货 / VIP专属 / 企微触达异常 / 新品上市 / 618大促）。
  * 规则（05）：所有异常波动必须能追溯到对应经营事件，禁止出现无原因异常。
+ *
+ * CSV（03A）只给 event_type / impact_direction / description，不含 impact_metrics。
+ * 故由 event_type 确定性地派生受影响指标（impact_metrics，英文展示名），
+ * 并把 CSV 的枚举（MARKETING/POSITIVE…）映射到归因层使用的展示枚举。
  *
  * 匹配条件（三者同时满足）：
  *   1. 事件 event_date 落在当前时间窗口 [windowStart, windowEnd] 内；
@@ -13,7 +18,7 @@
  * 故用统一的 DISPLAY_TO_KEY 解析到 MetricKey 后再比对。
  */
 
-import eventsJson from "@/lib/data/mock-data/08_business_events.json";
+import { facts } from "@/lib/data/csv-engine";
 import type { MetricKey } from "@/lib/kb/metric-kb";
 import type { EventAttribution } from "@/lib/agents/types";
 
@@ -26,7 +31,35 @@ interface BusinessEvent {
   description: string;
 }
 
-const EVENTS = eventsJson as BusinessEvent[];
+/** CSV event_type → 归因层展示分类（EventAttribution.event_type 枚举） */
+const TYPE_TO_DISPLAY: Record<string, BusinessEvent["event_type"]> = {
+  MARKETING: "Marketing",
+  PROMOTION: "Marketing",
+  INVENTORY: "Supply Chain",
+  PRODUCT: "Product",
+  CRM: "Member",
+  SCRM: "Member",
+};
+
+/** CSV event_type → 受影响指标（英文展示名，经 resolveKey 解析为 MetricKey） */
+const TYPE_TO_IMPACT: Record<string, string[]> = {
+  MARKETING: ["GMV", "Orders", "Conversion Rate"],
+  PROMOTION: ["GMV", "Orders"],
+  INVENTORY: ["GMV", "Orders"],
+  PRODUCT: ["GMV", "Orders", "Conversion Rate"],
+  CRM: ["Repurchase Rate", "VIP GMV"],
+  SCRM: ["Conversion Rate", "Repurchase Rate"],
+};
+
+/** 由 CSV 事实行构造归因用事件（单一数据源 = business_events.csv） */
+const EVENTS: BusinessEvent[] = facts.events.map((e) => ({
+  event_date: e.event_date,
+  event_name: e.event_name,
+  event_type: TYPE_TO_DISPLAY[e.event_type] ?? "Marketing",
+  impact_metrics: TYPE_TO_IMPACT[e.event_type] ?? ["GMV"],
+  impact_direction: e.impact_direction === "POSITIVE" ? "Positive" : "Negative",
+  description: e.description,
+}));
 
 /** 展示名 → MetricKey（英文事件名 + 中文 Evidence 名统一映射） */
 const DISPLAY_TO_KEY: Record<string, MetricKey> = {

@@ -8,6 +8,7 @@
  * 源系统（Data Trust）：OMS / CRM / CDP / Marketing Platform
  */
 
+import type { Range } from "@/lib/data/daily";
 import {
   aggregateChannels,
   aggregateCrm,
@@ -16,9 +17,8 @@ import {
   type ChannelAggregate,
   type CrmAggregate,
   type MarketingAggregate,
-  type Range,
   type SalesAggregate,
-} from "@/lib/data/daily";
+} from "@/lib/data/csv-engine";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
 import { metricTrustInfo } from "@/lib/data/data-trust";
 import type { KpiPoint } from "./types";

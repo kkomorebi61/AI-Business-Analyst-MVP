@@ -1,0 +1,7 @@
+event_id,event_date,event_name,event_type,impact_direction,impact_level,description
+EVT001,2026-04-21,618预热活动,MARKETING,POSITIVE,MEDIUM,618 预热活动启动，GMV +15%、访客 +20%，持续 7 天
+EVT002,2026-05-05,核心商品缺货,INVENTORY,NEGATIVE,HIGH,核心商品（空气炸锅/电饭煲）缺货，GMV -20%、订单 -15%，持续 5 天
+EVT003,2026-05-18,VIP专属活动,CRM,POSITIVE,MEDIUM,VIP 专属营销活动，复购率 +10%、VIP GMV +15%，持续 7 天
+EVT004,2026-06-01,企微触达异常,SCRM,NEGATIVE,MEDIUM,企业微信触达系统异常，触达率 -30%、回复率 -20%，持续 3 天
+EVT005,2026-06-10,新品上市,PRODUCT,POSITIVE,MEDIUM,新品（净水器）上市，GMV +10%、访客 +15%，持续 10 天
+EVT006,2026-06-18,618大促,PROMOTION,POSITIVE,HIGH,618 大促正式爆发，GMV +50%、订单 +40%、访客 +60%，持续 5 天

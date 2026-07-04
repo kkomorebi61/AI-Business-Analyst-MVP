@@ -10,7 +10,7 @@
  * 原则：数据事实优先，不虚构；无上一期时如实留空。
  */
 
-import type { ChannelAggregate } from "@/lib/data/daily";
+import type { ChannelAggregate } from "@/lib/data/csv-engine";
 import { trustForSources } from "@/lib/data/data-trust";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
 import type { DataAgentOutput } from "./data-agent";
