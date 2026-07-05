@@ -14,10 +14,12 @@ import {
   aggregateCrm,
   aggregateMarketing,
   aggregateSales,
+  aggregateScrm,
   type ChannelAggregate,
   type CrmAggregate,
   type MarketingAggregate,
   type SalesAggregate,
+  type ScrmAggregate,
 } from "@/lib/data/csv-engine";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
 import { metricTrustInfo } from "@/lib/data/data-trust";
@@ -35,19 +37,21 @@ export interface DataAgentOutput {
   channels: ChannelAggregate[];
   crm: CrmAggregate;
   marketing: MarketingAggregate;
+  scrm: ScrmAggregate;
 }
 
 /** 系统真实使用到的源系统（对齐 07_data_sources） */
-const SOURCE_SYSTEMS = ["OMS", "CRM", "CDP", "Marketing Platform"];
+const SOURCE_SYSTEMS = ["OMS", "CRM", "CDP", "Marketing Platform", "Enterprise WeChat"];
 
 export function dataAgent(metrics: MetricKey[], range: Range): DataAgentOutput {
   const sales = aggregateSales(range);
   const channels = aggregateChannels(range);
   const crm = aggregateCrm(range);
   const marketing = aggregateMarketing(range);
+  const scrm = aggregateScrm(range);
 
   const kpis = metrics
-    .map((m) => buildKpi(m, sales, crm, channels, marketing))
+    .map((m) => buildKpi(m, sales, crm, channels, marketing, scrm))
     .filter((k): k is KpiPoint => k !== null)
     .map((k) => ({ ...k, trust: metricTrustInfo(k.key) }));
   const trend = sales.daily.map((d) => ({ date: d.date, gmv: d.gmv, orders: d.orders }));
@@ -63,6 +67,7 @@ export function dataAgent(metrics: MetricKey[], range: Range): DataAgentOutput {
     channels,
     crm,
     marketing,
+    scrm,
   };
 }
 
@@ -82,6 +87,7 @@ function buildKpi(
   crm: CrmAggregate,
   channels: ChannelAggregate[],
   marketing: MarketingAggregate,
+  scrm: ScrmAggregate,
 ): KpiPoint | null {
   const spec = METRIC_SPECS[key];
   const base = { key, name: spec.name, en: spec.en, prevLabel: "上一周期", icon: iconOf(key) };
@@ -122,6 +128,18 @@ function buildKpi(
       return { ...base, value: crm.vipMembers.toLocaleString("zh-CN"), prevValue: "—", deltaPct: 0, direction: "up" };
     case "roi":
       return rateKpi(base, marketing.roi.toFixed(2), marketing.prevRoi !== null ? marketing.prevRoi.toFixed(2) : "—", marketing.roiDelta ?? undefined);
+    case "reachRate":
+      return rateKpi(base, `${scrm.reachRate.toFixed(1)}%`, scrm.prevReachRate !== null ? `${scrm.prevReachRate.toFixed(1)}%` : "—", scrm.reachRateDelta ?? undefined);
+    case "replyRate":
+      return rateKpi(base, `${scrm.replyRate.toFixed(1)}%`, scrm.prevReplyRate !== null ? `${scrm.prevReplyRate.toFixed(1)}%` : "—", scrm.replyRateDelta ?? undefined);
+    case "scrmConversion":
+      return rateKpi(base, `${scrm.scrmConversion.toFixed(1)}%`, scrm.prevScrmConversion !== null ? `${scrm.prevScrmConversion.toFixed(1)}%` : "—", scrm.scrmConversionDelta ?? undefined);
+    case "couponRedemption":
+      return rateKpi(base, `${scrm.couponRedemption.toFixed(1)}%`, scrm.prevCouponRedemption !== null ? `${scrm.prevCouponRedemption.toFixed(1)}%` : "—", scrm.couponRedemptionDelta ?? undefined);
+    case "totalFriends":
+      return kpi(base, scrm.totalFriends.toLocaleString("zh-CN"), scrm.prevTotalFriends !== null ? scrm.prevTotalFriends.toLocaleString("zh-CN") : "—", scrm.totalFriendsDelta ?? undefined);
+    case "newFriends":
+      return kpi(base, scrm.newFriends.toLocaleString("zh-CN"), scrm.prevNewFriends !== null ? scrm.prevNewFriends.toLocaleString("zh-CN") : "—", scrm.newFriendsDelta ?? undefined);
     default:
       return null;
   }
@@ -163,6 +181,12 @@ function iconOf(key: MetricKey): string {
     churnRate: "churn",
     vipMembers: "vip",
     roi: "roi",
+    reachRate: "megaphone",
+    replyRate: "activity",
+    scrmConversion: "target",
+    couponRedemption: "tag",
+    totalFriends: "users",
+    newFriends: "users",
   };
   return map[key] ?? "gmv";
 }

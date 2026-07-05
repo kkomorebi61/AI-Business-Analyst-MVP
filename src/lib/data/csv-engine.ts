@@ -103,6 +103,18 @@ interface MemberFact {
   churn_members: number;
 }
 
+interface ScrmFact {
+  date: string;
+  consultants: number;
+  total_friends: number;
+  new_friends: number;
+  reached_users: number;
+  reply_users: number;
+  converted_users: number;
+  coupon_sent: number;
+  coupon_used: number;
+}
+
 interface BusinessEventFact {
   event_id: string;
   event_date: string;
@@ -138,6 +150,18 @@ const MEMBER_FACTS: MemberFact[] = loadTable("daily_member_metrics.csv").map((r)
   churn_members: num(r, "churn_members"),
 }));
 
+const SCRM_FACTS: ScrmFact[] = loadTable("daily_scrm_metrics.csv").map((r) => ({
+  date: r.date,
+  consultants: num(r, "consultants"),
+  total_friends: num(r, "total_friends"),
+  new_friends: num(r, "new_friends"),
+  reached_users: num(r, "reached_users"),
+  reply_users: num(r, "reply_users"),
+  converted_users: num(r, "converted_users"),
+  coupon_sent: num(r, "coupon_sent"),
+  coupon_used: num(r, "coupon_used"),
+}));
+
 const EVENT_FACTS: BusinessEventFact[] = loadTable("business_events.csv").map((r) => ({
   event_id: r.event_id,
   event_date: r.event_date,
@@ -152,6 +176,7 @@ const EVENT_FACTS: BusinessEventFact[] = loadTable("business_events.csv").map((r
 export const facts = {
   channel: CHANNEL_FACTS,
   member: MEMBER_FACTS,
+  scrm: SCRM_FACTS,
   events: EVENT_FACTS,
 };
 
@@ -367,6 +392,80 @@ export function aggregateCrm(range: Range): CrmAggregate {
     prevRepurchaseRate,
     repurchaseDelta: prevRepurchaseRate !== null ? c.repurchaseRate - prevRepurchaseRate : null,
     ltv,
+  };
+}
+
+/* -------------------------------- SCRM 聚合 -------------------------------- */
+/*
+  企微运营事实表（daily_scrm_metrics）：
+  ReachRate         SELECT SUM(reached_users) / SUM(total_friends)
+  ReplyRate         SELECT SUM(reply_users)   / SUM(reached_users)
+  ScrmConversion    SELECT SUM(converted_users) / SUM(reached_users)   触达→成交端到端
+  CouponRedemption  SELECT SUM(coupon_used)   / SUM(coupon_sent)
+  TotalFriends      期末值（窗口末行 total_friends，存量口径，非 Σ）
+  NewFriends        SELECT SUM(new_friends)
+*/
+
+export interface ScrmAggregate {
+  reachRate: number;
+  replyRate: number;
+  scrmConversion: number;
+  couponRedemption: number;
+  totalFriends: number;
+  newFriends: number;
+  prevReachRate: number | null;
+  reachRateDelta: number | null; // pp
+  prevReplyRate: number | null;
+  replyRateDelta: number | null; // pp
+  prevScrmConversion: number | null;
+  scrmConversionDelta: number | null; // pp
+  prevCouponRedemption: number | null;
+  couponRedemptionDelta: number | null; // pp
+  prevTotalFriends: number | null;
+  totalFriendsDelta: number | null; // pct
+  prevNewFriends: number | null;
+  newFriendsDelta: number | null; // pct
+}
+
+/** 窗口末行（按日期升序）的 total_friends —— 存量口径，防误 Σ */
+function lastFriends(rows: ScrmFact[]): number {
+  if (!rows.length) return 0;
+  const sorted = [...rows].sort((a, b) => a.date.localeCompare(b.date));
+  return sorted[sorted.length - 1].total_friends;
+}
+
+function scrmOf(rows: ScrmFact[]) {
+  const reached = sum(rows, (r) => r.reached_users) || 1;
+  const friends = sum(rows, (r) => r.total_friends) || 1;
+  const sent = sum(rows, (r) => r.coupon_sent) || 1;
+  return {
+    reachRate: (reached / friends) * 100,
+    replyRate: (sum(rows, (r) => r.reply_users) / reached) * 100,
+    scrmConversion: (sum(rows, (r) => r.converted_users) / reached) * 100,
+    couponRedemption: (sum(rows, (r) => r.coupon_used) / sent) * 100,
+    totalFriends: lastFriends(rows),
+    newFriends: sum(rows, (r) => r.new_friends),
+  };
+}
+
+export function aggregateScrm(range: Range): ScrmAggregate {
+  const { current, previous, hasComparison } = dateWindow(SCRM_FACTS, range);
+  const c = scrmOf(current);
+  const p = hasComparison ? scrmOf(previous) : null;
+  return {
+    ...c,
+    prevReachRate: p?.reachRate ?? null,
+    reachRateDelta: p ? c.reachRate - p.reachRate : null,
+    prevReplyRate: p?.replyRate ?? null,
+    replyRateDelta: p ? c.replyRate - p.replyRate : null,
+    prevScrmConversion: p?.scrmConversion ?? null,
+    scrmConversionDelta: p ? c.scrmConversion - p.scrmConversion : null,
+    prevCouponRedemption: p?.couponRedemption ?? null,
+    couponRedemptionDelta: p ? c.couponRedemption - p.couponRedemption : null,
+    prevTotalFriends: p?.totalFriends ?? null,
+    totalFriendsDelta: p ? pct(c.totalFriends, p.totalFriends) : null,
+    prevNewFriends: p?.newFriends ?? null,
+    newFriendsDelta: p ? pct(c.newFriends, p.newFriends) : null,
   };
 }
 
