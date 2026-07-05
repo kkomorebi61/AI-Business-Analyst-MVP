@@ -13,7 +13,7 @@
 | 前端 | Next.js 14（App Router）· TypeScript · TailwindCSS · shadcn 风格组件 · lucide-react |
 | 图表 | **纯手写 SVG**（趋势折线图），不引入 recharts 等图表库 |
 | 后端 | Next.js API Routes（`/api/analyze`、`/api/kpis`） |
-| 数据 | Mock JSON（`src/lib/data/mock-data/01~08`，90 天 8 数据集） |
+| 数据 | CSV 单一事实源（`data/*.csv` 4 张事实表 · 03A Schema · 90 天；见「Phase 7 · CSV Metric Engine」） |
 | 测试 | Vitest（**devDependency**，不进运行时） |
 | LLM | GLM 5.1（**预留接口**，默认规则引擎，无需 Key） |
 
@@ -28,7 +28,7 @@ npm install
 npm run dev        # http://localhost:3000
 # 或生产构建
 npm run build && npm start
-npm test           # 运行 47 条 Vitest 单测（governance 引擎）
+npm test           # 运行 105 条 Vitest 单测（governance + 数据完整性 + SCRM 聚合）
 ```
 
 MVP **无需任何环境变量**。接入 GLM 时复制 `.env.local.example` → `.env.local` 并设 `ANALYST_AGENT_MODE=glm`（见「Agent 实现方案」）。
@@ -43,8 +43,10 @@ MVP **无需任何环境变量**。接入 GLM 时复制 `.env.local.example` →
 | V1.1 | 时间范围分析 | 7/14/30/90 天切换，90 天 Mock 数据层，纯 SVG 趋势图 |
 | Phase 2 | 数据可信层（Data Trust） | Evidence Engine：每条结论挂 before/after/血缘/覆盖率 |
 | Phase 3 | 数据可信中心（`/trust`） | 数据源注册表 / 时效 / 健康度 / 覆盖率 / 血缘可视化 |
-| Phase 4 | 查询治理（Query Governance） | A/B/C 分级 + 覆盖率门 + 4 级响应 + 异常暂停 + 事件归因（47 单测） |
+| Phase 4 | 查询治理（Query Governance） | A/B/C 分级 + 覆盖率门 + 4 级响应 + 异常暂停 + 事件归因 |
 | Phase 5 | 文档与 Bundle | README 同步 V2；KPI 聚合下沉 API，客户端瘦身 |
+| Phase 6 | 指标可解释性 | `/metrics` 定义中心 + Detail Drawer + KPI 内联 Trust（V3 指标元数据 + Trust Score） |
+| Phase 7 | CSV Metric Engine | 数据层统一到 `data/*.csv` 单一事实源；企微（SCRM）指标接入 |
 
 ---
 
@@ -58,6 +60,7 @@ AI-Business-Analyst-MVP/
 │   │   ├── layout.tsx / globals.css / page.tsx
 │   │   ├── report/page.tsx       # 分析报告页（searchParams → ReportView）
 │   │   ├── trust/page.tsx        # 数据可信中心（Phase 3）
+│   │   ├── metrics/page.tsx      # 指标定义中心（Phase 6）
 │   │   └── api/
 │   │       ├── analyze/route.ts  # POST：跑 Agent 工作流 → AnalysisResult
 │   │       └── kpis/route.ts     # GET：按 range 服务端聚合 → KPI（Phase 5，避免 JSON 进客户端）
@@ -66,22 +69,25 @@ AI-Business-Analyst-MVP/
 │   │   ├── icons.tsx             # string key → lucide 图标
 │   │   ├── top-nav.tsx           # 顶栏（首页 · 问答 · 数据源）
 │   │   ├── home/                 # 首页：workspace（提问+视角+时间范围+推荐卡）/ kpi-sidebar / range-switcher
+│   │   ├── metrics/              # 指标中心：metrics-center-client / metric-detail-drawer / metric-explain-link
 │   │   └── report/               # 报告：header / summary / kpi-cards / findings /
 │   │                             #       risk / recommendations / trend-chart(SVG) /
 │   │                             #       query-banner(分级) / evidence-drawer / evidence-inline
 │   └── lib/
 │       ├── utils.ts              # cn / 数字·百分比格式化
 │       ├── data/
-│       │   ├── mock-data/01~08   # V2 · 90 天 8 数据集（经营/会员/营销/渠道/分层/SCRM/数据源/事件）
-│       │   ├── daily.ts          # 按 range(7/14/30/90) 窗口聚合 + 环比 + 日序列
-│       │   └── data-trust.ts     # 数据源注册表（07）→ 覆盖率/健康度/血缘
-│       ├── kb/metric-kb.ts       # 指标知识库（定义/公式/血缘/归因规则/推荐行动）
-│       ├── governance/           # Phase 4：查询治理引擎（纯函数，47 单测）
+│       │   ├── csv-engine.ts     # [P7] CSV Metric Engine：data/*.csv → SQL 式聚合（服务端专用，禁客户端引用）
+│       │   ├── daily.ts          # [P7] client-safe：Range/RANGES/rangeLabel（聚合已下沉 csv-engine）
+│       │   ├── data-trust.ts     # 数据源注册表（07）→ 覆盖率/健康度/血缘 + 指标 Trust Score
+│       │   ├── mock-data/07_data_sources.json  # 仅剩 Data Trust 注册表元数据（事实数据已迁 CSV）
+│       │   └── __tests__/        # data-integrity + csv-engine-scrm（口径回归）
+│       ├── kb/metric-kb.ts       # [P6/P7] 指标知识库 V3：18 指标（含 6 个 SCRM）企业级元数据 + ROLE/搜索
+│       ├── governance/           # Phase 4：查询治理引擎（纯函数 + 单测）
 │       │   ├── classify.ts       #   A/B/C 分级 + 必需源齐全度
 │       │   ├── coverage.ts       #   覆盖率评估（High≥80 / Medium 50–<80 / Low<50）
 │       │   ├── risk.ts           #   响应策略决策（direct/partial/refuse/suspend）
 │       │   ├── anomaly.ts        #   异常检测（量级 5× + 率类 ≥20pp）
-│       │   ├── events.ts         #   业务事件归因（08_business_events）
+│       │   ├── events.ts         #   业务事件归因（[P7] 读 business_events.csv）
 │       │   └── index.ts          #   buildVerdict / applyStrategy / enrichInsight
 │       └── agents/
 │           ├── types.ts          # AnalysisResult / Evidence / GovernanceVerdict 等共享类型
@@ -180,7 +186,7 @@ AI-Business-Analyst-MVP/
 
 ## 5. 查询治理（Phase 4 · Query Governance）
 
-来源：`11_Query_Governance`（分级 / 覆盖率 / 风险 / 响应 / 异常）+ `10_Data_Trust`。引擎位于 `src/lib/governance/`，**纯函数 + 47 单测**，`insight-agent.ts` 与 `api/analyze/route.ts` 全程未改。
+来源：`11_Query_Governance`（分级 / 覆盖率 / 风险 / 响应 / 异常）+ `10_Data_Trust`。引擎位于 `src/lib/governance/`，**纯函数 + 单测守护**，`insight-agent.ts` 与 `api/analyze/route.ts` 全程未改。
 
 **查询分级（A/B/C）**
 - **A 直答**：指标在库 + 必需源齐全 → 完整摘要/发现/风险/建议
@@ -191,7 +197,7 @@ AI-Business-Analyst-MVP/
 
 **4 级响应策略**（按降级层实现，非缓存）：`direct`（直答）→ `partial`（部分）→ `refuse`（拒答）→ `suspend`（数据异常暂停）。异常检测：量级 ≥ 5× 且率类另需 ≥ 20pp。
 
-**业务事件归因**（`08_business_events.json`）：将周期内命中的业务事件（618 预热 / 爆款新品 / 企微触达下降等）挂为 Finding/Risk 的根因。
+**业务事件归因**（[Phase 7] 读 `business_events.csv`，由 `event_type` 派生 `impact_metrics`）：将周期内命中的业务事件（618 预热 / 新品上市 / 企微触达下降等）挂为 Finding/Risk 的根因。
 
 **开发态演示开关**——Mock 全 High、波动小（≤1.12×），异常/Medium/Low 无法被真实问题触发；提问含以下关键词可强制注入对应裁决，便于浏览器演示全部横幅：`演示数据异常`(→suspend) / `演示低覆盖`(→refuse) / `演示中等覆盖`(→partial)。
 
@@ -205,16 +211,16 @@ AI-Business-Analyst-MVP/
 - **90 天档**：无上一周期 → `hasComparison=false`，KPI 不显示环比，摘要改述累计值。
 - 四处联动：首页 RangeSwitcher + KPI 仪表盘（`/api/kpis`）、报告页 RangeSwitcher（重跑 `/api/analyze`）、KPI 驾驶舱、GMV 日趋势图（点数 = range）。
 
-**验证（实测，CEO 视角，提问「本周业务表现如何？」）**
+**验证（实测 · CSV 单一事实源，CEO 视角，提问「本周业务表现如何？」）**
 
 | range | GMV | 环比 | 摘要要点 | 命中事件 |
 | --- | --- | --- | --- | --- |
-| 7 天 | ¥99万 | +8.5% | 整体积极，增长主要来自小红书渠道 +92.8% | 爆款新品上线 |
-| 14 天 | ¥190万 | +8.8% | 增长主要来自天猫 +25.7%；高价值会员复购走弱 1.3pp | 爆款新品上线 |
-| 30 天 | ¥388万 | +12.4% | 增长主要来自小程序 +15.2%；复购走弱 0.7pp | 企微触达下降、爆款新品上线 |
-| 90 天 | ¥1080万 | —（无上一期） | 累计口径，不展示环比 | 618 预热、爆款新品上线 |
+| 7 天 | ¥116万 | −25.1% | 整体承压，各渠道分化、高价值会员复购走弱 0.2pp | — |
+| 14 天 | ¥271万 | +32.9% | 增长主要来自小红书 +34.6%；复购走弱 4.3pp | 618大促 |
+| 30 天 | ¥500万 | +46.1% | 增长主要来自小程序 +48.6% | 新品上市、618大促 |
+| 90 天 | ¥1168万 | —（无上一期） | 累计口径：订单 58,854 / 客单价 ¥198 / 转化率 4.2% | 618预热、新品上市、618大促 |
 
-> 暂不实现预测功能。
+> 暂不实现预测功能。数据集固定种子可复现（`scripts/gen_csv_mock_data.py`）。
 
 ---
 
@@ -231,8 +237,38 @@ AI-Business-Analyst-MVP/
 | `/`（首页） | 122 kB → **109 kB**（−13 kB） |
 | `/report`（报告） | 117 kB → **106 kB**（−11 kB） |
 
+> 注：上表为 Phase 5（JSON mock 时期）实测。Phase 6 指标元数据进客户端抽屉后 First Load 各 +~7 kB gzip；Phase 7 的 CSV Metric Engine 为服务端专用（顶部 `import fs`），不进客户端 bundle。
+
 ---
 
-## 8. 明确不做（Master Prompt 约束）
+## 8. Phase 6 · 指标可解释性（Explainability）
+
+目标：每个核心指标具备企业级可解释性（对齐 `02A_Business_Metric_Dictionary`）。来源：`02_Metric_KB` + `02A` + `10_Data_Trust` + `11_Query_Governance`。
+
+- **指标知识库 V3**（`metric-kb.ts`）：18 个指标（12 核心 + 6 SCRM）补齐企业级元数据 —— `metric_name / definition / business_meaning / formula / included_scope / excluded_scope / time_window / data_source / source_keys / owner / update_frequency / related_metrics / aliases / example / breakdown / lineage`；附 `ROLE_METRICS / ALL_METRICS / searchMetrics / resolveMetricKey`。
+- **指标 Trust Score**（`data-trust.ts`）：`metricTrustInfo(key)` 按 doc 10 §10 公式 —— `Trust Score = Coverage×40% + Freshness×30% + Health×20% + Completeness×10%`，分级 High ≥90 / Medium 75–89 / Low 60–74 / Caution <60。`dataAgent` 一处注入 → `/api/kpis` 与 `/api/analyze` 的 KPI 同时带 `trust`。
+- **`/metrics` 指标定义中心**：搜索 + 角色过滤 + 指标卡网格；`MetricDetailDrawer`（点 KPI 弹：定义 / 公式 / Include / Exclude / 更新频率 + 血缘 + Trust）；`MetricExplainLink`（Insight「该指标如何计算」入口）。
+- **KPI 内联 Trust**：首页侧边栏与报告 KPI 卡均内联「来源 / 覆盖率 / 健康 / 更新」，点击进 Detail Drawer。
+
+---
+
+## 9. Phase 7 · CSV Metric Engine（单一事实源）
+
+目标：数据层统一到 **CSV 单一事实源**，结果指标（GMV / ROI / LTV / 复购率…）一律不落盘、由引擎按 SQL 聚合得到。来源：`03A_Daily_Fact_Table_Schema` + `03B` 生成规则。
+
+- **四张事实表**（`data/*.csv`，03A Schema，固定种子可复现）：
+  - `daily_channel_metrics.csv` — 渠道经营（90 天 × 6 渠道 = 540 行）
+  - `daily_member_metrics.csv` — 会员运营（90 行）
+  - `daily_scrm_metrics.csv` — 企微运营（90 行）
+  - `business_events.csv` — 经营事件（6 行，供根因归因）
+- **CSV Metric Engine**（`csv-engine.ts`，服务端专用）：自带 RFC-4180 解析；启动时一次性载入并缓存；`aggregateSales / aggregateChannels / aggregateCrm / aggregateMarketing / aggregateScrm` 每函数标注等价 SQL。**Rule 1/2 天然成立** —— GMV 仅存于渠道表，总 GMV/订单 = Σ 渠道值，无需对账。
+- **数据层重构**：`daily.ts` 瘦身为 client-safe（仅 Range 工具，不含 `fs` —— 因客户端组件 import `RANGES`）；`dataAgent / evidence / insight` 改 import `csv-engine`（无感迁移）；`events.ts` 归因改读 `business_events.csv`（`event_type` 派生 `impact_metrics`）。删除 `mock-data/01~06 + 08` JSON（共 7 个），仅留 `07_data_sources.json`（Data Trust 注册表元数据）。
+- **SCRM 接入**（归档「未完成 #1」，已交付）：`aggregateScrm` 暴露 6 个企微指标 —— 触达率（`Σreached/Σfriends`）、回复率（`Σreply/Σreached`）、企微成交率（`Σconverted/Σreached`）、发券核销率（`Σused/Σsent`）、企微好友总数（窗口末行存量）、新增好友（`Σnew`）；归入 `CRM_MANAGER`，CRM 视角报告页自动展示。Trust 由已注册的 `Enterprise WeChat` 源自动算出（coverage 76 / Delayed / Low，演示企微数据时效偏弱）。
+
+**数据集关键量级**（经 `scripts/validate_csv_mock_data.py` 校验）：总 GMV ¥11,676,538 · 总订单 58,854 · 整体 AOV ¥198 · 转化率 4.23% · 退款率 3.45% · ROI 日级 4.15~4.30 · 会员 12,024→16,679（+38.71%）· 企微好友 18,096→28,069（+55.11%）。6 事件指纹可归因：618预热 +15% / 缺货 −20% / VIP复购 +10% / 企微触达 −30% / 新品 +10% / 618大促 +50%。
+
+---
+
+## 10. 明确不做（Master Prompt 约束）
 
 Forecast Agent / PPT 导出 / 营销自动化 / 数据库集成；GLM 模型路由兜底（GLM 未启用，rule 模式）。导出 PDF、分享按钮为 UI 占位。
