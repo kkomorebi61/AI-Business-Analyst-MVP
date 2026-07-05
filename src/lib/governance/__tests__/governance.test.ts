@@ -9,7 +9,8 @@ import {
 import { classifyAB } from "@/lib/governance/classify";
 import { assessCoverage } from "@/lib/governance/coverage";
 import { ANOMALY_TEXT, HIGH_REFUSE_TEXT } from "@/lib/governance/risk";
-import type { Finding, GovernanceVerdict, InsightAgentOutput } from "@/lib/agents/types";
+import type { Finding, GovernanceVerdict } from "@/lib/agents/types";
+import type { InsightAgentOutput } from "@/lib/agents/insight-agent";
 
 /** 构造完整 GovernanceVerdict（applyStrategy 只读 responseStrategy / mandatedText） */
 function verdict(over: Partial<GovernanceVerdict>): GovernanceVerdict {
