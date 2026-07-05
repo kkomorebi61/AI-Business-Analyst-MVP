@@ -347,51 +347,81 @@ export function aggregateChannels(range: Range): ChannelAggregate[] {
 
 /* -------------------------------- CRM 聚合 --------------------------------- */
 /*
-  NewMembers / ActiveMembers / VIP  : 来自 daily_member_metrics
-  RepurchaseRate = SUM(repeat_buyers) / SUM(buyers)
-  ChurnRate      = SUM(churn_members) / SUM(total_members)
-  LTV            = Σ90天 GMV / 平均活跃会员（生命周期口径，锚定 90 天，与 range 无关）
+  指标分两类（避免时间维度导致的数据认知错误）：
+
+  一、周期指标（Period · 受时间筛选影响，随 range 窗口变化）：
+    NewMembers      SELECT SUM(new_members)
+    ActiveMembers   周期内至少发生一次有效行为（登录/浏览/下单/活动参与）的会员数
+                    = MAX(daily_active_members) over window
+                    窗口越长 ⊇ 越短，MAX 单调不减 → 恒满足 90天 ≥ 30天 ≥ 7天
+                    （历史 bug：原取窗口日均，导致 7天 > 90天 的反逻辑）
+    RepurchaseRate  SELECT SUM(repeat_buyers) / SUM(buyers)
+
+  二、存量指标（Snapshot · 不受时间筛选影响，锚定「期末 / 近 90 天」）：
+    AsOf            期末日期（最新一行 date）→ 展示「截至 YYYY-MM-DD」
+    TotalMembers    期末 total_members（快照存量）
+    VipMembers      期末 vip_members（快照存量）
+    LTV             Σ90天GMV / 平均活跃会员（生命周期口径，锚定 90 天）
+    ChurnRate       Σ90(churn_members) / Σ90(total_members)（90 天滚动流失率）
+
+  快照指标一律不随 7/14/30/90 时间筛选器重新计算 —— 否则 VIP/LTV/流失率会
+  随窗口摆动，违背「存量指标」的统计含义。
 */
 
 export interface CrmAggregate {
+  /* —— 周期指标（受时间筛选影响）—— */
   newMembers: number;
   activeMembers: number;
   repurchaseRate: number;
   prevRepurchaseRate: number | null;
   repurchaseDelta: number | null;
-  ltv: number;
-  churnRate: number;
-  vipMembers: number;
+  /* —— 存量指标（快照，不受时间筛选影响）—— */
+  asOf: string; // 期末日期 YYYY-MM-DD
+  totalMembers: number; // 期末会员总数
+  vipMembers: number; // 期末 VIP 会员数
+  ltv: number; // 90 天口径 LTV
+  churnRate: number; // 90 天滚动流失率
 }
 
-function crmOf(rows: MemberFact[]) {
+/** 周期聚合（当期 / 上一期切片）—— 仅周期指标 */
+function crmPeriod(rows: MemberFact[]) {
   const buyers = sum(rows, (r) => r.buyers) || 1;
-  const total = sum(rows, (r) => r.total_members) || 1;
   return {
     newMembers: sum(rows, (r) => r.new_members),
-    activeMembers: Math.round(sum(rows, (r) => r.active_members) / rows.length),
+    activeMembers: rows.length ? Math.max(...rows.map((r) => r.active_members)) : 0,
     repurchaseRate: (sum(rows, (r) => r.repeat_buyers) / buyers) * 100,
-    churnRate: (sum(rows, (r) => r.churn_members) / total) * 100,
-    vipMembers: Math.round(sum(rows, (r) => r.vip_members) / rows.length),
+  };
+}
+
+/** 存量快照（与 range 无关）：锚定期末 + 近 90 天。range 切换不会改变返回值。 */
+function crmSnapshot() {
+  // 期末 = 最新日期那一行（按 date 排序取末位，防御性排序，文件本身已升序）
+  const sorted = [...MEMBER_FACTS].sort((a, b) => a.date.localeCompare(b.date));
+  const latest = sorted[sorted.length - 1];
+
+  const gmv90 = sum(DAY, (d) => d.gmv);
+  const m90 = MEMBER_FACTS.length ? sum(MEMBER_FACTS, (r) => r.active_members) / MEMBER_FACTS.length || 1 : 1;
+  const total90 = sum(MEMBER_FACTS, (r) => r.total_members) || 1;
+
+  return {
+    asOf: latest.date,
+    totalMembers: latest.total_members,
+    vipMembers: latest.vip_members,
+    ltv: Math.round(gmv90 / m90),
+    churnRate: (sum(MEMBER_FACTS, (r) => r.churn_members) / total90) * 100,
   };
 }
 
 export function aggregateCrm(range: Range): CrmAggregate {
   const { current, previous, hasComparison } = dateWindow(MEMBER_FACTS, range);
-  const c = crmOf(current);
-  const prevRepurchaseRate = hasComparison ? crmOf(previous).repurchaseRate : null;
-
-  // LTV：90 天口径（单一数据源 = 渠道 GMV + 会员活跃）
-  const n = DAY.length;
-  const gmv90 = sum(DAY, (d) => d.gmv);
-  const m90 = MEMBER_FACTS.length ? sum(MEMBER_FACTS, (r) => r.active_members) / MEMBER_FACTS.length || 1 : 1;
-  const ltv = Math.round(gmv90 / m90);
+  const p = crmPeriod(current);
+  const prevRepurchaseRate = hasComparison ? crmPeriod(previous).repurchaseRate : null;
 
   return {
-    ...c,
+    ...p,
     prevRepurchaseRate,
-    repurchaseDelta: prevRepurchaseRate !== null ? c.repurchaseRate - prevRepurchaseRate : null,
-    ltv,
+    repurchaseDelta: prevRepurchaseRate !== null ? p.repurchaseRate - prevRepurchaseRate : null,
+    ...crmSnapshot(),
   };
 }
 

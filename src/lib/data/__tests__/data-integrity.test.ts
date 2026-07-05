@@ -53,6 +53,20 @@ describe("数据完整性 · 渠道对账（单一数据源 = daily_channel_metr
   }
 });
 
+describe("展示层一致性 · 渠道明细表（元级显示恒等 → 表内 ✓ 的依据）", () => {
+  for (const r of RANGES) {
+    it(`range=${r}: 元级显示 Σ渠道 === 汇总（Math.round 严格相等）`, () => {
+      const sales = aggregateSales(r);
+      const sumGmv = aggregateChannels(r).reduce((s, c) => s + c.gmv, 0);
+      // 同源求和仅浮点加法顺序不同，实际误差 ~1e-8，整元四舍五入后恒等
+      expect(Math.round(sumGmv)).toBe(Math.round(sales.current.gmv));
+    });
+    it(`range=${r}: 返回全部 6 个渠道`, () => {
+      expect(aggregateChannels(r)).toHaveLength(6);
+    });
+  }
+});
+
 describe("数据完整性 · 营销对账（marketing_cost 落在渠道表，03A）", () => {
   for (const r of RANGES) {
     it(`range=${r}: ROI = ΣGMV / Σmarketing_cost，campaignGmv = 总GMV`, () => {
@@ -68,25 +82,25 @@ describe("数据完整性 · 营销对账（marketing_cost 落在渠道表，03A
 });
 
 describe("数据完整性 · LTV = 文档公式「90天GMV / 平均活跃会员」", () => {
-  it("LTV 锚定 90 天口径，各 range 一致（生命周期指标）", () => {
+  it("LTV 锚定 90 天口径，各 range 一致（生命周期 / 存量指标）", () => {
     const ltvs = RANGES.map((r) => aggregateCrm(r).ltv);
     expect(ltvs.every((v) => v === ltvs[0])).toBe(true);
     expect(ltvs[0]).toBeGreaterThan(0);
   });
 
-  it("LTV 数值 = round(Σ90天GMV / 平均活跃会员)", () => {
+  it("LTV 数值 = round(Σ90天GMV / 平均日活跃会员)（直接对事实表校验，脱离 activeMembers KPI）", () => {
     const s90 = aggregateSales(90);
     const c90 = aggregateCrm(90);
-    const active90 = Math.round(s90.current.gmv / c90.ltv);
-    expect(Math.abs(active90 - c90.activeMembers)).toBeLessThan(c90.activeMembers * 0.1);
+    const avgActive = facts.member.reduce((s, r) => s + r.active_members, 0) / facts.member.length;
+    expect(c90.ltv).toBe(Math.round(s90.current.gmv / avgActive));
   });
 });
 
 describe("数据完整性 · 会员内洽与取值范围", () => {
   for (const r of RANGES) {
-    it(`range=${r}: VIP 会员 ≤ 活跃会员`, () => {
+    it(`range=${r}: 期末 VIP ≤ 期末会员总数（存量快照内洽）`, () => {
       const c = aggregateCrm(r);
-      expect(c.vipMembers).toBeLessThanOrEqual(c.activeMembers);
+      expect(c.vipMembers).toBeLessThanOrEqual(c.totalMembers);
     });
     it(`range=${r}: 率类指标落在 [0, 100]`, () => {
       const s = aggregateSales(r);
@@ -97,6 +111,44 @@ describe("数据完整性 · 会员内洽与取值范围", () => {
       }
     });
   }
+});
+
+describe("数据完整性 · 活跃会员单调性（周期指标：窗口越长 ≥ 越短）", () => {
+  // 历史 bug：原取窗口日均 → 7天 > 90天 反逻辑。改为 MAX(窗口) 后单调成立。
+  it("活跃会员：90天 ≥ 30天 ≥ 14天 ≥ 7天", () => {
+    const a7 = aggregateCrm(7).activeMembers;
+    const a14 = aggregateCrm(14).activeMembers;
+    const a30 = aggregateCrm(30).activeMembers;
+    const a90 = aggregateCrm(90).activeMembers;
+    expect(a90).toBeGreaterThanOrEqual(a30);
+    expect(a30).toBeGreaterThanOrEqual(a14);
+    expect(a14).toBeGreaterThanOrEqual(a7);
+    expect(a7).toBeGreaterThan(0);
+  });
+});
+
+describe("数据完整性 · 存量指标与 range 无关（快照，不随时间筛选重算）", () => {
+  // VIP/LTV/流失率/会员总数 为期末快照，7/14/30/90 时间筛选器不应改变其值。
+  it("totalMembers / vipMembers / ltv / churnRate / asOf 在四档 range 下完全一致", () => {
+    const snap = (r: Range) => {
+      const c = aggregateCrm(r);
+      return `${c.asOf}|${c.totalMembers}|${c.vipMembers}|${c.ltv}|${c.churnRate.toFixed(4)}`;
+    };
+    const vals = RANGES.map(snap);
+    expect(vals.every((v) => v === vals[0])).toBe(true);
+  });
+
+  it("asOf = 期末日期（事实表最新一日）", () => {
+    const lastDate = facts.member.map((r) => r.date).sort().slice(-1)[0];
+    expect(aggregateCrm(7).asOf).toBe(lastDate);
+  });
+
+  it("期末 VIP / 会员总数 = 最新一日事实值", () => {
+    const latest = [...facts.member].sort((a, b) => a.date.localeCompare(b.date)).slice(-1)[0];
+    const c = aggregateCrm(7);
+    expect(c.vipMembers).toBe(latest.vip_members);
+    expect(c.totalMembers).toBe(latest.total_members);
+  });
 });
 
 describe("数据完整性 · 原始事实表 Rule 3~8（逐行）", () => {

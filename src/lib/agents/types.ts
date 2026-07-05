@@ -6,6 +6,7 @@
 import type { Range } from "@/lib/data/daily";
 import type { MetricKey, Role } from "@/lib/kb/metric-kb";
 import type { MetricTrustInfo } from "@/lib/data/data-trust";
+import type { ChannelAggregate } from "@/lib/data/csv-engine";
 
 export type Intent =
   | "business_overview"
@@ -173,6 +174,14 @@ export interface AnalysisResult {
   recommendations: Recommendation[];
   /** 当期日序列，供趋势图渲染 */
   trend: { date: string; gmv: number; orders: number }[];
+  /**
+   * 各渠道 GMV 明细（供「渠道 GMV 明细」表渲染）。
+   * 单一数据源：Σ channels.gmv === totalGmv === aggregateSales 当期 GMV，
+   * 故展示层逐元可验证（见 channel-breakdown 组件与 data-integrity 套件）。
+   */
+  channels: ChannelAggregate[];
+  /** 当期汇总 GMV（元，与 Σ channels.gmv 严格相等；KPI 卡的万级显示是其四舍五入） */
+  totalGmv: number;
   hasComparison: boolean; // 是否有上一期可比（30 天档为 false）
   dataSources: number; // 4
   /** V1.1：查询治理结论（分级 / 覆盖率 / 风险 / 响应策略 / 事件归因） */

@@ -126,6 +126,8 @@ function buildKpi(
       return { ...base, value: `${crm.churnRate.toFixed(1)}%`, prevValue: "—", deltaPct: 0, direction: "up" };
     case "vipMembers":
       return { ...base, value: crm.vipMembers.toLocaleString("zh-CN"), prevValue: "—", deltaPct: 0, direction: "up" };
+    case "totalMembers":
+      return { ...base, value: crm.totalMembers.toLocaleString("zh-CN"), prevValue: "—", deltaPct: 0, direction: "up" };
     case "roi":
       return rateKpi(base, marketing.roi.toFixed(2), marketing.prevRoi !== null ? marketing.prevRoi.toFixed(2) : "—", marketing.roiDelta ?? undefined);
     case "reachRate":
@@ -180,6 +182,7 @@ function iconOf(key: MetricKey): string {
     activeMembers: "members",
     churnRate: "churn",
     vipMembers: "vip",
+    totalMembers: "members",
     roi: "roi",
     reachRate: "megaphone",
     replyRate: "activity",

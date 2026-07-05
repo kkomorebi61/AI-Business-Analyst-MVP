@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import ReportHeader from "./report-header";
 import SummarySection from "./summary-section";
 import KpiCards from "./kpi-cards";
+import ChannelBreakdown from "./channel-breakdown";
 import FindingsSection from "./findings-section";
 import RiskSection from "./risk-section";
 import RecommendationsSection from "./recommendations-section";
@@ -132,11 +133,26 @@ export default function ReportView({
                 </section>
               )}
 
+              {result.governance.responseStrategy !== "refuse" && result.channels.length > 0 && (
+                <section>
+                  <SectionHeading
+                    index="02"
+                    title="渠道 GMV 明细"
+                    subtitle={`${result.rangeLabel}各渠道 GMV 与汇总对照（逐元可验证）`}
+                  />
+                  <ChannelBreakdown
+                    channels={result.channels}
+                    totalGmv={result.totalGmv}
+                    rangeLabel={result.rangeLabel}
+                  />
+                </section>
+              )}
+
               {(result.governance.responseStrategy === "direct" ||
                 result.governance.responseStrategy === "partial") && (
                 <section>
                   <SectionHeading
-                    index="02"
+                    index="03"
                     title="关键发现"
                     subtitle="按业务影响排序的洞察"
                   />
@@ -152,7 +168,7 @@ export default function ReportView({
                 result.governance.responseStrategy === "partial") && (
                 <section>
                   <SectionHeading
-                    index="03"
+                    index="04"
                     title="风险提示"
                     subtitle="影响下期表现的重点风险"
                   />
@@ -168,7 +184,7 @@ export default function ReportView({
                 result.governance.responseStrategy === "partial") && (
                 <section>
                   <SectionHeading
-                    index="04"
+                    index="05"
                     title="行动建议"
                     subtitle="按预期收益与投入排序"
                   />
