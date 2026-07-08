@@ -40,6 +40,7 @@ export function metricItem(key: MetricKey, data: DataAgentOutput): EvidenceItem 
   const s = data.sales;
   const c = data.crm;
   const m = data.marketing;
+  const scrm = data.scrm;
   switch (key) {
     case "gmv":
       return item("GMV", s.previous?.gmv ?? null, s.current.gmv, s.delta?.gmv ?? null, "pct", "¥");
@@ -65,6 +66,19 @@ export function metricItem(key: MetricKey, data: DataAgentOutput): EvidenceItem 
       return item("新增会员", null, c.newMembers, null, "value", "");
     case "churnRate":
       return item("流失率", null, c.churnRate, null, "pp", "%");
+    // SCRM（企微私域）—— 数据来自 data.scrm（与 data-agent buildKpi 同源）
+    case "reachRate":
+      return item("触达率", scrm.prevReachRate, scrm.reachRate, scrm.reachRateDelta, "pp", "%");
+    case "replyRate":
+      return item("回复率", scrm.prevReplyRate, scrm.replyRate, scrm.replyRateDelta, "pp", "%");
+    case "scrmConversion":
+      return item("企微成交率", scrm.prevScrmConversion, scrm.scrmConversion, scrm.scrmConversionDelta, "pp", "%");
+    case "couponRedemption":
+      return item("发券核销率", scrm.prevCouponRedemption, scrm.couponRedemption, scrm.couponRedemptionDelta, "pp", "%");
+    case "totalFriends":
+      return item("企微好友总数", scrm.prevTotalFriends, scrm.totalFriends, scrm.totalFriendsDelta, "pct", "");
+    case "newFriends":
+      return item("新增好友", scrm.prevNewFriends, scrm.newFriends, scrm.newFriendsDelta, "pct", "");
     default:
       return null;
   }
