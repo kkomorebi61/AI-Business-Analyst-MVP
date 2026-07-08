@@ -8,9 +8,10 @@ type NavItem = { label: string; href?: string };
 
 const NAV: NavItem[] = [
   { label: "首页", href: "/" },
-  { label: "问答", href: "/report" },
+  { label: "智能问答", href: "/query" },
   { label: "指标中心", href: "/metrics" },
   { label: "数据源", href: "/trust" },
+  { label: "成本中心", href: "/cost" },
 ];
 
 /**

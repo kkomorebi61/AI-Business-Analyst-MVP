@@ -48,9 +48,7 @@ export default function HomeWorkspace({
     const target = q.trim();
     if (!target) return;
     onSubmit();
-    router.push(
-      `/report?question=${encodeURIComponent(target)}&perspective=${perspective}&range=${range}`,
-    );
+    router.push(`/query?q=${encodeURIComponent(target)}&perspective=${perspective}`);
   };
 
   return (
