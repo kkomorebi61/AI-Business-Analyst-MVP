@@ -2,7 +2,7 @@
 
 > **面向 CEO / CRM 经理 / 运营经理的自然语言经营分析助手** —— 提问即得摘要、KPI、关键发现、风险与行动建议，且**每一个结论都带数据依据与查询分级**。
 
-一个把「业务提问 → 可解释分析报告」完整跑通的 AI 应用 MVP：内置 Agent 工作流编排、数据可信层与查询治理引擎，UI 严格参照设计稿实现。默认规则引擎驱动、零配置即可运行；GLM 5.1 接口已预留，切换一个环境变量即可接入大模型。
+一个把「业务提问 → 可解释分析报告」完整跑通的 AI 应用 MVP：内置 **AI 决策路由体系**（提问自动分类 → 路由到最优执行路径）、Agent 工作流编排、数据可信层与查询治理引擎，UI 严格参照设计稿实现。默认规则引擎驱动、零配置即可运行（绝大多数查询零 LLM 成本）；GLM 5.1 接口已接线，切换一个环境变量即可接入大模型。
 
 🌐 **在线 Demo**：<https://ai-business-analyst-mvp.vercel.app>
 
@@ -16,6 +16,7 @@
 - [技术栈](#技术栈)
 - [快速开始](#快速开始)
 - [Agent 工作流](#agent-工作流)
+- [AI 决策路由体系](#ai-决策路由体系)
 - [数据可信与查询治理](#数据可信与查询治理)
 - [指标体系](#指标体系)
 - [工程亮点](#工程亮点)
@@ -34,9 +35,9 @@
 
 本项目以 **「可信的 AI 经营分析」** 为核心命题，尝试用工程化的方式回答一个问题：
 
-> *当 AI 给出一条业务结论时，它凭什么这么说？依据来自哪些源系统？数据覆盖到什么程度？是否应该被允许回答？*
+> *当 AI 给出一条业务结论时，它凭什么这么说？依据来自哪些源系统？数据覆盖到什么程度？是否应该被允许回答？应该用多贵的引擎来回答？*
 
-围绕这一问题，MVP 构建了三层能力：**Agent 工作流**（把提问编排出可解释的分析链路）、**数据可信层**（给每条结论挂上数据依据与血缘）、**查询治理引擎**（按数据质量分级响应，必要时拒答）。
+围绕这一问题，MVP 构建了四层能力：**AI 决策路由体系**（提问自动分类并路由到成本最优的执行路径）、**Agent 工作流**（把提问编排出可解释的分析链路）、**数据可信层**（给每条结论挂上数据依据与血缘）、**查询治理引擎**（按数据质量分级响应，必要时拒答）。
 
 ---
 
@@ -46,13 +47,21 @@
 
 输入「本周业务表现如何？」「为什么 GMV 下降？」「各渠道表现如何？」，系统自动生成包含 **摘要 / KPI 驾驶舱 / 关键发现 / 风险提示 / 行动建议** 的完整报告，支持导出与分享（UI 占位）。
 
+### 🧭 智能问答 · 决策路由控制台（`/query`）
+
+每次提问先经 **Query Classifier** 自动归类为 6 类查询之一（取值 / 计算 / 归因 / 策略 / 操作 / 需求），再路由到对应执行引擎。控制台顶部「路由横幅」实时显示**判定类型 · 将走哪条引擎链 · 成本档 · 判定来源（置信度）**，并可展开「查看决策链」。输入框输入即预览「将判定为：策略建议 → Strategy Engine」，提交前高成本查询（strategy / requirement）弹二次确认。详见 [AI 决策路由体系](#ai-决策路由体系)。
+
+### 💰 成本中心（`/cost`）
+
+把 LLM 成本「**可见**」：实时快照缓存命中率、知识复用率、**LLM 使用率**、单查询均价，对照目标（LLM 使用率 <30%、单查询均价 <¥0.05）展示达成度。`GET /api/cost` 读进程内 globalThis 计数器（`force-dynamic` 防静态预渲染）。
+
 ### 👥 三视角适配
 
-同一份数据，按 **CEO / CRM 经理 / 运营经理** 三种视角呈现不同重点：CEO 看经营总览与渠道，CRM 经理聚焦会员资产与私域，运营经理关注渠道经营。视角改变首页聚焦节与推荐问题。
+同一份数据，按 **CEO / CRM 经理 / 运营经理** 三种视角呈现不同重点：CEO 看经营总览与渠道，CRM 经理聚焦会员资产与私域，运营经理关注渠道经营。视角改变首页聚焦节与推荐问题，并贯穿决策路由全链路（`RouteInput.role` + POST body + 控制台视角选择器）。
 
 ### 📊 经营驾驶舱（首页）
 
-首页即「业务驾驶舱」：一次接口返回 4 大主题域 L1 指标 + 默认概览洞察，按 **经营总览 / 会员资产 / 渠道分析 / 关键发现** 组织成 7 节直读视图，并区分**周期指标**（受时间筛选影响）与**存量指标**（会员资产快照，不受筛选影响）。
+首页即「业务驾驶舱」：一次接口返回 4 大主题域 L1 指标 + 默认概览洞察，按 **经营总览 / 会员资产 / 私域经营 / 渠道分析 / 关键发现** 组织成直读视图，并区分**周期指标**（受时间筛选影响）与**存量指标**（会员资产快照，不受筛选影响）。
 
 ### 🕒 多时间范围与环比口径
 
@@ -82,8 +91,9 @@
                             │
 ┌───────────────────────────▼──────────────────────────────────────────┐
 │                          交互层（Next.js 页面）                         │
-│  首页驾驶舱 /  问答报告   /  指标中心  /  数据可信中心  /  二级下钻页     │
-│    /         /report      /metrics      /trust        /channels /members /scrm │
+│  首页驾驶舱 / 智能问答控制台 / 问答报告 / 指标中心 / 数据源 / 成本中心   │
+│    /          /query           /report   /metrics    /trust  /cost   │
+│                            + 二级下钻页 /channels /members /scrm      │
 └───────────────────────────┬──────────────────────────────────────────┘
                             │ fetch
 ┌───────────────────────────▼──────────────────────────────────────────┐
@@ -91,6 +101,15 @@
 │   GET /api/dashboard   一次返回 4 主题域 L1 指标 + 概览洞察（首页直读）    │
 │   GET /api/kpis        CEO 四件套 KPI（轻量、切换范围实时重算）          │
 │   POST /api/analyze    跑完整 Agent 工作流 → AnalysisResult 报告        │
+│   POST/GET /api/query  决策路由主入口：分类→路由→执行→成本（GET 仅分类） │
+│   GET /api/cost        成本监控实时快照（force-dynamic）                │
+└───────────────────────────┬──────────────────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────────────────┐
+│              AI 决策路由层（决策前置 · 不替换 runWorkflow）              │
+│   Query Classifier（三层：6 类 QueryType + 参数 + 置信度/GLM 兜底）     │
+│   Router → metric/calculation/insight/strategy/execution/requirement   │
+│   缓存层（TTL 分级） · 成本监控（usage→pricing→cost-store） · 高成本确认 │
 └───────────────────────────┬──────────────────────────────────────────┘
                             │
 ┌───────────────────────────▼──────────────────────────────────────────┐
@@ -136,10 +155,10 @@
 | 样式 | TailwindCSS + shadcn 风格组件 | 不引入 Radix 等运行时 UI 原语库 |
 | 图标 | lucide-react | string key → 图标映射 |
 | 图表 | **纯手写 SVG** | 趋势折线图不引入 recharts 等图表库 |
-| 后端 | Next.js Route Handlers | `/api/analyze`、`/api/kpis`、`/api/dashboard` |
+| 后端 | Next.js Route Handlers | `/api/analyze`、`/api/dashboard`、`/api/query`、`/api/cost` 等 |
 | 数据 | **CSV 单一事实源** | 4 张事实表（03A Schema · 90 天 · 固定种子可复现） |
-| 测试 | Vitest（devDependency） | 122 条单测，governance + 数据完整性 + SCRM 聚合，不进运行时 |
-| LLM | GLM 5.1（**预留接口**） | 默认规则引擎，无需 Key；切换 `ANALYST_AGENT_MODE=glm` 接入 |
+| 测试 | Vitest（devDependency） | 237 条单测，决策路由 + 查询治理 + 数据完整性 + SCRM 聚合，不进运行时 |
+| LLM | GLM 5.1（**已接线 · 默认关闭**） | 默认规则引擎，无需 Key；切换 `ANALYST_AGENT_MODE=glm` 接入 |
 
 > **依赖克制**：运行时依赖仅 `next / react / react-dom / tailwind-merge / clsx / class-variance-authority / lucide-react`。无图表库、无 UI 原语库、无状态管理库。
 
@@ -157,10 +176,10 @@ MVP **无需任何环境变量**，开箱即用。
 
 ```bash
 npm run build && npm start   # 生产构建
-npm test                     # 122 条 Vitest 单测
+npm test                     # 237 条 Vitest 单测
 ```
 
-接入 GLM 5.1（可选）：复制 `.env.local.example` → `.env.local`，填入智谱 BigModel API Key 并设 `ANALYST_AGENT_MODE=glm`。详见 [Agent 工作流](#agent-工作流)。
+接入 GLM 5.1（可选）：复制 `.env.local.example` → `.env.local`，填入智谱 BigModel API Key 并设 `ANALYST_AGENT_MODE=glm`。详见 [AI 决策路由体系](#ai-决策路由体系)。
 
 ---
 
@@ -184,7 +203,88 @@ npm test                     # 122 条 Vitest 单测
 
 **可解释性**：`AnalysisResult.trace` 记录每步推理命中理由；`governance.reasons` 记录分级判定链。任意一条结论都可回溯到「为什么这么判」。
 
-**GLM 5.1 接入路径（零 UI 改动）**：`llm-client.ts` 已实现智谱 BigModel 的 OpenAI 兼容调用；切到 `glm` 模式后，各 Agent 用同一份 `types.ts` 结构调用，`AnalysisResult` 结构不变。知识库（`metric-kb.ts`）作为 system prompt / few-shot 注入。
+> 该工作流被 **AI 决策路由体系** 复用为 Insight 查询的执行引擎（见下节），二者正交：`Intent` 回答「什么业务主题」，`QueryType` 回答「想干什么」。
+
+---
+
+## AI 决策路由体系
+
+> 对齐设计文档 `docs/ai-decision-routing.md` 与 `15_AI_Cost_and_Execution_Principles` / `16_Capability_Knowledge_Base` / `17_AI_Strategy_Engine` / `18_Query_Classifier`。
+
+这是**决策前置层**：用户提问 → 自动分类 → 路由到**最优执行路径**，而非「所有请求直接调用大模型」。它不替换既有 `runWorkflow`，而是复用它作为 Insight 查询的执行引擎，把成本治理下沉到系统每一层。
+
+### 五条铁律（落到每一层）
+
+| 原则 | 含义 | 在本体系的落点 |
+| --- | --- | --- |
+| **Rule First** | 规则可解则不用 LLM | Query Classifier 规则先行，置信度足够直接返回（cost 0） |
+| **SQL First** | 结构化数据用 SQL 取 | metric / calculation 走 csv-engine 聚合，附等价 SQL |
+| **Evidence First** | 先取证再推理 | Insight 复用 Evidence Engine，结论必带数据依据 |
+| **Knowledge First** | 优先查知识库 | execution / strategy 走 Capability KB，不调 LLM |
+| **LLM Last** | 最后才用大模型 | 仅叙事 / 出 PRD / 分类兜底时调用 |
+
+成本目标（doc 15 §Cost Monitoring）：缓存命中率 >60%、知识复用率 >50%、**LLM 使用率 <30%**、单查询均价 <¥0.05。
+
+### Query Classifier（三层 · `src/lib/routing/query-classifier.ts`）
+
+| 层 | 职责 | 实现 |
+| --- | --- | --- |
+| L1 Intent Parser | 自然语言 → 6 类 `QueryType` | 正则规则集，按优先级先命中先归类（消除歧义） |
+| L2 Parameter Extractor | 抽取 metric / range / channel / segment | 关键词 + `resolveMetricKey` 归一化（始终规则，确定性） |
+| L3 置信度 | 决定是否回落 LLM | ≥0.8 直返；<0.6 且 GLM 可用 → GLM 仅修正类型，失败回退规则、绝不抛错 |
+
+**六类查询与执行路径**：
+
+| QueryType | 示例 | 执行引擎 | LLM | 成本档 |
+| --- | --- | --- | --- | --- |
+| `metric` | 今天 GMV 是多少？ | SQL Engine（csv-engine 聚合） | ❌ | free |
+| `calculation` | 复购率是多少？ | Metric Engine（按公式计算） | ❌ | free |
+| `insight` | 为什么 GMV 下降？ | Insight + Evidence + GLM 叙事 | ✅ | medium |
+| `strategy` | 如何提升复购率？ | Strategy Engine + Capability KB + GLM | ✅ | high |
+| `execution` | 如何创建优惠券？ | Capability KB | ❌ | low |
+| `requirement` | 帮我生成 PRD | Gap Analysis + LLM（high 档） | ✅ | very_high |
+
+### 路由可解释性（RoutingTrace）
+
+每个结果携带 `routing`，记录「**为什么这么走**」：
+
+```ts
+routing = {
+  queryType, engines[],        // 实际引擎链
+  ruleOrder[],                 // 决策链：①规则命中 ②SQL/知识库优先 ③LLM Last
+  costTier, llmUsed, llmModel  // 成本档 + 是否用了 LLM 及模型
+}
+```
+
+例：metric 路径 `ruleOrder = ["①规则命中取值诉求", "②SQL Engine 直接聚合", "③禁止 LLM 计算"]`，`llmUsed=false`。任意一次路由都可回溯到「为何不调用更贵的引擎」。
+
+### 缓存层与成本治理
+
+- **缓存层**（`src/lib/routing/cache.ts`）：Key = Question / Range / Role / Brand，TTL 按查询节奏分级（metric/calculation 5min、insight/execution 1h、strategy 6h、requirement 24h）；globalThis 单例 Map + 惰性过期，命中即早返回（`routing.cacheHit=true`）且不调引擎。
+- **成本监控**（`src/lib/agents/{usage,pricing,cost-store}.ts`）：捕获 GLM `usage` token（原本被丢弃）→ 请求级 `CostAcc` 贯穿分类器与各 handler → globalThis 计数器汇总 5 项指标 + 4 项目标（含 `knowledgeReuseRate` 代理 = (total−llm)/total）。`GET /api/cost` 与 `/cost` 页实时展示。
+- **高成本确认**（`cost-estimate.ts` + `confirm-dialog.tsx`）：strategy / requirement（high / very_high）触发「预计消耗：XX Tokens / 确认执行？」，query-console 提交前用 GET 分类判档门控。
+
+### 知识库与策略引擎
+
+| 模块 | 源码 | 内容 |
+| --- | --- | --- |
+| **Capability KB** | `src/lib/kb/capability-kb.ts` | doc 16 全部 14 项能力（CRM/CDP/SCRM/OMS）；`matchCapabilities()` 关键词加权；`gapAnalysis()` 缺口检测 |
+| **Strategy Engine** | `src/lib/agents/strategy-engine.ts` | doc 17 六个零售场景（复购下降 / 增长放缓 / 流失 / AOV / VIP / 企微）；`matchStrategy()` + 能力解析 + 缺口暴露 |
+
+匹配规则：能力命中优先复用；仅当能力缺失才出 PRD。策略需要但 KB 未覆盖的项（如「邀请裂变 / 积分中心 / 商品推荐」）自动暴露为 `capabilityGaps`，闭环到 Gap Analysis。
+
+### GLM 5.1 接线
+
+`src/lib/agents/llm-client.ts` 统一入口 `chat({ system, messages, json, tier, temperature })`，OpenAI 兼容接口直连智谱 BigModel。**模型分层**：`medium`（默认 `glm-5.1`）用于 Insight / Strategy / 分类兜底；`high`（回退 GLM-5.1，配 `claude-*` 即切真实 Claude）用于 Requirement 出 PRD。**环境门控** `isLlmEnabled() = ANALYST_AGENT_MODE==='glm' && ANALYST_LLM_API_KEY`：未启用时全程规则路径，测试与 CI 无需 Key 即确定性运行。
+
+```bash
+ANALYST_AGENT_MODE=glm
+ANALYST_LLM_API_KEY=xxxxx
+ANALYST_LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+ANALYST_LLM_MODEL=glm-5.1
+# 可选：Requirement Query 走 Claude（未配则回退 GLM-5.1）
+# ANALYST_LLM_HIGH_MODEL=claude-opus-4-8
+```
 
 ---
 
@@ -232,10 +332,11 @@ npm test                     # 122 条 Vitest 单测
 ## 工程亮点
 
 - **单一事实源**：数据层统一到 4 张 CSV，结果指标（GMV / ROI / LTV / 复购率…）一律不落盘、由 `csv-engine.ts` 按 SQL 语义实时聚合。GMV 仅存于渠道表，总 GMV = Σ 渠道值天然成立，**无需对账**。
+- **LLM Last 成本治理**：决策路由让绝大多数查询零 LLM（metric / calculation / execution 走 SQL 与知识库，cost 0 或 ≈0），仅 insight / strategy / requirement 叙事才调 GLM；配合分级 TTL 缓存（命中即早返回）与高成本二次确认，把单查询均价压到目标内。成本全程可见（`/cost` 实时快照）。
 - **Bundle 瘦身**：重数据聚合全部下沉服务端（`csv-engine.ts` 顶部 `import fs`，禁客户端引用），客户端只回传轻量 KPI（~400B）；事实数据（CSV）绝不进客户端 bundle。共享 First Load JS 仅 87 kB，各页面在其上仅增 1–6 kB（首页 123 kB / 报告 116 kB / 指标 113 kB / 二级页 ~96 kB，`next build` 实测）。
 - **治理引擎与业务解耦**：查询治理为纯函数模块，`insight-agent.ts` 与 `api/analyze/route.ts` 全程未改即可接入，降级链 `direct → partial → refuse → suspend` 按层实现、非缓存。
-- **零配置可跑 + 大模型可接**：默认规则引擎无需 Key 即可完整演示；GLM 5.1 走预留接口，切换一个环境变量接入，前后端结构不变。
-- **测试守护**：122 条单测覆盖查询治理（分级 / 覆盖率 / 异常 / 事件归因）、CSV 引擎口径回归、SCRM 聚合、数据完整性（Σ 渠道 = 总 GMV）。
+- **零配置可跑 + 大模型可接**：默认规则引擎无需 Key 即可完整演示；GLM 5.1 走已接线入口，切换一个环境变量接入，前后端结构不变。
+- **测试守护**：237 条单测覆盖决策路由（分类器 / 路由 / 缓存 / 成本）、查询治理（分级 / 覆盖率 / 异常 / 事件归因）、CSV 引擎口径回归、SCRM 聚合、数据完整性（Σ 渠道 = 总 GMV）。
 
 ---
 
@@ -245,19 +346,22 @@ npm test                     # 122 条 Vitest 单测
 AI-Business-Analyst-MVP/
 ├── data/                          # CSV 单一事实源（4 张事实表，服务端专用）
 ├── scripts/                       # Mock 数据生成与校验（Python，固定种子可复现）
+├── docs/                          # 设计文档（ai-decision-routing / home-ia-redesign）
 ├── src/
 │   ├── app/                       # 页面 + API Routes
 │   │   ├── page.tsx               #   首页驾驶舱
+│   │   ├── query/                 #   智能问答 · 决策路由控制台
 │   │   ├── report/                #   分析报告页
-│   │   ├── trust/ metrics/        #   数据可信中心 / 指标定义中心
+│   │   ├── metrics/ trust/ cost/  #   指标中心 / 数据源 / 成本中心
 │   │   ├── channels/ members/ scrm/  # 二级下钻页
-│   │   └── api/                   #   /dashboard /kpis /analyze
-│   ├── components/                # home / report / metrics / ui 原语
+│   │   └── api/                   #   /dashboard /kpis /analyze /query /cost
+│   ├── components/                # home / report / query / metrics / ui 原语
 │   └── lib/
-│       ├── agents/                # ①~⑤ Agent + Evidence Engine + workflow + llm-client
+│       ├── agents/                # ①~⑤ Agent + Evidence + workflow + strategy-engine + llm-client + cost(usage/pricing)
+│       ├── routing/               # 决策路由（classifier/router/cache + cost-estimate/cost-store + 6 类 handler）
 │       ├── governance/            # 查询治理引擎（纯函数 + 单测）
 │       ├── data/                  # csv-engine / data-trust / daily(Range 工具)
-│       └── kb/                    # 指标知识库 V3（20 指标企业级元数据）
+│       └── kb/                    # metric-kb（20 指标）+ capability-kb（14 能力 + Gap Analysis）
 └── package.json
 ```
 
@@ -269,11 +373,12 @@ AI-Business-Analyst-MVP/
 
 - Forecast Agent / 预测功能
 - PPT 导出 / 营销自动化 / 数据库集成
-- GLM 模型路由兜底（GLM 未启用，rule 模式）
+- GLM 实调需配置可用 Key（决策路由机制已就绪，默认 rule 模式零成本运行；接 GLM 仅改环境变量，模型分层 medium/high 已接线）
+- MCP（doc 暂缓）：Capability KB 的能力执行当前为「指引」，未接真实系统操作
 - 导出 PDF、分享按钮为 UI 占位
 
 二级下钻页（`/channels`、`/members`、`/scrm`）当前为 Drill-Down 桩，L2 明细指标留待后续迭代。
 
 ---
 
-*Built as a portfolio MVP demonstrating end-to-end AI business analysis with explainability and query governance.*
+*Built as a portfolio MVP demonstrating end-to-end AI business analysis with decision routing, explainability, and query governance.*
