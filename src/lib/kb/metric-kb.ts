@@ -654,4 +654,13 @@ export const RECOMMENDATIONS: Record<string, RecommendationRule> = {
     title: "优化投放结构",
     description: "复盘各渠道投产比，削减 ROI<1 的投放，向高投产组合倾斜预算。",
   },
+  scrm_engage: {
+    trigger: "scrm_engage",
+    icon: "megaphone",
+    category: "私域",
+    investment: "低投入",
+    outcome: "触达率 +2pp",
+    title: "优化企微触达策略",
+    description: "复盘触达时段 / 频次 / 人群分层，对高价值好友精准触达，提升触达率与回复率。",
+  },
 };

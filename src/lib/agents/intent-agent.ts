@@ -2,7 +2,7 @@
  * Intent Agent —— 识别业务意图
  *
  * 输入：自然语言提问
- * 输出：business_overview | sales_analysis | crm_analysis | channel_analysis | risk_analysis
+ * 输出：business_overview | sales_analysis | crm_analysis | scrm_analysis | channel_analysis | risk_analysis
  *
  * 规则：按关键词权重命中；"为什么…下降"类问题映射到对应域并以 risk 倾向。
  */
@@ -10,6 +10,7 @@
 import type { Intent } from "./types";
 
 const RULES: { intent: Intent; words: string[] }[] = [
+  { intent: "scrm_analysis", words: ["企微", "私域", "触达", "好友", "发券", "核销"] },
   { intent: "crm_analysis", words: ["复购", "会员", "ltv", "流失", "留存", "活跃"] },
   { intent: "channel_analysis", words: ["渠道", "天猫", "京东", "小红书", "对比 q"] },
   { intent: "sales_analysis", words: ["gmv", "销售", "订单", "利润", "客单价", "下降", "上升", "为什么"] },

@@ -31,6 +31,11 @@ export function insightAgent(
   question: string,
   data: DataAgentOutput,
 ): InsightAgentOutput {
+  // SCRM（企微私域）优先：意图命中或关键词出现即走私域洞察。
+  // 覆盖「为什么 X 下降」经 risk_analysis 落到 crmInsight 的错配——只要问句含私域词就走 scrmInsight。
+  const isScrmFlavor =
+    intent === "scrm_analysis" || /企微|私域|触达|好友|发券|核销/.test(question);
+  if (isScrmFlavor) return scrmInsight(data);
   const isCrmFlavor =
     intent === "crm_analysis" ||
     intent === "risk_analysis" ||
@@ -241,6 +246,89 @@ function crmInsight(data: DataAgentOutput): InsightAgentOutput {
         ]
       : [],
     recommendations: [toRec(RECOMMENDATIONS.repurchase_down, 1)],
+  };
+}
+
+/* ------------------------- 企微私域 SCRM（CRM_MANAGER / 私域问句） ------------------------- */
+
+function scrmInsight(data: DataAgentOutput): InsightAgentOutput {
+  const scrm = data.scrm;
+  const reachDelta = scrm.reachRateDelta;
+  const convDelta = scrm.scrmConversionDelta;
+  const hasCmp = data.hasComparison;
+
+  const reachNote =
+    hasCmp && reachDelta !== null ? `（环比 ${reachDelta >= 0 ? "+" : ""}${reachDelta.toFixed(1)}pp）` : "";
+  const text =
+    `${data.rangeLabel}企微私域：触达率 ${scrm.reachRate.toFixed(1)}%${reachNote}，回复率 ${scrm.replyRate.toFixed(1)}%，` +
+    `企微成交率 ${scrm.scrmConversion.toFixed(1)}%；好友总数 ${scrm.totalFriends.toLocaleString("zh-CN")}，本期新增 ${scrm.newFriends.toLocaleString("zh-CN")}。`;
+
+  const findings: Finding[] = [
+    {
+      id: "f-scrm-reach",
+      category: "私域",
+      icon: "megaphone",
+      title: hasCmp && reachDelta !== null ? `触达率${reachDelta >= 0 ? "提升" : "下滑"}` : "企微触达覆盖",
+      description: `${data.rangeLabel}企微触达率 ${scrm.reachRate.toFixed(1)}%（触达用户 / 好友总数）${hasCmp && reachDelta !== null ? `，环比 ${reachDelta >= 0 ? "提升" : "下降"} ${Math.abs(reachDelta).toFixed(1)} 个百分点` : ""}。`,
+      metric: hasCmp && reachDelta !== null ? `${reachDelta >= 0 ? "+" : ""}${reachDelta.toFixed(1)} pp` : `${scrm.reachRate.toFixed(1)}%`,
+      direction: hasCmp && reachDelta !== null ? (reachDelta >= 0 ? "up" : "down") : "up",
+      evidence: buildMetricEvidence(["reachRate"], data),
+    },
+    {
+      id: "f-scrm-conv",
+      category: "私域",
+      icon: "target",
+      title: hasCmp && convDelta !== null ? `企微成交率${convDelta >= 0 ? "改善" : "走弱"}` : "企微成交转化",
+      description: `触达→成交端到端转化率 ${scrm.scrmConversion.toFixed(1)}%，回复率 ${scrm.replyRate.toFixed(1)}%${hasCmp && convDelta !== null ? `，成交率环比 ${convDelta >= 0 ? "提升" : "下降"} ${Math.abs(convDelta).toFixed(1)} 个百分点` : ""}。`,
+      metric: hasCmp && convDelta !== null ? `${convDelta >= 0 ? "+" : ""}${convDelta.toFixed(1)} pp` : `${scrm.scrmConversion.toFixed(1)}%`,
+      direction: hasCmp && convDelta !== null ? (convDelta >= 0 ? "up" : "down") : "up",
+      evidence: buildMetricEvidence(["scrmConversion", "replyRate"], data),
+    },
+    {
+      id: "f-scrm-friends",
+      category: "私域",
+      icon: "users",
+      title: "私域好友盘子",
+      description: `企微好友总数 ${scrm.totalFriends.toLocaleString("zh-CN")}，本期新增 ${scrm.newFriends.toLocaleString("zh-CN")}；发券核销率 ${scrm.couponRedemption.toFixed(1)}%。`,
+      metric: `新增 ${scrm.newFriends.toLocaleString("zh-CN")}`,
+      direction: "up",
+      evidence: buildMetricEvidence(["totalFriends", "newFriends", "couponRedemption"], data),
+    },
+  ];
+
+  const risks: Risk[] = [];
+  if (hasCmp && reachDelta !== null && reachDelta < -0.5) {
+    risks.push({
+      id: "r-scrm-reach",
+      level: reachDelta < -2 ? "high" : "medium",
+      title: "企微触达率下滑",
+      description: `触达率环比下降 ${Math.abs(reachDelta).toFixed(1)} 个百分点至 ${scrm.reachRate.toFixed(1)}%，需排查触达策略与好友质量。`,
+      impact: "影响: 触达覆盖收窄，后续成交与复购动能减弱",
+      evidence: buildMetricEvidence(["reachRate"], data),
+    });
+  }
+  if (hasCmp && convDelta !== null && convDelta < -0.3) {
+    risks.push({
+      id: "r-scrm-conv",
+      level: "medium",
+      title: "企微成交转化走弱",
+      description: `企微成交率环比下降 ${Math.abs(convDelta).toFixed(1)} 个百分点至 ${scrm.scrmConversion.toFixed(1)}%，结合回复率 ${scrm.replyRate.toFixed(1)}% 复盘话术与商品组合。`,
+      impact: "影响: 私域变现效率下降",
+      evidence: buildMetricEvidence(["scrmConversion"], data),
+    });
+  }
+
+  const recommendations: Recommendation[] = [];
+  if (risks.some((r) => r.id === "r-scrm-reach" || r.id === "r-scrm-conv")) {
+    recommendations.push(toRec(RECOMMENDATIONS.scrm_engage, recommendations.length + 1));
+  }
+  recommendations.push(toRec(RECOMMENDATIONS.repurchase_down, recommendations.length + 1));
+
+  return {
+    summary: { tag: "私域摘要", accuracy: 93, readingTimeSec: 35, text },
+    findings,
+    risks,
+    recommendations,
   };
 }
 

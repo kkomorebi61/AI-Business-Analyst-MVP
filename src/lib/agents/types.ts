@@ -12,6 +12,7 @@ export type Intent =
   | "business_overview"
   | "sales_analysis"
   | "crm_analysis"
+  | "scrm_analysis"
   | "channel_analysis"
   | "risk_analysis";
 
