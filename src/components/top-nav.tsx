@@ -7,6 +7,7 @@ import { Bell, Globe, LineChart, Search, Settings } from "lucide-react";
 type NavItem = { label: string; href?: string };
 
 const NAV: NavItem[] = [
+  { label: "上传数据", href: "/upload" },
   { label: "首页", href: "/" },
   { label: "智能问答", href: "/query" },
   { label: "指标中心", href: "/metrics" },

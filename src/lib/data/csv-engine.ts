@@ -26,6 +26,14 @@ import { rangeLabel, type Range } from "@/lib/data/daily";
 
 /* --------------------------------- CSV 解析 --------------------------------- */
 
+/**
+ * 公开解析入口：供 /api/upload 解析用户上传 CSV、dataset-store 解析内置样本复用。
+ * （Data First 升级：同一份 RFC-4180 解析器服务「样本」与「上传」两条数据源。）
+ */
+export function parseCsvText(text: string): Record<string, string>[] {
+  return parseCsv(text);
+}
+
 /** 极简 RFC-4180 解析：支持引号字段、转义双引号、CRLF。返回 {列名:值} 数组。 */
 function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
