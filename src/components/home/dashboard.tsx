@@ -1,22 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import MetricSection from "./sections/metric-section";
 import ChannelSection from "./sections/channel-section";
 import InsightSection from "./sections/insight-section";
 import MetricDetailDrawer from "@/components/metrics/metric-detail-drawer";
 import EvidenceDrawer from "@/components/report/evidence-drawer";
-import { Sparkles } from "lucide-react";
+import { Sparkles, CalendarClock, Upload } from "lucide-react";
 import type { DashboardResponse } from "@/app/api/dashboard/route";
 import type { Finding, Risk } from "@/lib/agents/types";
 import type { MetricKey, Role } from "@/lib/kb/metric-kb";
 import type { Range } from "@/lib/data/daily";
 
-/** 视角 → 默认聚焦节（仅高亮，不藏节） */
+/** 视角 → 默认聚焦节（按 section id 高亮，不藏节） */
 const FOCUS_SECTION: Record<Role, string> = {
-  CEO: "01",
-  CRM_MANAGER: "02",
-  OPERATION_MANAGER: "04",
+  CEO: "overview",
+  CRM_MANAGER: "membership",
+  OPERATION_MANAGER: "channels",
 };
 const FOCUS_HINT: Record<Role, string> = {
   CEO: "经营总览 · 渠道分析 · 关键发现",
@@ -45,7 +46,7 @@ export default function Dashboard({
   useEffect(() => {
     let active = true;
     setLoading(true);
-    fetch(`/api/dashboard?range=${range}&perspective=${perspective}`)
+    fetch(`/api/dashboard?range=${range}&perspective=${perspective}`, { cache: "no-store" })
       .then((r) => r.json())
       .then((payload: DashboardResponse) => {
         if (active) setData(payload);
@@ -61,12 +62,9 @@ export default function Dashboard({
     };
   }, [range, perspective]);
 
-  /** 指标卡「依据」/ 卡身点击 → 指标口径说明抽屉（定义 / 公式 / 来源 / 更新时间） */
   const onViewMetric = useCallback((key: MetricKey) => {
     setMetricDrawer({ open: true, key });
   }, []);
-
-  /** 洞察（§5/§6）「查看依据」→ 直接用 Finding/Risk 自带的 evidence */
   const onViewInsightEvidence = useCallback((target: Finding | Risk) => {
     setEvidenceDrawer({ open: true, target });
   }, []);
@@ -74,70 +72,73 @@ export default function Dashboard({
   if (loading || !data) return <DashboardSkeleton />;
 
   const focus = FOCUS_SECTION[perspective];
-  const s = data.sections;
+  const gapCount = data.gaps.cannotAnalyze.length;
+
+  // 节序号：按渲染顺序连续编号（metric sections + channels）
+  let idx = 0;
+  const nextIndex = () => String(++idx).padStart(2, "0");
 
   return (
     <div className="flex flex-col gap-8">
-      {/* 视角聚焦提示 + 周期/存量口径说明 */}
+      {/* Data First 上下文：视角 + Date Anchor + 场景 + 缺口提示 */}
       <div className="flex flex-col gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-700">
         <span className="flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 shrink-0" />
           当前视角：
           <b>{perspective === "CEO" ? "CEO" : perspective === "CRM_MANAGER" ? "CRM 经理" : "运营经理"}</b>
-          ；建议关注：{FOCUS_HINT[perspective]}。
+          ；业务场景：<b>{data.scenario.label}</b>
+          {data.isSample ? (
+            <span className="rounded bg-white/70 px-1.5 py-0.5 text-[10px] text-blue-600">内置样本</span>
+          ) : (
+            <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] text-emerald-700">已上传数据</span>
+          )}
         </span>
-        <span className="text-blue-600/80">
-          口径：§1 经营总览为<b>周期指标</b>（随时间筛选变化）；§2 会员资产为<b>存量指标</b>（期末快照，不随筛选变化）。
+        <span className="flex items-center gap-1.5">
+          <CalendarClock className="h-3.5 w-3.5 shrink-0" />
+          Date Anchor（数据截止 <b>{data.anchor || "未知"}</b>）：所有指标的时间口径基于此日期，与系统当前时间无关
         </span>
+        {gapCount > 0 && (
+          <Link
+            href="/upload"
+            className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700"
+          >
+            <Upload className="h-3.5 w-3.5 shrink-0" />
+            当前数据暂不支持 {gapCount} 项分析（如 {data.gaps.cannotAnalyze.slice(0, 3).map((g) => g.metric).join("、")}
+            ）→ 前往「上传数据」补充
+          </Link>
+        )}
       </div>
 
-      {/* §1 经营总览（周期指标 · 受时间筛选影响） */}
-      <MetricSection
-        index="01"
-        title="经营总览"
-        subtitle="Business Overview · 周期指标（GMV / 订单 / 客单价 / ROI / 新增 / 活跃 / 复购）"
-        source={s.overview.source}
-        kpis={s.overview.kpis}
-        kind="period"
-        rangeLabel={data.rangeLabel}
-        highlight={focus === "01"}
-        onViewMetric={onViewMetric}
-      />
+      {/* 动态节：仅渲染数据支撑的 metric sections */}
+      {data.sections.map((s) => (
+        <MetricSection
+          key={s.id}
+          index={nextIndex()}
+          title={s.title}
+          subtitle={s.subtitle}
+          source={s.source}
+          kpis={s.kpis}
+          kind={s.kind}
+          asOf={s.asOf}
+          drillTo={s.drillTo}
+          rangeLabel={data.rangeLabel}
+          highlight={focus === s.id}
+          onViewMetric={onViewMetric}
+        />
+      ))}
 
-      {/* §2 会员资产（存量指标 · 不受时间筛选影响） */}
-      <MetricSection
-        index="02"
-        title="会员资产"
-        subtitle="Membership Assets · 存量快照（会员总数 / VIP / LTV / 流失率）"
-        source={s.membership.source}
-        kpis={s.membership.kpis}
-        kind="snapshot"
-        asOf={s.membership.asOf}
-        drillTo={s.membership.drillTo}
-        highlight={focus === "02"}
-        onViewMetric={onViewMetric}
-      />
+      {/* 渠道分析（OMS 存在时） */}
+      {data.channels && (
+        <div className={focus === "channels" ? "rounded-xl ring-2 ring-blue-200 ring-offset-4" : undefined}>
+          <ChannelSection
+            channels={data.channels.rows}
+            totalGmv={data.channels.totalGmv}
+            rangeLabel={data.rangeLabel}
+          />
+        </div>
+      )}
 
-      {/* §3 私域经营 */}
-      <MetricSection
-        index="03"
-        title="私域经营"
-        subtitle="SCRM Performance · Enterprise WeChat"
-        source={s.scrm.source}
-        kpis={s.scrm.kpis}
-        kind="period"
-        rangeLabel={data.rangeLabel}
-        drillTo={s.scrm.drillTo}
-        highlight={focus === "03"}
-        onViewMetric={onViewMetric}
-      />
-
-      {/* §4 渠道分析 */}
-      <div className={focus === "04" ? "rounded-xl ring-2 ring-blue-200 ring-offset-4" : undefined}>
-        <ChannelSection channels={s.channels.rows} totalGmv={s.channels.totalGmv} rangeLabel={data.rangeLabel} />
-      </div>
-
-      {/* §5/§6/§7 洞察 */}
+      {/* 关键发现 / 风险 / 建议（doc19 M6 主动洞察） */}
       <InsightSection
         findings={data.insights.findings}
         risks={data.insights.risks}

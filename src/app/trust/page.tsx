@@ -3,19 +3,26 @@ import Link from "next/link";
 import {
   Activity,
   ArrowLeft,
+  CalendarClock,
+  CheckCircle2,
   Database,
   Gauge,
   GitBranch,
   ShieldCheck,
+  Upload,
+  XCircle,
 } from "lucide-react";
 import TopNav from "@/components/top-nav";
 import { listSources, type SourceTrust } from "@/lib/data/data-trust";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
+import { getUnderstanding, isSample } from "@/lib/data/dataset-store";
+import { SCENARIO_LABELS } from "@/lib/data-understanding/scenario";
+import { DATA_TYPE_LABELS } from "@/lib/data-understanding/recommend";
 
 /**
  * 数据可信中心（Data Trust Center，路由：/trust）
- * 来源：10_Data_Trust_Layer.md
- * 展示：数据源状态 / 时效 / 覆盖率 / 健康度 / 数据血缘 / 指标定义。
+ * 来源：10_Data_Trust_Layer.md · Data First 升级叠加「数据理解概览 + 缺口」（doc19 M4）。
+ * 展示：数据源状态 / 时效 / 覆盖率 / 健康度 / 数据血缘 / 指标定义 / 当前数据缺口。
  */
 const HEALTH_STYLE: Record<string, string> = {
   Healthy: "bg-emerald-50 text-emerald-700",
@@ -38,6 +45,8 @@ const CORE_METRICS: MetricKey[] = [
 
 export default function TrustPage() {
   const sources = listSources();
+  const u = getUnderstanding();
+  const sample = isSample();
   const avgCoverage = Math.round(
     sources.reduce((s, x) => s + x.coverage, 0) / (sources.length || 1),
   );
@@ -58,7 +67,7 @@ export default function TrustPage() {
         <header className="mb-6">
           <h1 className="text-[24px] font-semibold">数据可信中心</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Data Trust Center · 数据源 / 时效 / 覆盖率 / 健康度 / 血缘
+            Data Trust Center · 数据源 / 时效 / 覆盖率 / 健康度 / 血缘 / 缺口
           </p>
         </header>
 
@@ -69,6 +78,80 @@ export default function TrustPage() {
           <Tile icon={<ShieldCheck className="h-4 w-4" />} label="健康源" value={`${healthy}`} />
           <Tile icon={<Activity className="h-4 w-4" />} label="异常/延迟源" value={`${abnormal}`} warn={abnormal > 0} />
         </div>
+
+        {/* Data First · 数据理解概览 + 缺口（doc19 M4） */}
+        <Section
+          title="数据理解概览"
+          subtitle="Data Understanding · 当前数据类型 / 场景 / Date Anchor / 缺口"
+        >
+          <div className="rounded-xl border border-border bg-white p-4">
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+                <CalendarClock className="h-4 w-4" />
+                Date Anchor（数据截止）：<b className="text-foreground">{u.latestDataDate || "未知"}</b>
+              </span>
+              <span className="text-muted-foreground">·</span>
+              <span className="text-muted-foreground">
+                场景：<b className="text-foreground">{SCENARIO_LABELS[u.scenario.primary]}</b>
+              </span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs ${
+                  sample ? "bg-blue-50 text-blue-700" : "bg-emerald-50 text-emerald-700"
+                }`}
+              >
+                {sample ? "内置样本" : "已上传数据"}
+              </span>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {u.classification.perType.map((d) => (
+                <span
+                  key={d.type}
+                  className="rounded-md border border-border bg-[#F8F9FA] px-2 py-0.5 text-xs text-foreground"
+                >
+                  ✓ {DATA_TYPE_LABELS[d.type]}（{d.matchedFields.length} 字段）
+                </span>
+              ))}
+            </div>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="rounded-md border border-emerald-200 bg-emerald-50/50 p-3">
+                <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-emerald-700">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> 可分析（{u.gaps.canAnalyze.length}）
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {u.gaps.canAnalyze.map((m) => (
+                    <span key={m} className="rounded bg-white px-1.5 py-0.5 text-[11px] text-emerald-700">
+                      {m}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="rounded-md border border-rose-200 bg-rose-50/50 p-3">
+                <div className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-rose-700">
+                  <XCircle className="h-3.5 w-3.5" /> 暂不支持（{u.gaps.cannotAnalyze.length}）
+                </div>
+                {u.gaps.cannotAnalyze.length === 0 ? (
+                  <span className="text-[11px] text-muted-foreground">无缺口，数据齐全</span>
+                ) : (
+                  <ul className="space-y-1 text-[11px] text-rose-700">
+                    {u.gaps.cannotAnalyze.slice(0, 6).map((g) => (
+                      <li key={g.metric}>
+                        <span className="font-medium">{g.metric}</span>：{g.reason}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <Link
+                  href="/upload"
+                  className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700"
+                >
+                  <Upload className="h-3 w-3" /> 上传数据补充
+                </Link>
+              </div>
+            </div>
+          </div>
+        </Section>
 
         {/* 数据源状态 */}
         <Section title="数据源状态" subtitle="Source Registry · Freshness · Health · Coverage">
@@ -124,7 +207,7 @@ export default function TrustPage() {
         </Section>
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          基于 07_data_sources 注册表（Mock · 90 天口径）
+          基于 07_data_sources 注册表（Mock · 90 天口径） · 数据理解来自 Data Understanding Engine
         </p>
       </main>
     </div>
