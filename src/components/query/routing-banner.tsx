@@ -19,6 +19,8 @@ const TYPE_STYLE: Record<QueryType, { badge: "info" | "success" | "warning" | "d
   strategy: { badge: "success", icon: "🎯" },
   execution: { badge: "secondary", icon: "⚙️" },
   requirement: { badge: "danger", icon: "📝" },
+  comparison: { badge: "info", icon: "⚖️" },
+  trend: { badge: "info", icon: "📈" },
 };
 
 const COST_STYLE: Record<CostTier, "success" | "info" | "warning" | "danger"> = {

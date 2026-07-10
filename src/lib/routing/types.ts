@@ -5,13 +5,17 @@
  *
  * 与既有 Intent（业务域：sales/crm/channel…）正交：
  *   - Intent：回答「这是什么业务主题」
- *   - QueryType：回答「用户想干什么（看数 / 计算 / 归因 / 出策略 / 查操作 / 提需求）」
+ *   - QueryType：回答「用户想干什么（看数 / 计算 / 归因 / 出策略 / 查操作 / 提需求 / 对比 / 趋势）」
  *
  * 五条铁律（doc 15）：Rule First · SQL First · Evidence First · Knowledge First · LLM Last
  * —— Router 必须先穷尽规则 / SQL / 知识库，最后才调用大模型。
+ *
+ * Data First 升级（doc 18 V2）：新增 comparison / trend 两类 + Time Anchor 任意时间窗口
+ * + Missing Data 拦截（缺数据不产出，doc18 §Missing Data Checker）。
  */
 
 import type { Range } from "@/lib/data/daily";
+import type { TimeExpr, TimeComparison, ResolvedWindow } from "@/lib/data/time";
 import type { MetricKey } from "@/lib/kb/metric-kb";
 import type { AnalysisResult } from "@/lib/agents/types";
 
@@ -20,16 +24,18 @@ import type { AnalysisResult } from "@/lib/agents/types";
  * ------------------------------------------------------------------ */
 
 /**
- * 6 类查询类型。
+ * 查询类型（capability extension：在原 6 类上加 comparison / trend）。
  * 每类绑定固定执行路径与成本档（doc 18 §Cost Governance）。
  */
 export type QueryType =
   | "metric" // 指标查询 → SQL Engine            · cost 0
-  | "calculation" // 指标计算 → Metric Engine     · cost 0
-  | "insight" // 经营分析 → Insight Engine + GLM   · cost Medium
+  | "calculation" // 派生指标计算 → Metric Engine · cost 0
+  | "insight" // 经营归因 → Insight Engine + GLM  · cost Medium
   | "strategy" // 策略建议 → Strategy Engine + Capability KB + GLM · cost High
-  | "execution" // 系统操作 → Capability KB        · cost ≈0
-  | "requirement"; // 需求设计 → Gap Analysis + LLM(Claude/GLM) · cost Very High
+  | "execution" // 系统操作 → Capability KB       · cost ≈0
+  | "requirement" // 需求设计 → Gap Analysis + LLM · cost Very High
+  | "comparison" // 对比分析 → Window Engine（时段/维度对比）· cost 0（doc18 V2）
+  | "trend"; // 趋势分析 → Window Engine（任意区间走势）· cost 0（doc18 V2）
 
 export const QUERY_TYPES: QueryType[] = [
   "metric",
@@ -38,6 +44,8 @@ export const QUERY_TYPES: QueryType[] = [
   "strategy",
   "execution",
   "requirement",
+  "comparison",
+  "trend",
 ];
 
 /** 查询类型 → 中文标签 */
@@ -48,9 +56,11 @@ export const QUERY_TYPE_LABEL: Record<QueryType, string> = {
   strategy: "策略建议",
   execution: "系统操作",
   requirement: "需求设计",
+  comparison: "对比分析",
+  trend: "趋势分析",
 };
 
-/** 查询类型 → 执行引擎链（doc 18 §Execution Engine，verbatim 对齐） */
+/** 查询类型 → 执行引擎链（doc 18 §Execution Engine） */
 export const QUERY_TYPE_ENGINE_CHAIN: Record<QueryType, string[]> = {
   metric: ["SQL Engine"],
   calculation: ["Metric Engine"],
@@ -58,10 +68,12 @@ export const QUERY_TYPE_ENGINE_CHAIN: Record<QueryType, string[]> = {
   strategy: ["Strategy Engine", "Capability KB", "GLM"],
   execution: ["Capability KB"],
   requirement: ["Gap Analysis", "Claude"],
+  comparison: ["Window Engine"],
+  trend: ["Window Engine"],
 };
 
 /* ------------------------------------------------------------------ *
- * Layer 2 —— Parameter Extractor（doc 18 §Parameter Extractor）
+ * Layer 2 —— Parameter Extractor（doc 18 §Parameter Extractor + Time Anchor）
  * ------------------------------------------------------------------ */
 
 /**
@@ -77,10 +89,20 @@ export interface QueryParams {
   timeRange?: string;
   /** 归一化到 7/14/30/90 */
   range?: Range;
+  /** doc18 Time Anchor：结构化时间表达（今天/昨天/最近N/自定义区间） */
+  timeExpr?: TimeExpr;
+  /** doc18 任意对比（时段对比 或 维度对比） */
+  comparison?: TimeComparison;
+  /** Router 经 Date Anchor 解析出的具体窗口（metric/trend 取数用） */
+  window?: ResolvedWindow;
+  /** Router 解析出的对比双窗口（comparison 时段对比用） */
+  comparisonWindows?: { baseline: ResolvedWindow; comparison: ResolvedWindow };
   /** 业务维度（渠道 / 会员 / 区域 / 商品 / 活动） */
   dimension?: string;
   /** 渠道（APP / 小程序 / 企微 / 门店 …） */
   channel?: string;
+  /** 维度对比时的多个渠道（企业微信 vs 小程序） */
+  compareChannels?: string[];
   /** 会员分群（VIP / 普通会员 / 新会员 …） */
   segment?: string[];
   /** 区域（华东 / 华北 …） */
@@ -118,6 +140,8 @@ export const QUERY_TYPE_COST: Record<QueryType, CostTier> = {
   insight: "medium",
   strategy: "high",
   requirement: "very_high",
+  comparison: "free",
+  trend: "free",
 };
 
 export const COST_TIER_LABEL: Record<CostTier, string> = {
@@ -169,6 +193,8 @@ export interface MetricAnswer {
   /** 等价 SQL（可解释 / 可审计，doc 15 §SQL First） */
   sql: string;
   sources: string[];
+  /** Data First：本次取数的时间窗口（label，基于 Date Anchor） */
+  windowLabel?: string;
 }
 
 /** Calculation Query → Metric Engine 产出 */
@@ -182,6 +208,7 @@ export interface CalculationAnswer {
   evidence: { name: string; value: string }[];
   sql: string;
   sources: string[];
+  windowLabel?: string;
 }
 
 /** Insight Query → Insight Engine 产出（直接复用既有 AnalysisResult） */
@@ -240,13 +267,51 @@ export interface RequirementAnswer {
   };
 }
 
+/** Comparison Query → Window Engine 产出（doc18 V2 §Comparison，时段/维度对比） */
+export interface ComparisonAnswer {
+  kind: "comparison";
+  metric: string;
+  /** "time" 时段对比 / "dimension" 维度对比 */
+  mode: "time" | "dimension";
+  /** 时段对比：基线 vs 对比窗口 */
+  baseline?: { label: string; formatted: string };
+  comparison?: { label: string; formatted: string };
+  /** 维度对比：各渠道值 */
+  channels?: { channel: string; formatted: string }[];
+  delta?: string;
+  direction?: "up" | "down";
+  windowLabel?: string;
+  sql: string;
+}
+
+/** Trend Query → Window Engine 产出（doc18 V2 §Trend，任意区间走势） */
+export interface TrendAnswer {
+  kind: "trend";
+  metric: string;
+  points: { date: string; value: number; formatted: string }[];
+  summary: string;
+  windowLabel: string;
+  sql: string;
+}
+
+/** Missing Data 拦截（doc18 §Missing Data Checker + doc19 §M4）：缺数据不产出 */
+export interface MissingDataAnswer {
+  kind: "missing_data";
+  metric: string;
+  reason: string;
+  recommendUpload: string;
+}
+
 export type QueryAnswer =
   | MetricAnswer
   | CalculationAnswer
   | InsightAnswer
   | StrategyAnswer
   | ExecutionAnswer
-  | RequirementAnswer;
+  | RequirementAnswer
+  | ComparisonAnswer
+  | TrendAnswer
+  | MissingDataAnswer;
 
 /* ------------------------------------------------------------------ *
  * 统一返回
@@ -259,4 +324,6 @@ export interface QueryResult {
   answer: QueryAnswer;
   /** 成本预估（可解释、可监控，doc 15 §Cost Monitoring） */
   cost: { tier: CostTier; estimate: string };
+  /** Data First：本次回答所基于的 Date Anchor（最新数据日期） */
+  anchor?: string;
 }

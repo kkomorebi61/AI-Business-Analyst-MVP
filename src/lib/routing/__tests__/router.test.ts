@@ -3,11 +3,13 @@
  *
  * 无 ANALYST_LLM_API_KEY → 全程规则路径，routing.llmUsed=false（确定性）。
  */
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { routeQuery } from "../router";
 import { QUERY_TYPE_COST, type QueryType } from "../types";
 import { resetCostStore, getCostSnapshot } from "../cost-store";
 import { resetCache } from "../cache";
+import { setUploaded, resetDatasetStore } from "@/lib/data/dataset-store";
+import type { DatasetFile } from "@/lib/data-understanding/types";
 
 const ROUTE_CASES: { q: string; type: QueryType }[] = [
   { q: "最近7天GMV是多少？", type: "metric" },
@@ -181,5 +183,106 @@ describe("router · 缓存（doc 15 P3 Cache First）", () => {
     const snap = getCostSnapshot();
     expect(snap.cacheHits).toBe(1);
     expect(snap.totalRequests).toBe(2);
+  });
+});
+
+describe("router · comparison / trend（doc18 V2 · 任意时间与对比）", () => {
+  beforeEach(() => {
+    resetCache();
+    resetCostStore();
+  });
+
+  it("时段对比（今天 vs 昨天）→ ComparisonAnswer(time)", async () => {
+    const r = await routeQuery({ question: "今天和昨天GMV对比" });
+    expect(r.classification.queryType).toBe("comparison");
+    expect(r.answer.kind).toBe("comparison");
+    if (r.answer.kind === "comparison") {
+      expect(r.answer.mode).toBe("time");
+      expect(r.answer.baseline?.formatted).toBeTruthy();
+      expect(r.answer.comparison?.formatted).toBeTruthy();
+      expect(r.answer.delta).toBeTruthy();
+      expect(r.cost.tier).toBe("free");
+    }
+  });
+
+  it("维度对比（企微 vs 小程序）→ ComparisonAnswer(dimension)", async () => {
+    const r = await routeQuery({ question: "企业微信和小程序GMV对比" });
+    expect(r.answer.kind).toBe("comparison");
+    if (r.answer.kind === "comparison") {
+      expect(r.answer.mode).toBe("dimension");
+      expect(r.answer.channels).toHaveLength(2);
+    }
+  });
+
+  it("趋势 → TrendAnswer（带走势点 + 摘要）", async () => {
+    const r = await routeQuery({ question: "最近30天GMV趋势如何" });
+    expect(r.classification.queryType).toBe("trend");
+    expect(r.answer.kind).toBe("trend");
+    if (r.answer.kind === "trend") {
+      expect(r.answer.points.length).toBeGreaterThan(0);
+      expect(r.answer.summary).toBeTruthy();
+      expect(r.answer.windowLabel).toContain("2026");
+    }
+  });
+
+  it("自定义区间（2026-06-01 到 06-15）取数", async () => {
+    const r = await routeQuery({ question: "2026-06-01到2026-06-15的GMV是多少？" });
+    if (r.answer.kind === "metric") {
+      expect(r.answer.windowLabel).toContain("2026-06-01");
+    } else if (r.answer.kind === "calculation") {
+      expect(r.answer.windowLabel).toContain("2026-06-01");
+    }
+  });
+
+  it("result 带 Date Anchor（最新数据日期，非系统今天）", async () => {
+    const r = await routeQuery({ question: "最近7天GMV是多少？" });
+    expect(r.anchor).toBe("2026-06-29");
+  });
+});
+
+/** 仅 OMS 的事务数据集（缺 CRM / Marketing）→ 用于 Missing Data Gate */
+const OMS_ONLY: DatasetFile[] = [
+  {
+    name: "orders.csv",
+    columns: ["order_id", "order_amount", "sku", "channel", "order_date"],
+    rows: [
+      { order_id: "1", order_amount: "100", sku: "S1", channel: "Tmall", order_date: "2026-06-29" },
+      { order_id: "2", order_amount: "200", sku: "S2", channel: "JD", order_date: "2026-06-29" },
+    ],
+  },
+];
+
+describe("router · Missing Data Gate（doc18 §M5 + doc19 §M4，缺数据不产出）", () => {
+  beforeEach(() => {
+    resetCache();
+    resetCostStore();
+    resetDatasetStore();
+    setUploaded(OMS_ONLY); // 仅识别为 oms → 缺 CRM / Marketing
+  });
+  afterEach(() => {
+    resetDatasetStore(); // 恢复内置样本，避免污染其它用例
+  });
+
+  it("缺会员数据时 LTV 查询被拦截 → MissingDataAnswer", async () => {
+    const r = await routeQuery({ question: "LTV是多少？" });
+    expect(r.answer.kind).toBe("missing_data");
+    if (r.answer.kind === "missing_data") {
+      expect(r.answer.metric).toMatch(/LTV/);
+      expect(r.answer.reason).toContain("会员");
+      expect(r.answer.recommendUpload).toContain("CRM");
+    }
+  });
+
+  it("缺营销成本时 ROI 查询被拦截", async () => {
+    const r = await routeQuery({ question: "ROI是多少？" });
+    expect(r.answer.kind).toBe("missing_data");
+    if (r.answer.kind === "missing_data") {
+      expect(r.answer.reason).toContain("营销");
+    }
+  });
+
+  it("OMS 可分析的指标不被拦截（GMV 正常出值）", async () => {
+    const r = await routeQuery({ question: "最近7天GMV是多少？" });
+    expect(r.answer.kind).toBe("metric");
   });
 });

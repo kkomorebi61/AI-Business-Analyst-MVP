@@ -5,7 +5,13 @@
  * 纯规则路径（classifyRule），不依赖 LLM Key —— CI 确定性。
  */
 import { describe, expect, it } from "vitest";
-import { classifyRule, extractParams } from "../query-classifier";
+import {
+  classifyRule,
+  extractParams,
+  parseTimeExpr,
+  parseTimeComparison,
+  parseCompareChannels,
+} from "../query-classifier";
 import type { QueryType } from "../types";
 
 const CASES: { q: string; expect: QueryType }[] = [
@@ -92,5 +98,54 @@ describe("query-classifier · extractParams（参数提取准确率 > 90%）", (
   it("无明确参数时不报错", () => {
     const p = extractParams("经营情况怎么样");
     expect(p).toBeDefined();
+  });
+});
+
+describe("query-classifier · Time Anchor 解析（doc18 §M2，禁系统时间）", () => {
+  it("parseTimeExpr：今天 / 昨天 / 最近 N / 自定义区间", () => {
+    expect(parseTimeExpr("今天GMV")).toEqual({ kind: "today" });
+    expect(parseTimeExpr("昨天订单")).toEqual({ kind: "yesterday" });
+    expect(parseTimeExpr("最近7天GMV")).toEqual({ kind: "relative", days: 7 });
+    expect(parseTimeExpr("2026-06-01到2026-06-15 GMV")).toEqual({
+      kind: "absolute",
+      from: "2026-06-01",
+      to: "2026-06-15",
+    });
+    // 中文日期（年默认数据年 2026）
+    expect(parseTimeExpr("6月1日到6月15日GMV")).toEqual({
+      kind: "absolute",
+      from: "2026-06-01",
+      to: "2026-06-15",
+    });
+  });
+
+  it("parseTimeComparison：今天 vs 昨天（基线=昨天）", () => {
+    expect(parseTimeComparison("今天和昨天GMV对比")).toEqual({
+      baseline: { kind: "yesterday" },
+      comparison: { kind: "today" },
+    });
+    expect(parseTimeComparison("最近7天GMV")).toBeUndefined();
+  });
+
+  it("parseCompareChannels：抽取 ≥2 渠道", () => {
+    expect(parseCompareChannels("企业微信和小程序GMV对比")).toEqual(
+      expect.arrayContaining(["Enterprise WeChat", "Mini Program"]),
+    );
+    expect(parseCompareChannels("GMV对比")).toEqual([]);
+  });
+});
+
+describe("query-classifier · comparison / trend 分类（doc18 V2）", () => {
+  it("时段对比 → comparison", () => {
+    expect(classifyRule("今天和昨天GMV对比").queryType).toBe("comparison");
+  });
+
+  it("维度对比 → comparison（对比优先于取值）", () => {
+    expect(classifyRule("企业微信和小程序GMV对比").queryType).toBe("comparison");
+  });
+
+  it("趋势 → trend", () => {
+    expect(classifyRule("最近30天GMV趋势如何").queryType).toBe("trend");
+    expect(classifyRule("GMV走势怎么样").queryType).toBe("trend");
   });
 });

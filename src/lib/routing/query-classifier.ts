@@ -17,6 +17,7 @@
 import type { Range } from "@/lib/data/daily";
 import { resolveMetricKey, type MetricKey } from "@/lib/kb/metric-kb";
 import { isLlmEnabled, chat } from "@/lib/agents/llm-client";
+import type { TimeExpr, TimeComparison } from "@/lib/data/time";
 import type { CostAcc } from "@/lib/agents/usage";
 import type { Classification, QueryParams, QueryType } from "./types";
 import { QUERY_TYPES } from "./types";
@@ -99,7 +100,21 @@ const RULES: Rule[] = [
     confidence: 0.85,
     reason: "命中归因/分析诉求 → Insight Query（Insight Engine + GLM）",
   },
-  // 5) Metric / Calculation：取值查询（X 是多少 / 怎么样 / 多少 / 目前 / 现在）
+  // 5) Comparison：对比分析（对比 / 环比 / 相比 / VS / 本期 vs 上期）
+  {
+    type: "comparison",
+    patterns: [/对比|环比|相比|比较|\bvs\b/i, /(本周|这周|近?\d+天).{0,3}(和|与).{0,3}(上周|上期|前一?周)/],
+    confidence: 0.85,
+    reason: "命中对比诉求 → Comparison Query（Window Engine，任意时段/维度对比）",
+  },
+  // 6) Trend：趋势分析（趋势 / 走势 / 变化情况 / 波动）
+  {
+    type: "trend",
+    patterns: [/趋势|走势|变化情况|变化趋势|波动|近\d+天(的)?变化/],
+    confidence: 0.85,
+    reason: "命中趋势诉求 → Trend Query（Window Engine，任意区间走势）",
+  },
+  // 7) Metric / Calculation：取值查询（X 是多少 / 怎么样 / 多少 / 目前 / 现在）
   {
     type: "metric", // 占位；命中后按指标类型二次判定 metric vs calculation
     patterns: [
@@ -153,6 +168,52 @@ const COMPARE_RULES: { re: RegExp; target: string }[] = [
   { re: /相比?上周|比上周|环比上周|本周对比/, target: "last_week" },
   { re: /相比?上月|比上月|环比上月|本月对比/, target: "last_month" },
 ];
+
+/* ------------------------------------------------------------------ *
+ * Time Anchor 解析（doc 18 §Time Anchor Engine）—— 一切基于「最新数据日期」
+ * 纯规则、可单测；具体日期窗口由 Router 经 Date Anchor 解析（resolveWindow）。
+ * ------------------------------------------------------------------ */
+
+/** 自定义区间：2026-06-01到2026-06-15 / 6月1日到6月15日（年默认数据年 2026） */
+function parseAbsoluteRange(question: string): { from: string; to: string } | null {
+  const iso = /(\d{4}-\d{2}-\d{2})\s*(?:到|至|~|-|—)\s*(\d{4}-\d{2}-\d{2})/.exec(question);
+  if (iso) return { from: iso[1], to: iso[2] };
+  const cn = /(\d{1,2})月(\d{1,2})日\s*(?:到|至|~|-|—)\s*(\d{1,2})月(\d{1,2})日/.exec(question);
+  if (cn) {
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return { from: `2026-${pad(+cn[1])}-${pad(+cn[2])}`, to: `2026-${pad(+cn[3])}-${pad(+cn[4])}` };
+  }
+  return null;
+}
+
+/** 单一时间表达（metric / trend 取数窗口）：自定义 > 今天 > 昨天 > 最近N */
+export function parseTimeExpr(question: string): TimeExpr | undefined {
+  const abs = parseAbsoluteRange(question);
+  if (abs) return { kind: "absolute", ...abs };
+  if (/今天|今日/.test(question)) return { kind: "today" };
+  if (/昨天/.test(question)) return { kind: "yesterday" };
+  for (const { re, range } of RANGE_RULES) {
+    if (re.test(question)) return { kind: "relative", days: range };
+  }
+  return undefined;
+}
+
+/** 时段对比（今天 vs 昨天；以昨天为基线、今天为对比） */
+export function parseTimeComparison(question: string): TimeComparison | undefined {
+  if (/今天|今日/.test(question) && /昨天/.test(question)) {
+    return { baseline: { kind: "yesterday" }, comparison: { kind: "today" } };
+  }
+  return undefined;
+}
+
+/** 维度对比：抽取两个及以上渠道（企业微信 vs 小程序） */
+export function parseCompareChannels(question: string): string[] {
+  const found: string[] = [];
+  for (const { re, channel } of CHANNEL_RULES) {
+    if (re.test(question)) found.push(channel);
+  }
+  return Array.from(new Set(found));
+}
 
 /** 从 NL 抽取查询参数（纯规则，可单测） */
 export function extractParams(question: string): QueryParams {
@@ -215,6 +276,20 @@ export function extractParams(question: string): QueryParams {
     }
   }
 
+  // doc18 Time Anchor：结构化时间表达 + 任意对比（一切基于「最新数据日期」）
+  const timeExpr = parseTimeExpr(question);
+  if (timeExpr) params.timeExpr = timeExpr;
+  const cmp = parseTimeComparison(question);
+  if (cmp) params.comparison = cmp;
+  const dims = parseCompareChannels(question);
+  if (dims.length >= 2) {
+    params.compareChannels = dims;
+    params.dimension = "channel";
+  }
+  if (!params.compareTarget && /环比|相比|对比/.test(question)) {
+    params.compareTarget = "last_period";
+  }
+
   return params;
 }
 
@@ -226,6 +301,26 @@ export function extractParams(question: string): QueryParams {
 export function classifyRule(question: string): Classification {
   const params = extractParams(question);
   const text = question.toLowerCase();
+
+  // doc18 对比优先：显式维度/时段对比优先于取值（企业微信 vs 小程序 / 今天和昨天）
+  if (params.compareChannels && params.compareChannels.length >= 2) {
+    return {
+      queryType: "comparison",
+      confidence: 0.85,
+      params,
+      reason: "命中双渠道对比 → Comparison Query（Window Engine）",
+      by: "rule",
+    };
+  }
+  if (params.comparison) {
+    return {
+      queryType: "comparison",
+      confidence: 0.85,
+      params,
+      reason: "命中时段对比 → Comparison Query（Window Engine）",
+      by: "rule",
+    };
+  }
 
   for (const rule of RULES) {
     if (rule.patterns.some((re) => re.test(question) || re.test(text))) {

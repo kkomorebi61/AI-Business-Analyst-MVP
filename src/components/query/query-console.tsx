@@ -12,9 +12,11 @@ import type { Role } from "@/lib/kb/metric-kb";
 import { needsConfirmation, TIER_TOKEN_ESTIMATE } from "@/lib/routing/cost-estimate";
 import ConfirmDialog from "./confirm-dialog";
 
-/** 每类一个示例提问，点击即填入并提交（便于验收 6 条路径） */
+/** 每类一个示例提问，点击即填入并提交（便于验收 8 条路径） */
 const EXAMPLES: { type: Classification["queryType"]; q: string }[] = [
   { type: "metric", q: "最近7天GMV是多少？" },
+  { type: "comparison", q: "今天和昨天GMV对比" },
+  { type: "trend", q: "最近30天GMV趋势如何？" },
   { type: "calculation", q: "ROI是多少？" },
   { type: "insight", q: "为什么GMV下降？" },
   { type: "strategy", q: "如何提升复购率？" },

@@ -25,6 +25,8 @@ export const QUERY_TYPE_CADENCE: Record<QueryType, CacheCadence> = {
   execution: "daily",
   strategy: "weekly",
   requirement: "monthly",
+  comparison: "realtime",
+  trend: "daily",
 };
 
 /** 节奏 → TTL（doc 15 P3 verbatim） */

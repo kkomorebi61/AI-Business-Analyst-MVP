@@ -31,7 +31,38 @@ import { fillTemplate } from "@/lib/agents/prompt-templates";
 import { strategyEngine } from "@/lib/agents/strategy-engine";
 import { gapAnalysis, matchCapabilities, topCapability } from "@/lib/kb/capability-kb";
 import { queryClassifier } from "./query-classifier";
+import { getUnderstanding } from "@/lib/data/dataset-store";
+import { isAnalyzable } from "@/lib/data-understanding/gap";
+import { DATA_TYPE_LABELS } from "@/lib/data-understanding/recommend";
+import type { DataSetType } from "@/lib/data-understanding/types";
+import { resolveWindow, type ResolvedWindow, type TimeExpr, type TimeComparison } from "@/lib/data/time";
+import {
+  metricValue,
+  formatMetricValue,
+  compareWindows,
+  compareChannels,
+  trendPoints,
+  type TrendPoint,
+} from "./comparison-engine";
 import { recordRequest } from "./cost-store";
+import {
+  COST_TIER_LABEL,
+  QUERY_TYPE_COST,
+  type CalculationAnswer,
+  type ComparisonAnswer,
+  type ExecutionAnswer,
+  type InsightAnswer,
+  type MetricAnswer,
+  type MissingDataAnswer,
+  type QueryAnswer,
+  type QueryParams,
+  type QueryResult,
+  type QueryType,
+  type RequirementAnswer,
+  type RoutingTrace,
+  type StrategyAnswer,
+  type TrendAnswer,
+} from "./types";
 import {
   buildCacheKey,
   cacheGet,
@@ -39,20 +70,6 @@ import {
   CADENCE_TTL_MS,
   QUERY_TYPE_CADENCE,
 } from "./cache";
-import {
-  COST_TIER_LABEL,
-  QUERY_TYPE_COST,
-  type CalculationAnswer,
-  type ExecutionAnswer,
-  type InsightAnswer,
-  type MetricAnswer,
-  type QueryAnswer,
-  type QueryParams,
-  type QueryResult,
-  type RequirementAnswer,
-  type RoutingTrace,
-  type StrategyAnswer,
-} from "./types";
 
 export interface RouteInput {
   question: string;
@@ -84,7 +101,17 @@ export async function routeQuery(input: RouteInput): Promise<QueryResult> {
   const classification = await queryClassifier(question, acc);
   const range: Range = input.range ?? classification.params.range ?? 7;
 
-  const ctx: HandlerCtx = { question, range, params: classification.params, acc, role };
+  // Data First：一切时间基于「最新数据日期」（Date Anchor），缺数据由 detected 判定
+  const understanding = getUnderstanding();
+  const ctx: HandlerCtx = {
+    question,
+    range,
+    params: classification.params,
+    acc,
+    role,
+    anchor: understanding.latestDataDate,
+    detected: understanding.classification.detected,
+  };
   const { answer, trace } = await dispatch(classification.queryType, ctx);
 
   const summary = acc.summary();
@@ -95,6 +122,7 @@ export async function routeQuery(input: RouteInput): Promise<QueryResult> {
     routing: { ...trace, tokensIn: summary.tokensIn, tokensOut: summary.tokensOut },
     answer,
     cost: { tier: costTier, estimate: COST_TIER_LABEL[costTier] },
+    anchor: understanding.latestDataDate,
   };
 
   // 写缓存（按 QueryType 节奏定 TTL）+ 记成本事件
@@ -120,6 +148,10 @@ interface HandlerCtx {
   acc: CostAcc;
   /** 用户视角（Insight 工作流 perspective） */
   role?: Role;
+  /** Date Anchor：最新数据日期（doc 18 §Time Anchor，禁用系统当前时间） */
+  anchor: string;
+  /** 当前已识别数据类型（Missing Data Gate 用，doc 18 §Missing Data Checker） */
+  detected: DataSetType[];
 }
 
 async function dispatch(
@@ -145,6 +177,10 @@ async function dispatch(
       const { answer, llmModel } = await handleRequirement(ctx);
       return { answer, trace: traceFor("requirement", Boolean(llmModel), llmModel) };
     }
+    case "comparison":
+      return { answer: handleComparison(ctx), trace: traceFor("comparison", false, null) };
+    case "trend":
+      return { answer: handleTrend(ctx), trace: traceFor("trend", false, null) };
   }
 }
 
@@ -204,6 +240,22 @@ function traceFor(
         "① 规则命中需求/方案诉求",
         "② Gap Analysis 检测能力缺口（doc 16 Rule 3：能力缺失才出 PRD）",
         "③ LLM 生成 PRD/方案（Claude/GLM，最高成本档）",
+      ],
+    },
+    comparison: {
+      engines: ["Window Engine"],
+      ruleOrder: [
+        "① 规则命中对比诉求（时段 / 维度，Rule First）",
+        "② Window Engine 经 Date Anchor 解析双窗口 / 双渠道",
+        "③ 纯聚合对比，禁止 LLM 计算（doc 18 §Comparison）",
+      ],
+    },
+    trend: {
+      engines: ["Window Engine"],
+      ruleOrder: [
+        "① 规则命中趋势诉求（Rule First）",
+        "② Window Engine 按日聚合任意区间走势",
+        "③ 纯聚合，禁止 LLM 计算（doc 18 §Trend）",
       ],
     },
   };
@@ -317,14 +369,81 @@ function fmtDelta(f: MetricFact): string | undefined {
 }
 
 /* ------------------------------------------------------------------ *
- * Handler: Metric Query → SQL Engine
+ * Data First 工具：Missing Data Gate + Time Anchor 窗口（doc 18 §M5 + doc 19 §M4）
  * ------------------------------------------------------------------ */
 
-function handleMetric(ctx: HandlerCtx): MetricAnswer {
-  const key: MetricKey = ctx.params.metricKey ?? "gmv";
-  const spec = METRIC_SPECS[key];
-  const f = metricFact(key, ctx.range);
+/** 率类指标（变化按百分点 pp，其余按相对 %） */
+const RATE_LIKE_KEYS: MetricKey[] = [
+  "conversion", "refundRate", "repurchaseRate", "churnRate",
+  "reachRate", "replyRate", "scrmConversion", "couponRedemption",
+];
 
+/**
+ * Missing Data Checker（doc 18 §M5 + doc 19 §M4）：指标依赖的源数据缺失时**不产出**。
+ * 返回 MissingDataAnswer = 拦截并改述缺口；返回 null = 数据充足，放行。
+ * 复用 Data Understanding 预计算的缺口（已含人话原因 + 推荐上传类型）。
+ */
+function missingDataGate(key: MetricKey, detected: DataSetType[]): MissingDataAnswer | null {
+  if (isAnalyzable(key, detected)) return null;
+  const spec = METRIC_SPECS[key];
+  const gap = getUnderstanding().gaps.cannotAnalyze.find((g) => g.metric === spec.name);
+  const reason = gap?.reason ?? `缺少 ${spec.source_keys.join("、")} 数据`;
+  const recommendUpload = gap ? DATA_TYPE_LABELS[gap.recommendUpload] : "请上传对应业务数据";
+  return { kind: "missing_data", metric: spec.name, reason, recommendUpload };
+}
+
+/** 本次查询的时间参数 → 具体日期窗口（一切基于 Date Anchor，禁用系统当前时间） */
+function queryWindow(ctx: HandlerCtx): ResolvedWindow {
+  const expr: TimeExpr = ctx.params.timeExpr ?? { kind: "relative", days: ctx.range };
+  return resolveWindow(ctx.anchor, expr);
+}
+
+/** 是否为 Range(7/14/30/90) 表达不了的窗口（今天/昨天/自定义）→ 走 Window Engine */
+function isWindowed(ctx: HandlerCtx): boolean {
+  const k = ctx.params.timeExpr?.kind;
+  return k === "today" || k === "yesterday" || k === "absolute";
+}
+
+/** Trend 摘要：窗口首尾对比（率类报 pp，其余报 %） */
+function trendSummary(key: MetricKey, points: TrendPoint[]): string {
+  if (points.length === 0) return "所选窗口内无数据";
+  const first = points[0];
+  const last = points[points.length - 1];
+  if (RATE_LIKE_KEYS.includes(key)) {
+    const pp = last.value - first.value;
+    return `${first.formatted} → ${last.formatted}（${pp >= 0 ? "+" : ""}${pp.toFixed(1)}pp）`;
+  }
+  if (first.value === 0) return `起步为 0，最新 ${last.formatted}`;
+  const chg = ((last.value - first.value) / first.value) * 100;
+  return `${first.formatted} → ${last.formatted}（${chg > 0 ? "+" : ""}${chg.toFixed(1)}%）`;
+}
+
+/* ------------------------------------------------------------------ *
+ * Handler: Metric Query → SQL Engine（Data First：Time Anchor + 缺数据拦截）
+ * ------------------------------------------------------------------ */
+
+function handleMetric(ctx: HandlerCtx): MetricAnswer | MissingDataAnswer {
+  const key: MetricKey = ctx.params.metricKey ?? "gmv";
+  const gate = missingDataGate(key, ctx.detected);
+  if (gate) return gate;
+  const spec = METRIC_SPECS[key];
+
+  // 今天 / 昨天 / 自定义区间 → Window Engine 按锚点窗口取数（单点值，无环比）
+  if (isWindowed(ctx)) {
+    const win = queryWindow(ctx);
+    const v = metricValue(key, win.from, win.to);
+    return {
+      kind: "metric",
+      metric: spec.name,
+      value: formatMetricValue(key, v),
+      sql: SQL_FOR[key],
+      sources: spec.source_keys,
+      windowLabel: win.label,
+    };
+  }
+
+  // 最近 N 天 → 复用既有 anchor-correct 取数（带环比 delta）
+  const f = metricFact(key, ctx.range);
   return {
     kind: "metric",
     metric: spec.name,
@@ -334,6 +453,7 @@ function handleMetric(ctx: HandlerCtx): MetricAnswer {
     direction: (f.delta ?? 0) >= 0 ? "up" : "down",
     sql: SQL_FOR[key],
     sources: spec.source_keys,
+    windowLabel: rangeLabel(ctx.range),
   };
 }
 
@@ -341,9 +461,32 @@ function handleMetric(ctx: HandlerCtx): MetricAnswer {
  * Handler: Calculation Query → Metric Engine（公式 + 依据）
  * ------------------------------------------------------------------ */
 
-function handleCalculation(ctx: HandlerCtx): CalculationAnswer {
+function handleCalculation(ctx: HandlerCtx): CalculationAnswer | MissingDataAnswer {
   const key: MetricKey = ctx.params.metricKey ?? "roi";
+  const gate = missingDataGate(key, ctx.detected);
+  if (gate) return gate;
   const spec = METRIC_SPECS[key];
+
+  // 今天 / 昨天 / 自定义区间 → Window Engine 取数
+  if (isWindowed(ctx)) {
+    const win = queryWindow(ctx);
+    const v = metricValue(key, win.from, win.to);
+    return {
+      kind: "calculation",
+      metric: spec.name,
+      formula: spec.formula,
+      result: formatMetricValue(key, v),
+      evidence: [
+        { name: spec.name, value: formatMetricValue(key, v) },
+        { name: "统计口径", value: spec.formula },
+        { name: "统计周期", value: win.label },
+      ],
+      sql: SQL_FOR[key],
+      sources: spec.source_keys,
+      windowLabel: win.label,
+    };
+  }
+
   const f = metricFact(key, ctx.range);
 
   // Evidence：派生指标拆出主要计算分量（可审计）
@@ -371,6 +514,77 @@ function handleCalculation(ctx: HandlerCtx): CalculationAnswer {
     evidence,
     sql: SQL_FOR[key],
     sources: spec.source_keys,
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * Handler: Comparison Query → Window Engine（doc 18 §Comparison）
+ * 时段对比（今天 vs 昨天）/ 维度对比（企业微信 vs 小程序）
+ * ------------------------------------------------------------------ */
+
+function handleComparison(ctx: HandlerCtx): ComparisonAnswer | MissingDataAnswer {
+  const key: MetricKey = ctx.params.metricKey ?? "gmv";
+  const gate = missingDataGate(key, ctx.detected);
+  if (gate) return gate;
+  const spec = METRIC_SPECS[key];
+
+  // 维度对比：双渠道（企业微信 vs 小程序）
+  const dims = ctx.params.compareChannels;
+  if (dims && dims.length >= 2) {
+    const win = queryWindow(ctx);
+    const res = compareChannels(key, win.from, win.to, dims);
+    return {
+      kind: "comparison",
+      metric: spec.name,
+      mode: "dimension",
+      channels: res.rows.map((r) => ({ channel: r.channel, formatted: r.formatted })),
+      delta:
+        res.delta === null
+          ? undefined
+          : `${res.delta > 0 ? "+" : ""}${res.delta.toFixed(1)}${RATE_LIKE_KEYS.includes(key) ? "pp" : "%"}`,
+      direction: res.direction ?? undefined,
+      windowLabel: win.label,
+      sql: SQL_FOR[key],
+    };
+  }
+
+  // 时段对比：基线 vs 对比窗口（今天 vs 昨天）
+  const cmp: TimeComparison =
+    ctx.params.comparison ?? { baseline: { kind: "yesterday" }, comparison: { kind: "today" } };
+  const baseline = resolveWindow(ctx.anchor, cmp.baseline);
+  const comparison = resolveWindow(ctx.anchor, cmp.comparison);
+  const res = compareWindows(key, baseline, comparison);
+  return {
+    kind: "comparison",
+    metric: spec.name,
+    mode: "time",
+    baseline: { label: res.baseline.label, formatted: res.baseline.formatted },
+    comparison: { label: res.comparison.label, formatted: res.comparison.formatted },
+    delta: res.deltaFormatted,
+    direction: res.direction,
+    windowLabel: `${res.baseline.label} vs ${res.comparison.label}`,
+    sql: SQL_FOR[key],
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * Handler: Trend Query → Window Engine（doc 18 §Trend，任意区间走势）
+ * ------------------------------------------------------------------ */
+
+function handleTrend(ctx: HandlerCtx): TrendAnswer | MissingDataAnswer {
+  const key: MetricKey = ctx.params.metricKey ?? "gmv";
+  const gate = missingDataGate(key, ctx.detected);
+  if (gate) return gate;
+  const spec = METRIC_SPECS[key];
+  const win = queryWindow(ctx);
+  const points = trendPoints(key, win.from, win.to);
+  return {
+    kind: "trend",
+    metric: spec.name,
+    points: points.map((p) => ({ date: p.date, value: p.value, formatted: p.formatted })),
+    summary: trendSummary(key, points),
+    windowLabel: win.label,
+    sql: SQL_FOR[key],
   };
 }
 
