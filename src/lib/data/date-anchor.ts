@@ -8,15 +8,16 @@
  * （UnderstandingResult.latestDataDate）；本文件服务于「默认样本」口径。
  */
 
-import { facts } from "@/lib/data/csv-engine";
+import { getFacts } from "@/lib/data/csv-engine";
 import { maxDateString, type DateAnchor } from "@/lib/data/time";
 
-/** Latest Data Date = 渠道 / 会员 / 企微 三张事实表日期的最大值 */
+/** Latest Data Date = 渠道 / 会员 / 企微 三张事实表日期的最大值（取自当前 Active Dataset） */
 export function getLatestDataDate(): string {
+  const f = getFacts();
   return maxDateString([
-    ...facts.channel.map((r) => r.date),
-    ...facts.member.map((r) => r.date),
-    ...facts.scrm.map((r) => r.date),
+    ...f.channel.map((r) => r.date),
+    ...f.member.map((r) => r.date),
+    ...f.scrm.map((r) => r.date),
   ]);
 }
 

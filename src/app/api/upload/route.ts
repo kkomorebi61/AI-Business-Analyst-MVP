@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { parseCsvText } from "@/lib/data/csv-engine";
 import { resetToSample, setUploaded } from "@/lib/data/dataset-store";
+import { resetCache } from "@/lib/routing/cache";
 import type { DatasetFile } from "@/lib/data-understanding/types";
 
 export const dynamic = "force-dynamic";
@@ -10,9 +11,11 @@ export const dynamic = "force-dynamic";
  *
  * 两种动作（form 字段 action 区分）：
  *   - action="sample"（默认无文件）：重置为内置样本
- *   - 上传一个或多个 .csv：解析 → Data Understanding Engine → 设为活跃数据集
+ *   - 上传一个或多个 .csv：解析 → Fact Table Builder（构建规范事实表）→ Data Understanding
+ *     → 设为活跃数据集（此后所有指标从上传数据计算）
  *
- * 返回最新的 UnderstandingResult（分类 / 场景 / 推荐 / 缺口 / Date Anchor / dashboardSpec）。
+ * 数据源切换后必须清空查询缓存（缓存键不含数据集标识，否则旧样本答案会命中）。
+ * 返回最新的 UnderstandingResult（含 uploadDiagnostics：未识别列 / raw 检测）。
  */
 export async function POST(req: Request) {
   let form: FormData;
@@ -24,6 +27,7 @@ export async function POST(req: Request) {
 
   // 动作：重置为样本
   if (form.get("action") === "sample") {
+    resetCache(); // 数据源已变，旧答案缓存失效
     return NextResponse.json(resetToSample());
   }
 
@@ -45,5 +49,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "上传的 CSV 均无有效数据行" }, { status: 400 });
   }
 
+  resetCache(); // 数据源已变，旧答案缓存失效
   return NextResponse.json(setUploaded(files));
 }
+

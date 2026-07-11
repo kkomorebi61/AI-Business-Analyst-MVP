@@ -14,6 +14,7 @@ import TrendChart from "./trend-chart";
 import QueryBanner from "./query-banner";
 import EvidenceDrawer from "./evidence-drawer";
 import MetricDetailDrawer from "@/components/metrics/metric-detail-drawer";
+import CurrentDatasetChip from "@/components/dataset/current-dataset-chip";
 import RangeSwitcher from "@/components/home/range-switcher";
 import type { Range } from "@/lib/data/daily";
 import type { AnalysisResult, Finding, Risk } from "@/lib/agents/types";
@@ -94,6 +95,7 @@ export default function ReportView({
               <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
                 AI 业务分析师 · {ROLE_LABEL[result.perspective]}
+                <CurrentDatasetChip />
               </div>
               <h1 className="text-[22px] font-semibold leading-snug">
                 {result.question}

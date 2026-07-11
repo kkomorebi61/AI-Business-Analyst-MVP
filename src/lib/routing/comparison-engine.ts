@@ -9,7 +9,7 @@
  * 纯函数、无 fs（facts 由 csv-engine 载入）。可单测。
  */
 
-import { facts } from "@/lib/data/csv-engine";
+import { getFacts, type ChannelFact } from "@/lib/data/csv-engine";
 import type { MetricKey } from "@/lib/kb/metric-kb";
 import type { ResolvedWindow } from "@/lib/data/time";
 
@@ -31,9 +31,10 @@ const CHANNEL_KEY: Record<string, string> = {
  * period 指标按窗口聚合；snapshot 指标取窗口末值（存量口径）。
  */
 export function metricValue(key: MetricKey, from: string, to: string): number {
-  const ch = facts.channel.filter((r) => inWin(r.date, from, to));
-  const mb = facts.member.filter((r) => inWin(r.date, from, to));
-  const sc = facts.scrm.filter((r) => inWin(r.date, from, to));
+  const f = getFacts();
+  const ch = f.channel.filter((r) => inWin(r.date, from, to));
+  const mb = f.member.filter((r) => inWin(r.date, from, to));
+  const sc = f.scrm.filter((r) => inWin(r.date, from, to));
 
   switch (key) {
     case "gmv":
@@ -189,7 +190,7 @@ export function compareChannels(
 ): { rows: ChannelValue[]; delta: number | null; direction: "up" | "down" | null } {
   const rows: ChannelValue[] = channels.map((c) => {
     const factKey = CHANNEL_KEY[c] ?? c;
-    const ch = facts.channel.filter((r) => r.channel === factKey && inWin(r.date, from, to));
+    const ch = getFacts().channel.filter((r) => r.channel === factKey && inWin(r.date, from, to));
     const v = channelMetric(key, ch);
     return { channel: c, value: v, formatted: formatMetricValue(key, v) };
   });
@@ -202,7 +203,7 @@ export function compareChannels(
 }
 
 /** 单渠道事实行的指标值（对比维度用） */
-function channelMetric(key: MetricKey, ch: typeof facts.channel): number {
+function channelMetric(key: MetricKey, ch: ChannelFact[]): number {
   switch (key) {
     case "gmv":
       return sum(ch, (r) => r.gmv);
@@ -244,7 +245,7 @@ export function trendPoints(key: MetricKey, from: string, to: string): TrendPoin
   // GMV / 订单 / 客单价 / 转化 / 退款 / ROI 走渠道日聚合；会员/私域走各自日表
   const dates = Array.from(
     new Set(
-      facts.channel
+      getFacts().channel
         .map((r) => r.date)
         .filter((d) => inWin(d, from, to)),
     ),

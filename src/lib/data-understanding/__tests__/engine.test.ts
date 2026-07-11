@@ -46,6 +46,11 @@ describe("engine · Data Understanding 编排（doc19）", () => {
     expect(u.latestDataDate).toBe("2026-06-30");
   });
 
+  it("dateRange = 数据跨度（min/max + 去重天数），maxDate ≡ latestDataDate", () => {
+    expect(u.dateRange).toEqual({ minDate: "2026-06-28", maxDate: "2026-06-30", dayCount: 3 });
+    expect(u.latestDataDate).toBe(u.dateRange.maxDate);
+  });
+
   it("全集数据无缺口（No Unsupported Analysis）", () => {
     expect(u.gaps.cannotAnalyze).toHaveLength(0);
   });

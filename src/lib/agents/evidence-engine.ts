@@ -12,6 +12,7 @@
 
 import type { ChannelAggregate } from "@/lib/data/csv-engine";
 import { trustForSources } from "@/lib/data/data-trust";
+import { getCurrentDatasetSummary } from "@/lib/data/dataset-store";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
 import type { DataAgentOutput } from "./data-agent";
 import type { Evidence, EvidenceItem } from "./types";
@@ -97,6 +98,7 @@ export function buildMetricEvidence(keys: MetricKey[], data: DataAgentOutput): E
     coverage: trust.coverage,
     healthStatus: trust.healthStatus,
     lastUpdated: trust.lastUpdated,
+    dataset: getCurrentDatasetSummary(),
   };
 }
 
@@ -109,5 +111,6 @@ export function buildChannelEvidence(ch: ChannelAggregate): Evidence {
     coverage: trust.coverage,
     healthStatus: trust.healthStatus,
     lastUpdated: trust.lastUpdated,
+    dataset: getCurrentDatasetSummary(),
   };
 }

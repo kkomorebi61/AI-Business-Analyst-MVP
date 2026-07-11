@@ -10,7 +10,6 @@
  */
 
 import type { MetricKey } from "@/lib/kb/metric-kb";
-import { maxDateString } from "@/lib/data/time";
 import { classify } from "./classify";
 import { identifyScenario } from "./scenario";
 import { recommend } from "./recommend";
@@ -22,19 +21,34 @@ import type {
   UnderstandingInput,
   UnderstandingResult,
 } from "./types";
+import type { DateRange } from "./types";
 
 /** 日期型列名（raw + aggregated），用于抽取 Latest Data Date */
 const DATE_COLUMNS = ["date", "order_date", "event_date", "register_date", "created_at", "dt"];
 
-/** 从数据集中抽取最新日期（= Date Anchor） */
-function extractLatestDate(input: UnderstandingInput): string {
-  const dates: string[] = [];
+/**
+ * 从数据集中抽取日期跨度（min/max + 去重天数）= Date Range。
+ * - maxDate 即 Date Anchor（与原 latestDataDate 同口径）；
+ * - dayCount（去重）= 「分析范围」的实际上限：上传多少天，分析范围就是多少天。
+ * 注：这里读的是用户原始行（未规范化），与既有 latestDataDate 抽取口径一致；
+ * 事实表侧的日期规范化由 csv-engine.map* 承担。
+ */
+function extractDateRange(input: UnderstandingInput): DateRange {
+  const seen = new Set<string>();
   for (const f of input.files) {
     const dateKey = f.columns.find((c) => DATE_COLUMNS.includes(c.toLowerCase()));
     if (!dateKey) continue;
-    for (const row of f.rows) dates.push(row[dateKey]);
+    for (const row of f.rows) {
+      const v = row[dateKey];
+      if (v) seen.add(v);
+    }
   }
-  return maxDateString(dates);
+  const sorted = Array.from(seen).sort(); // ISO 日期串字典序 = 时间序
+  return {
+    minDate: sorted[0] ?? "",
+    maxDate: sorted[sorted.length - 1] ?? "",
+    dayCount: sorted.length,
+  };
 }
 
 /* ----------------------- Module 5 · Dashboard Generator ----------------------- */
@@ -84,7 +98,7 @@ export function understand(input: UnderstandingInput): UnderstandingResult {
   const scenario = identifyScenario(detected);
   const recommendations = recommend(detected);
   const gaps = analyzeGaps(detected);
-  const latestDataDate = extractLatestDate(input);
+  const dateRange = extractDateRange(input);
   const dashboardSpec = generateDashboard(detected, scenario.primary);
 
   return {
@@ -93,7 +107,8 @@ export function understand(input: UnderstandingInput): UnderstandingResult {
     scenario,
     recommendations,
     gaps,
-    latestDataDate,
+    latestDataDate: dateRange.maxDate, // = Date Anchor（向后兼容字段）
+    dateRange,
     dashboardSpec,
   };
 }

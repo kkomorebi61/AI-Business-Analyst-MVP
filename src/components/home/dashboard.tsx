@@ -7,6 +7,7 @@ import ChannelSection from "./sections/channel-section";
 import InsightSection from "./sections/insight-section";
 import MetricDetailDrawer from "@/components/metrics/metric-detail-drawer";
 import EvidenceDrawer from "@/components/report/evidence-drawer";
+import CurrentDatasetChip from "@/components/dataset/current-dataset-chip";
 import { Sparkles, CalendarClock, Upload } from "lucide-react";
 import type { DashboardResponse } from "@/app/api/dashboard/route";
 import type { Finding, Risk } from "@/lib/agents/types";
@@ -82,16 +83,12 @@ export default function Dashboard({
     <div className="flex flex-col gap-8">
       {/* Data First 上下文：视角 + Date Anchor + 场景 + 缺口提示 */}
       <div className="flex flex-col gap-1 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-700">
-        <span className="flex items-center gap-1.5">
+        <span className="flex flex-wrap items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 shrink-0" />
           当前视角：
           <b>{perspective === "CEO" ? "CEO" : perspective === "CRM_MANAGER" ? "CRM 经理" : "运营经理"}</b>
           ；业务场景：<b>{data.scenario.label}</b>
-          {data.isSample ? (
-            <span className="rounded bg-white/70 px-1.5 py-0.5 text-[10px] text-blue-600">内置样本</span>
-          ) : (
-            <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] text-emerald-700">已上传数据</span>
-          )}
+          <CurrentDatasetChip />
         </span>
         <span className="flex items-center gap-1.5">
           <CalendarClock className="h-3.5 w-3.5 shrink-0" />

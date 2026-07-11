@@ -13,11 +13,18 @@ import {
   XCircle,
 } from "lucide-react";
 import TopNav from "@/components/top-nav";
+import CurrentDatasetCard from "@/components/dataset/current-dataset-card";
 import { listSources, type SourceTrust } from "@/lib/data/data-trust";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
-import { getUnderstanding, isSample } from "@/lib/data/dataset-store";
+import { getCurrentDatasetSummary, getUnderstanding, isSample } from "@/lib/data/dataset-store";
 import { SCENARIO_LABELS } from "@/lib/data-understanding/scenario";
 import { DATA_TYPE_LABELS } from "@/lib/data-understanding/recommend";
+
+/**
+ * 强制动态：读进程内 globalStore（当前数据集 / 数据理解 / 数据源注册表），
+ * 禁静态预渲染——否则上传或切换数据集后页仍是构建时的样本快照（同 /cost 口径）。
+ */
+export const dynamic = "force-dynamic";
 
 /**
  * 数据可信中心（Data Trust Center，路由：/trust）
@@ -47,6 +54,7 @@ export default function TrustPage() {
   const sources = listSources();
   const u = getUnderstanding();
   const sample = isSample();
+  const currentDataset = getCurrentDatasetSummary();
   const avgCoverage = Math.round(
     sources.reduce((s, x) => s + x.coverage, 0) / (sources.length || 1),
   );
@@ -77,6 +85,11 @@ export default function TrustPage() {
           <Tile icon={<Gauge className="h-4 w-4" />} label="平均覆盖率" value={`${avgCoverage}%`} />
           <Tile icon={<ShieldCheck className="h-4 w-4" />} label="健康源" value={`${healthy}`} />
           <Tile icon={<Activity className="h-4 w-4" />} label="异常/延迟源" value={`${abnormal}`} warn={abnormal > 0} />
+        </div>
+
+        {/* Dataset Visibility · 当前数据集（所有指标的计算源） */}
+        <div className="mb-8">
+          <CurrentDatasetCard d={currentDataset} variant="full" />
         </div>
 
         {/* Data First · 数据理解概览 + 缺口（doc19 M4） */}

@@ -18,7 +18,7 @@
  * 故用统一的 DISPLAY_TO_KEY 解析到 MetricKey 后再比对。
  */
 
-import { facts } from "@/lib/data/csv-engine";
+import { getFacts } from "@/lib/data/csv-engine";
 import type { MetricKey } from "@/lib/kb/metric-kb";
 import type { EventAttribution } from "@/lib/agents/types";
 
@@ -51,15 +51,17 @@ const TYPE_TO_IMPACT: Record<string, string[]> = {
   SCRM: ["Conversion Rate", "Repurchase Rate"],
 };
 
-/** 由 CSV 事实行构造归因用事件（单一数据源 = business_events.csv） */
-const EVENTS: BusinessEvent[] = facts.events.map((e) => ({
-  event_date: e.event_date,
-  event_name: e.event_name,
-  event_type: TYPE_TO_DISPLAY[e.event_type] ?? "Marketing",
-  impact_metrics: TYPE_TO_IMPACT[e.event_type] ?? ["GMV"],
-  impact_direction: e.impact_direction === "POSITIVE" ? "Positive" : "Negative",
-  description: e.description,
-}));
+/** 由当前 Active Dataset 的事件行构造归因用事件（惰性：随上传数据集变化） */
+function getEvents(): BusinessEvent[] {
+  return getFacts().events.map((e) => ({
+    event_date: e.event_date,
+    event_name: e.event_name,
+    event_type: TYPE_TO_DISPLAY[e.event_type] ?? "Marketing",
+    impact_metrics: TYPE_TO_IMPACT[e.event_type] ?? ["GMV"],
+    impact_direction: e.impact_direction === "POSITIVE" ? "Positive" : "Negative",
+    description: e.description,
+  }));
+}
 
 /** 展示名 → MetricKey（英文事件名 + 中文 Evidence 名统一映射） */
 const DISPLAY_TO_KEY: Record<string, MetricKey> = {
@@ -118,7 +120,7 @@ export function attributeEvents(args: {
   const movedKeys = new Set(movements.map((m) => m.metric));
   const result: EventAttribution[] = [];
 
-  for (const e of EVENTS) {
+  for (const e of getEvents()) {
     if (!inWindow(e.event_date, windowStart, windowEnd)) continue;
     const eventKeys = e.impact_metrics
       .map(resolveKey)

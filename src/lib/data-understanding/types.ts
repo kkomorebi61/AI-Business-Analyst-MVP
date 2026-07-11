@@ -65,6 +65,26 @@ export interface DashboardSpec {
   sections: { id: string; title: string; metrics: MetricKey[] }[];
 }
 
+/** 数据日期跨度（min/max + 去重天数）——「分析范围 = 上传范围」的事实依据 */
+export interface DateRange {
+  /** 最早数据日期（左边界） */
+  minDate: string;
+  /** 最新数据日期（右边界 = Date Anchor） */
+  maxDate: string;
+  /** 去重后的天数 = 可分析范围的上限 */
+  dayCount: number;
+}
+
+/** 上传入库诊断（仅 source="upload" 时存在；结构化，由 Fact Table Builder 填充） */
+export interface UploadDiagnostics {
+  /** 是否检测到 raw 事务流水（需提示「请按日聚合后上传」） */
+  rawDetected: boolean;
+  /** 未映射到任何规范字段的用户列名 */
+  unmappedColumns: string[];
+  /** 各规范事实表入库行数 */
+  rowsByTable: Record<string, number>;
+}
+
 /** Data Understanding Engine 的最终输出 */
 export interface UnderstandingResult {
   source: "sample" | "upload";
@@ -72,9 +92,13 @@ export interface UnderstandingResult {
   scenario: ScenarioResult;
   recommendations: AnalysisRecommendation[];
   gaps: GapAnalysis;
-  /** 最新数据日期 = Date Anchor（doc 18 §Time Anchor Engine） */
+  /** 最新数据日期 = Date Anchor（doc 18 §Time Anchor Engine）；≡ dateRange.maxDate（保留以向后兼容） */
   latestDataDate: string;
+  /** 数据日期跨度：分析范围以此为上限（上传多少天 = 多少天分析范围，不回落样本、不越界） */
+  dateRange: DateRange;
   dashboardSpec: DashboardSpec;
+  /** 上传入库诊断（样本时为 undefined） */
+  uploadDiagnostics?: UploadDiagnostics;
 }
 
 /* ------------------------------ 输入 ------------------------------ */

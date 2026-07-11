@@ -7,6 +7,7 @@ import type { Range } from "@/lib/data/daily";
 import type { MetricKey, Role } from "@/lib/kb/metric-kb";
 import type { MetricTrustInfo } from "@/lib/data/data-trust";
 import type { ChannelAggregate } from "@/lib/data/csv-engine";
+import type { DatasetSummary } from "@/lib/data/dataset-store";
 
 export type Intent =
   | "business_overview"
@@ -66,6 +67,8 @@ export interface Evidence {
   coverage: number | null; // 0~100，来自 Data Trust 注册表
   healthStatus: string; // Healthy / Warning / Delayed / Error
   lastUpdated: string | null; // 最晚更新时间
+  /** Dataset Visibility：该结论计算时所用的数据集（当前激活），让每条依据可溯源到具体数据 */
+  dataset?: DatasetSummary;
 }
 
 /* ---------- Query Governance（V1.1：查询分级 / 覆盖率 / 风险 / 响应策略 / 事件归因） ---------- */

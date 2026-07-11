@@ -3,7 +3,12 @@
 import { useEffect, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { DATA_TYPE_LABELS } from "@/lib/data-understanding/recommend";
 import type { EvidenceItem, Finding, Risk } from "@/lib/agents/types";
+
+function typeLabel(t: string): string {
+  return DATA_TYPE_LABELS[t as keyof typeof DATA_TYPE_LABELS] ?? t;
+}
 
 function fmtNum(v: number, unit: string): string {
   if (unit === "¥") {
@@ -123,6 +128,53 @@ export default function EvidenceDrawer({
                 {ev.dataSources.map((s) => (
                   <Badge key={s} variant="info">{s}</Badge>
                 ))}
+              </div>
+            </Section>
+          )}
+
+          {/* 当前数据集 · Dataset Visibility：该结论计算所用的数据集 */}
+          {ev?.dataset && (
+            <Section title="当前数据集 · Current Dataset">
+              <div className="rounded-lg border border-border p-3 text-xs">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[13px] font-semibold text-foreground">{ev.dataset.name}</span>
+                  <Badge variant={ev.dataset.sourceType === "sample" ? "info" : "success"}>
+                    {ev.dataset.sourceType === "sample" ? "内置样本" : "已上传"}
+                  </Badge>
+                </div>
+                <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
+                  <div>
+                    <dt className="text-muted-foreground">数据类型</dt>
+                    <dd className="font-medium text-foreground">
+                      {ev.dataset.datasetTypes.map(typeLabel).join(" / ") || "—"}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">截止日期</dt>
+                    <dd className="font-medium text-foreground">{ev.dataset.latestDataDate || "—"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">数据范围</dt>
+                    <dd className="font-medium text-foreground">
+                      {ev.dataset.dateRange.minDate || "—"} ~ {ev.dataset.dateRange.maxDate || "—"}
+                      （{ev.dataset.dateRange.dayCount} 天）
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted-foreground">记录数</dt>
+                    <dd className="font-medium text-foreground">
+                      {ev.dataset.recordCount.toLocaleString("zh-CN")} 条
+                    </dd>
+                  </div>
+                </dl>
+                {ev.dataset.fileNames.length > 0 && (
+                  <div className="mt-2 border-t border-border pt-2">
+                    <dt className="text-muted-foreground">来源文件</dt>
+                    <dd className="mt-0.5 break-all font-medium text-foreground">
+                      {ev.dataset.fileNames.join("、")}
+                    </dd>
+                  </div>
+                )}
               </div>
             </Section>
           )}

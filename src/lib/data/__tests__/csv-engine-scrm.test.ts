@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { Range } from "@/lib/data/daily";
-import { aggregateScrm, facts } from "@/lib/data/csv-engine";
+import { aggregateScrm, getFacts, type ScrmFact } from "@/lib/data/csv-engine";
 
 /**
  * SCRM（企微运营）聚合回归套件 · 03A SQL 口径
@@ -16,11 +16,11 @@ import { aggregateScrm, facts } from "@/lib/data/csv-engine";
 const RANGES: Range[] = [7, 14, 30, 90];
 const CMP_RANGES: Range[] = [7, 14, 30]; // 90 天为全量窗口，无上一期
 
-/** facts.scrm 已按日期升序；当期 = 最后 range 行（与 dateWindow 当期一致） */
-const currentRows = (range: Range) => facts.scrm.slice(-range);
+/** getFacts().scrm 已按日期升序；当期 = 最后 range 行（与 dateWindow 当期一致） */
+const currentRows = (range: Range) => getFacts().scrm.slice(-range);
 
 describe("SCRM 聚合 · 公式正确性（对齐 03A SQL 口径）", () => {
-  const sum = (key: keyof (typeof facts.scrm)[number]) =>
+  const sum = (key: keyof ScrmFact) =>
     currentRows(7).reduce((s, r) => s + (r[key] as number), 0);
 
   it("reachRate = Σreached_users / Σtotal_friends", () => {
@@ -134,7 +134,7 @@ describe("SCRM 聚合 · totalFriends 跨 range 一致（窗口右端固定）",
     const t14 = aggregateScrm(14).totalFriends;
     const t30 = aggregateScrm(30).totalFriends;
     const t90 = aggregateScrm(90).totalFriends;
-    const last = facts.scrm[facts.scrm.length - 1].total_friends;
+    const last = getFacts().scrm[getFacts().scrm.length - 1].total_friends;
     expect(t7).toBe(last);
     expect(t14).toBe(last);
     expect(t30).toBe(last);

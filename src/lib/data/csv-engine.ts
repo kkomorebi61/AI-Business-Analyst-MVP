@@ -1,23 +1,19 @@
 /**
- * CSV Metric Engine —— 单一数据源的指标计算层（V3 · 03A Schema）
+ * CSV Metric Engine —— Active Dataset 的指标计算层（V4 · 03A Schema + Data First）
  *
- * 权威数据源：项目根 data/ 下的 4 张 CSV 事实表（03A_Daily_Fact_Table_Schema）
- *   daily_channel_metrics.csv  渠道经营事实表（90 天 × 6 渠道）
- *   daily_member_metrics.csv   会员运营事实表（90 天）
- *   daily_scrm_metrics.csv     企微运营事实表（90 天）
- *   business_events.csv        经营事件表（供 Root Cause，由 governance 侧消费）
+ * 权威数据源 = **Active Dataset（活跃数据集）**：
+ *   - 默认为内置样本（项目根 data/ 下 4 张 CSV 事实表，满足 No Empty Dashboard）；
+ *   - /upload 上传后由 Fact Table Builder 构建为规范事实表，挂为活跃，替换样本。
+ *   一切指标（GMV/ROI/LTV/复购率…）一律从 Active Dataset 聚合得到，**禁止再用样本兜底**。
  *
- * 设计原则（03A）：
- *   - Single Source of Truth：结果指标（GMV/ROI/LTV/复购率…）一律不落盘，
- *     由本引擎对事实表做 SQL 式聚合得到（每函数标注等价 SQL）。
- *   - Rule 1/2 天然成立：总 GMV / 总订单 = Σ 渠道值（GMV 仅存在于渠道表，
- *     不存在第二份总量，故无需对账）。
+ * 设计原则（03A / Data First）：
+ *   - Single Source of Truth：结果指标不落盘，由本引擎对事实表做 SQL 式聚合（每函数标注等价 SQL）。
+ *   - Rule 1/2 天然成立：总 GMV / 总订单 = Σ 渠道值（GMV 仅存在于渠道表）。
+ *   - aggregate* 对外签名与返回结构**不变** → dataAgent / workflow / UI 无需改动；
+ *     切换数据源只发生在本模块内部（getFacts()），对上层透明。
  *
  * 本模块为「服务端专用」：顶部 import fs，禁止被客户端组件引用
  * （客户端只经 /api/kpis、/api/analyze 取聚合结果）。
- *
- * 对外导出的 4 个 aggregate 函数签名与返回结构，与旧 daily.ts 完全一致，
- * 故 dataAgent / workflow / UI 均无需改动（仅 import 路径切换）。
  */
 
 import { readFileSync } from "fs";
@@ -83,11 +79,73 @@ function loadTable(name: string): Record<string, string>[] {
   return parseCsv(readFileSync(join(DATA_DIR, name), "utf-8"));
 }
 
-const num = (r: Record<string, string>, k: string) => Number(r[k] ?? 0);
+/* ----------------------------- 值解析（样本 + 上传共用） ----------------------------- */
+/*
+ * map* 行映射函数对「样本」（规范列名、纯数字）与「上传」（经 Fact Table Builder
+ * 归一为规范列名，但单元格可能带 ¥/千分位/万/亿/%）统一用下面三个解析器。
+ * 样本的干净值经这些解析器后保持不变（passthrough），故历史数值/回归恒等不受影响。
+ */
+
+/** 数值解析：去 ¥/$/￥/千分位/空格/%；识别中文量级后缀「万」「亿」；非法/空 → 0。 */
+export function parseNumber(s: string | undefined): number {
+  if (s == null) return 0;
+  let t = String(s).trim();
+  if (!t) return 0;
+  let mult = 1;
+  if (/亿$/.test(t)) {
+    mult = 1e8;
+    t = t.slice(0, -1);
+  } else if (/万$/.test(t)) {
+    mult = 1e4;
+    t = t.slice(0, -1);
+  }
+  t = t.replace(/[¥$￥,\s%]/g, "");
+  const n = Number(t);
+  return Number.isFinite(n) ? n * mult : 0;
+}
+
+/** 日期解析：YYYY/M/D 或 YYYY-M-D → YYYY-MM-DD；无法识别 → 原值透传（样本本即 ISO）。 */
+export function parseDateCell(s: string | undefined): string {
+  const t = String(s ?? "").trim();
+  if (!t) return "";
+  const m = t.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
+  if (m) {
+    const [, y, mo, d] = m;
+    return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  }
+  return t;
+}
+
+const CANONICAL_CHANNEL_KEYS = new Set([
+  "PRIVATE_TRAFFIC",
+  "MINI_PROGRAM",
+  "XIAOHONGSHU",
+  "TMALL",
+  "JD",
+  "OFFLINE_STORE",
+]);
+
+/** NL 渠道名变体 → 事实表 channel key；已是规范 key 或未识别 → 原值透传。 */
+const CHANNEL_KEY_VARIANTS: [RegExp, string][] = [
+  [/私域|企微|wechat|private/i, "PRIVATE_TRAFFIC"],
+  [/小程序|mini\s*program/i, "MINI_PROGRAM"],
+  [/小红书|xiaohongshu|xhs|red/i, "XIAOHONGSHU"],
+  [/天猫|tmall/i, "TMALL"],
+  [/京东|\bjd\b/i, "JD"],
+  [/线下|门店|offline|store/i, "OFFLINE_STORE"],
+];
+
+export function normalizeChannelKey(s: string | undefined): string {
+  const t = String(s ?? "").trim();
+  if (!t) return "";
+  if (CANONICAL_CHANNEL_KEYS.has(t)) return t;
+  for (const [re, key] of CHANNEL_KEY_VARIANTS) if (re.test(t)) return key;
+  return t;
+}
 
 /* --------------------------------- 事实表行 --------------------------------- */
 
-interface ChannelFact {
+export interface ChannelFact {
   date: string;
   channel: string;
   visitors: number;
@@ -100,7 +158,7 @@ interface ChannelFact {
   returning_customers: number;
 }
 
-interface MemberFact {
+export interface MemberFact {
   date: string;
   total_members: number;
   active_members: number;
@@ -111,7 +169,7 @@ interface MemberFact {
   churn_members: number;
 }
 
-interface ScrmFact {
+export interface ScrmFact {
   date: string;
   consultants: number;
   total_friends: number;
@@ -123,7 +181,7 @@ interface ScrmFact {
   coupon_used: number;
 }
 
-interface BusinessEventFact {
+export interface BusinessEventFact {
   event_id: string;
   event_date: string;
   event_name: string;
@@ -133,60 +191,137 @@ interface BusinessEventFact {
   description: string;
 }
 
-/** 启动时一次性载入并缓存（服务端长驻内存）。 */
-const CHANNEL_FACTS: ChannelFact[] = loadTable("daily_channel_metrics.csv").map((r) => ({
-  date: r.date,
-  channel: r.channel,
-  visitors: num(r, "visitors"),
-  buyers: num(r, "buyers"),
-  orders: num(r, "orders"),
-  gmv: num(r, "gmv"),
-  refund_amount: num(r, "refund_amount"),
-  marketing_cost: num(r, "marketing_cost"),
-  new_customers: num(r, "new_customers"),
-  returning_customers: num(r, "returning_customers"),
-}));
+/** 规范事实表集合 = Active Dataset 的全部数据。 */
+export interface Facts {
+  channel: ChannelFact[];
+  member: MemberFact[];
+  scrm: ScrmFact[];
+  events: BusinessEventFact[];
+}
 
-const MEMBER_FACTS: MemberFact[] = loadTable("daily_member_metrics.csv").map((r) => ({
-  date: r.date,
-  total_members: num(r, "total_members"),
-  active_members: num(r, "active_members"),
-  new_members: num(r, "new_members"),
-  vip_members: num(r, "vip_members"),
-  buyers: num(r, "buyers"),
-  repeat_buyers: num(r, "repeat_buyers"),
-  churn_members: num(r, "churn_members"),
-}));
+/**
+ * 行映射（规范列名行 → 强类型事实行）。样本与上传共用：
+ *  - 样本：loadTable 直接产出规范列名行；
+ *  - 上传：Fact Table Builder 先把用户列名归一为规范列名，再交由此处解析值。
+ */
+export function mapChannelRows(rows: Record<string, string>[]): ChannelFact[] {
+  return rows.map((r) => ({
+    date: parseDateCell(r.date),
+    channel: normalizeChannelKey(r.channel),
+    visitors: parseNumber(r.visitors),
+    buyers: parseNumber(r.buyers),
+    orders: parseNumber(r.orders),
+    gmv: parseNumber(r.gmv),
+    refund_amount: parseNumber(r.refund_amount),
+    marketing_cost: parseNumber(r.marketing_cost),
+    new_customers: parseNumber(r.new_customers),
+    returning_customers: parseNumber(r.returning_customers),
+  }));
+}
 
-const SCRM_FACTS: ScrmFact[] = loadTable("daily_scrm_metrics.csv").map((r) => ({
-  date: r.date,
-  consultants: num(r, "consultants"),
-  total_friends: num(r, "total_friends"),
-  new_friends: num(r, "new_friends"),
-  reached_users: num(r, "reached_users"),
-  reply_users: num(r, "reply_users"),
-  converted_users: num(r, "converted_users"),
-  coupon_sent: num(r, "coupon_sent"),
-  coupon_used: num(r, "coupon_used"),
-}));
+export function mapMemberRows(rows: Record<string, string>[]): MemberFact[] {
+  return rows.map((r) => ({
+    date: parseDateCell(r.date),
+    total_members: parseNumber(r.total_members),
+    active_members: parseNumber(r.active_members),
+    new_members: parseNumber(r.new_members),
+    vip_members: parseNumber(r.vip_members),
+    buyers: parseNumber(r.buyers),
+    repeat_buyers: parseNumber(r.repeat_buyers),
+    churn_members: parseNumber(r.churn_members),
+  }));
+}
 
-const EVENT_FACTS: BusinessEventFact[] = loadTable("business_events.csv").map((r) => ({
-  event_id: r.event_id,
-  event_date: r.event_date,
-  event_name: r.event_name,
-  event_type: r.event_type,
-  impact_direction: r.impact_direction,
-  impact_level: r.impact_level,
-  description: r.description,
-}));
+export function mapScrmRows(rows: Record<string, string>[]): ScrmFact[] {
+  return rows.map((r) => ({
+    date: parseDateCell(r.date),
+    consultants: parseNumber(r.consultants),
+    total_friends: parseNumber(r.total_friends),
+    new_friends: parseNumber(r.new_friends),
+    reached_users: parseNumber(r.reached_users),
+    reply_users: parseNumber(r.reply_users),
+    converted_users: parseNumber(r.converted_users),
+    coupon_sent: parseNumber(r.coupon_sent),
+    coupon_used: parseNumber(r.coupon_used),
+  }));
+}
 
-/** 暴露原始事实表（供 data-integrity 测试与未来 SQL 透传使用）。 */
-export const facts = {
-  channel: CHANNEL_FACTS,
-  member: MEMBER_FACTS,
-  scrm: SCRM_FACTS,
-  events: EVENT_FACTS,
-};
+export function mapEventRows(rows: Record<string, string>[]): BusinessEventFact[] {
+  return rows.map((r) => ({
+    event_id: r.event_id ?? "",
+    event_date: parseDateCell(r.event_date),
+    event_name: r.event_name ?? "",
+    event_type: r.event_type ?? "",
+    impact_direction: r.impact_direction ?? "",
+    impact_level: r.impact_level ?? "",
+    description: r.description ?? "",
+  }));
+}
+
+/* ----------------------------- Active Dataset 状态 ----------------------------- */
+/*
+ * 进程内可切换的活跃事实表（globalThis guard 保 HMR 单例）。null = 使用惰性构建的内置样本。
+ * 切换入口 setActiveFacts/resetFacts 供 dataset-store 在 /upload 时调用。
+ */
+
+interface DatasetStore {
+  active: Facts | null;
+}
+
+const g = globalThis as unknown as { __ANALYST_FACTS__?: DatasetStore };
+g.__ANALYST_FACTS__ ??= { active: null };
+const F = g.__ANALYST_FACTS__!;
+
+let sampleCache: Facts | null = null;
+
+/** 内置样本 = 4 张 CSV 事实表（惰性构建，进程内只算一次）。 */
+function buildSampleFacts(): Facts {
+  return {
+    channel: mapChannelRows(loadTable("daily_channel_metrics.csv")),
+    member: mapMemberRows(loadTable("daily_member_metrics.csv")),
+    scrm: mapScrmRows(loadTable("daily_scrm_metrics.csv")),
+    events: mapEventRows(loadTable("business_events.csv")),
+  };
+}
+
+/** 当前活跃事实表：上传数据优先，否则惰性构建内置样本。 */
+export function getFacts(): Facts {
+  return F.active ?? (sampleCache ??= buildSampleFacts());
+}
+
+/** 内置样本事实表（与当前激活无关；供 Dataset Visibility 展示样本元信息） */
+export function getSampleFacts(): Facts {
+  return sampleCache ?? (sampleCache = buildSampleFacts());
+}
+
+/** 上传成功后挂为活跃（替换样本，成为唯一分析源）。 */
+export function setActiveFacts(facts: Facts): void {
+  F.active = facts;
+}
+
+/** 重置回内置样本。 */
+export function resetFacts(): void {
+  F.active = null;
+}
+
+/** 是否正在使用用户上传数据（非样本）。 */
+export function isActiveUploaded(): boolean {
+  return F.active !== null;
+}
+
+/**
+ * 活跃数据集的可分析天数 = 渠道/会员/企微三表去重日期数（实时读 Active Facts）。
+ * 这是「分析范围」的实际上限：上传多少天，就是多少天。与 UnderstandingResult.dateRange.dayCount
+ * 同义，但读的是规范化后的活跃事实表（随时反映 setActiveFacts / resetFacts 的结果）。
+ */
+export function availableDayCount(): number {
+  const f = getFacts();
+  const dates = new Set<string>();
+  for (const r of f.channel) dates.add(r.date);
+  for (const r of f.member) dates.add(r.date);
+  for (const r of f.scrm) dates.add(r.date);
+  return dates.size;
+}
 
 /* --------------------------------- 窗口工具 --------------------------------- */
 
@@ -206,7 +341,7 @@ const sum = <T,>(rows: T[], f: (r: T) => number) => rows.reduce((s, r) => s + f(
 const pct = (cur: number, prev: number) => (prev ? ((cur - prev) / prev) * 100 : 0);
 const pp = (cur: number, prev: number) => cur - prev;
 
-/** 渠道事实表按日聚合（6 渠道 → 1 行/日），供 Sales / Marketing / 趋势使用。 */
+/** 渠道事实表按日聚合（多渠道 → 1 行/日），供 Sales / Marketing / 趋势使用。 */
 interface DayTotals {
   date: string;
   gmv: number;
@@ -230,8 +365,6 @@ function dailyTotals(rows: ChannelFact[]): DayTotals[] {
   }
   return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
 }
-
-const DAY = dailyTotals(CHANNEL_FACTS);
 
 /* ------------------------------- Sales 聚合 -------------------------------- */
 /*
@@ -274,9 +407,10 @@ function periodOf(days: DayTotals[]): PeriodMetrics {
 }
 
 export function aggregateSales(range: Range): SalesAggregate {
-  const n = DAY.length;
-  const current = DAY.slice(n - range, n);
-  const prevRows = DAY.slice(n - 2 * range, n - range);
+  const day = dailyTotals(getFacts().channel);
+  const n = day.length;
+  const current = day.slice(n - range, n);
+  const prevRows = day.slice(n - 2 * range, n - range);
   const hasComparison = prevRows.length === range;
   const c = periodOf(current);
   const p = hasComparison ? periodOf(prevRows) : null;
@@ -326,7 +460,7 @@ export interface ChannelAggregate {
 }
 
 export function aggregateChannels(range: Range): ChannelAggregate[] {
-  const { current, previous, hasComparison } = dateWindow(CHANNEL_FACTS, range);
+  const { current, previous, hasComparison } = dateWindow(getFacts().channel, range);
   const names = Array.from(new Set(current.map((r) => r.channel)));
   return names.map((name) => {
     const cur = current.filter((r) => r.channel === name);
@@ -402,26 +536,35 @@ function crmPeriod(rows: MemberFact[]) {
 }
 
 /** 存量快照（与 range 无关）：锚定期末 + 近 90 天。range 切换不会改变返回值。 */
-function crmSnapshot() {
+function crmSnapshot(): {
+  asOf: string;
+  totalMembers: number;
+  vipMembers: number;
+  ltv: number;
+  churnRate: number;
+} {
+  const member = getFacts().member;
+  const day = dailyTotals(getFacts().channel);
   // 期末 = 最新日期那一行（按 date 排序取末位，防御性排序，文件本身已升序）
-  const sorted = [...MEMBER_FACTS].sort((a, b) => a.date.localeCompare(b.date));
+  const sorted = [...member].sort((a, b) => a.date.localeCompare(b.date));
   const latest = sorted[sorted.length - 1];
+  if (!latest) return { asOf: "", totalMembers: 0, vipMembers: 0, ltv: 0, churnRate: 0 };
 
-  const gmv90 = sum(DAY, (d) => d.gmv);
-  const m90 = MEMBER_FACTS.length ? sum(MEMBER_FACTS, (r) => r.active_members) / MEMBER_FACTS.length || 1 : 1;
-  const total90 = sum(MEMBER_FACTS, (r) => r.total_members) || 1;
+  const gmv90 = sum(day, (d) => d.gmv);
+  const m90 = member.length ? sum(member, (r) => r.active_members) / member.length || 1 : 1;
+  const total90 = sum(member, (r) => r.total_members) || 1;
 
   return {
     asOf: latest.date,
     totalMembers: latest.total_members,
     vipMembers: latest.vip_members,
     ltv: Math.round(gmv90 / m90),
-    churnRate: (sum(MEMBER_FACTS, (r) => r.churn_members) / total90) * 100,
+    churnRate: (sum(member, (r) => r.churn_members) / total90) * 100,
   };
 }
 
 export function aggregateCrm(range: Range): CrmAggregate {
-  const { current, previous, hasComparison } = dateWindow(MEMBER_FACTS, range);
+  const { current, previous, hasComparison } = dateWindow(getFacts().member, range);
   const p = crmPeriod(current);
   const prevRepurchaseRate = hasComparison ? crmPeriod(previous).repurchaseRate : null;
 
@@ -487,7 +630,7 @@ function scrmOf(rows: ScrmFact[]) {
 }
 
 export function aggregateScrm(range: Range): ScrmAggregate {
-  const { current, previous, hasComparison } = dateWindow(SCRM_FACTS, range);
+  const { current, previous, hasComparison } = dateWindow(getFacts().scrm, range);
   const c = scrmOf(current);
   const p = hasComparison ? scrmOf(previous) : null;
   return {
@@ -521,9 +664,10 @@ export interface MarketingAggregate {
 }
 
 export function aggregateMarketing(range: Range): MarketingAggregate {
-  const n = DAY.length;
-  const cur = DAY.slice(n - range, n);
-  const prev = DAY.slice(n - 2 * range, n - range);
+  const day = dailyTotals(getFacts().channel);
+  const n = day.length;
+  const cur = day.slice(n - range, n);
+  const prev = day.slice(n - 2 * range, n - range);
   const hasComparison = prev.length === range;
 
   const gmv = sum(cur, (d) => d.gmv);

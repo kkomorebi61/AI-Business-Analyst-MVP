@@ -5,6 +5,7 @@ import type { Range } from "@/lib/data/daily";
 import type { Role } from "@/lib/kb/metric-kb";
 import HomeWorkspace from "./home-workspace";
 import Dashboard from "./dashboard";
+import CurrentDatasetBar from "../dataset/current-dataset-bar";
 
 /**
  * 首页客户端根（IA V2）：持有视角 + 时间范围 + 问题输入状态。
@@ -22,6 +23,11 @@ export default function HomeClient() {
 
   return (
     <main className="mx-auto max-w-[1100px] px-6 py-8">
+      {/* 当前分析数据集（Dataset Visibility · 首页顶部固定） */}
+      <div className="mb-6">
+        <CurrentDatasetBar />
+      </div>
+
       <HomeWorkspace
         perspective={perspective}
         range={range}

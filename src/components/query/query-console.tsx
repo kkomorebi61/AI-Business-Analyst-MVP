@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Loader2, Send, Sparkles } from "lucide-react";
 import RangeSwitcher from "@/components/home/range-switcher";
+import CurrentDatasetChip from "@/components/dataset/current-dataset-chip";
 import RoutingBanner from "./routing-banner";
 import AnswerRenderer from "./answer-renderer";
 import { QUERY_TYPE_LABEL, QUERY_TYPE_COST } from "@/lib/routing/types";
@@ -126,10 +127,13 @@ export default function QueryConsole({
     <main className="mx-auto max-w-[920px] px-6 py-8">
       {/* 标题 */}
       <div className="mb-5">
-        <h1 className="flex items-center gap-2 text-[22px] font-semibold">
-          <Sparkles className="h-5 w-5 text-blue-600" />
-          智能问答 · 决策路由控制台
-        </h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className="flex items-center gap-2 text-[22px] font-semibold">
+            <Sparkles className="h-5 w-5 text-blue-600" />
+            智能问答 · 决策路由控制台
+          </h1>
+          <CurrentDatasetChip />
+        </div>
         <p className="mt-1 text-sm text-muted-foreground">
           自然语言提问 → 自动分类 → 路由到最优执行路径（Rule / SQL / Evidence / Knowledge First · LLM Last）
         </p>
