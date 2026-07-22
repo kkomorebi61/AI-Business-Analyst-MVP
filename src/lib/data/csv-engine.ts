@@ -433,6 +433,35 @@ export function aggregateSales(range: Range): SalesAggregate {
   };
 }
 
+/**
+ * 当期多指标日序列（经营诊断 V2 · 指标趋势：GMV / Orders / Users / Conversion / AOV）。
+ * 基于 dailyTotals（含 visitors/buyers），逐日派生转化率与客单价。不改动 aggregateSales。
+ */
+export interface DayMetric {
+  date: string;
+  gmv: number;
+  orders: number;
+  visitors: number; // Users
+  buyers: number;
+  conversion: number; // %
+  aov: number;
+}
+
+export function dailySeries(range: Range): DayMetric[] {
+  const day = dailyTotals(getFacts().channel);
+  const n = day.length;
+  const current = day.slice(n - range, n);
+  return current.map((d) => ({
+    date: d.date,
+    gmv: d.gmv,
+    orders: d.orders,
+    visitors: d.visitors,
+    buyers: d.buyers,
+    conversion: d.visitors ? (d.buyers / d.visitors) * 100 : 0,
+    aov: d.orders ? d.gmv / d.orders : 0,
+  }));
+}
+
 /* ------------------------------ Channels 聚合 ------------------------------ */
 /*
   渠道维度：GMV=SUM(gmv) / Orders=SUM(orders) / Conversion=SUM(buyers)/SUM(visitors)

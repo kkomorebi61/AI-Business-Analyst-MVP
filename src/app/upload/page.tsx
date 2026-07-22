@@ -1,4 +1,3 @@
-import TopNav from "@/components/top-nav";
 import UploadClient from "@/components/upload/upload-client";
 
 /**
@@ -8,7 +7,6 @@ import UploadClient from "@/components/upload/upload-client";
 export default function UploadPage() {
   return (
     <div className="min-h-screen bg-[#F8F9FA]">
-      <TopNav />
       <main className="mx-auto max-w-[1280px] px-6 py-8">
         <UploadClient />
       </main>

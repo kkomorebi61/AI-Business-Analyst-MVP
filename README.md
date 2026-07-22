@@ -8,8 +8,38 @@
 
 ---
 
+## V2.0 · 项目制咨询流水线（Consulting OS）
+
+V2.0 在「问答式分析」之上，升级为 **以项目为单元的端到端咨询闭环**：每个 Project 绑定自己的数据、跑完一条「业务问题 → 数据 → 诊断 → 根因 → 策略 → 执行 → 追踪」的完整咨询链路。全局 AppShell（左侧导航 + 顶栏），项目制着陆页 `/projects`。
+
+**8 步 Wizard**（`/projects/[id]`，每步接真实引擎，非占位）：
+
+| 步 | 阶段 | 能力 |
+|---|---|---|
+| 1 业务背景 | A | 项目名 / 行业 / 视角 / 业务问题 |
+| **2 数据采集** | B | **Data Collection Center**：数据归属项目、可追溯、可追加；上传前字段规范提示；成功/失败/处理中状态；明细流水识别后提示「按日聚合」 |
+| 3 数据体检 | C | 完整性 / 一致性 / 覆盖度 / 可信度评分 |
+| **4 经营诊断** | D | **Insight Engine V2**：经营健康度（4 维综合分）+ AI 关键发现卡（带证据/严重度/可信度/下一步）+ 多指标趋势 + 异常检测 + 问题拆解树 |
+| 5 根因分析 | E | 问题树 + 业务事件归因 + 证据链 |
+| **6 策略方案** | F | **Strategy Center V2**：根因 → 策略库匹配 → Strategy Card（优先级 P0-P2 / 预计收益 ROI / 能力映射 √× / 可信度 / 风险 / 推荐依据） |
+| 7 执行计划 | G | 采用策略 → Task Generator 生成 Action Plan，状态可改 |
+| 8 效果追踪 | H | Before / Target / After（数据已就绪） |
+
+**核心设计原则**
+
+- **数据归属按项目（by project）**：每份数据集挂 `projectId` + `origin`（`upload` 现行 / `sync` 预留未来系统自动同步）。进入项目即激活其数据（合并写入引擎单例，**全栈引擎零改动**）；独立沙盒页（`/` `/cockpit` `/query`）始终读内置样本，互不串台。
+- **Rule-First + Knowledge-Based**：健康度、Insight、策略均由规则 + 知识库计算，LLM 仅润色语言（默认关闭）。每个结论绑定 Evidence + 可信度 Badge。
+- **仅摄入聚合日表**：4 张事实表（渠道/订单 · 会员 · 私域 · 业务事件）；明细流水（order_id/customer_id）识别后引导按日聚合上传。
+
+**新增 API**：`/api/projects/:id/datasets`（上传/列表）、`/datasets/:datasetId`（删除）、`/activate` `/deactivate`（项目激活上下文）、`/diagnosis`（经营诊断）、`/strategy`（策略方案）、`/tasks`（执行计划 CRUD + 生成）。
+
+**数据层**：`project-dataset-store`（项目级数据集）、`task-store`（任务）、`dataset-store` 增「激活项目」槽（`setActiveProject`/`clearActiveProject`）、`field-spec`（字段规范）、`health-score` + `insight-format`（诊断整形）、`strategy-v2`（策略卡 + 优先级/ROI/能力映射）。
+
+---
+
 ## 目录
 
+- [V2.0 项目制咨询流水线](#v20-项目制咨询流水线consulting-os)
 - [项目背景](#项目背景)
 - [核心功能](#核心功能)
 - [系统架构](#系统架构)

@@ -12,6 +12,7 @@ import type { Range } from "@/lib/data/daily";
 import type { Role } from "@/lib/kb/metric-kb";
 import { needsConfirmation, TIER_TOKEN_ESTIMATE } from "@/lib/routing/cost-estimate";
 import ConfirmDialog from "./confirm-dialog";
+import { useDeactivateOnMount } from "@/components/shared/use-deactivate-on-mount";
 
 /** 每类一个示例提问，点击即填入并提交（便于验收 8 条路径） */
 const EXAMPLES: { type: Classification["queryType"]; q: string }[] = [
@@ -51,6 +52,7 @@ export default function QueryConsole({
   initialQuestion?: string;
   initialPerspective?: Role;
 }) {
+  useDeactivateOnMount();
   const [question, setQuestion] = useState(initialQuestion || EXAMPLES[2].q);
   const [range, setRange] = useState<Range>(7);
   const [perspective, setPerspective] = useState<Role>(initialPerspective);

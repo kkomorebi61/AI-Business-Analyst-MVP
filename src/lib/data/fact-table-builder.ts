@@ -31,7 +31,7 @@ function norm(s: string): string {
 export type FactTableKind = "channel" | "member" | "scrm" | "events";
 
 /** 规范字段 → 识别别名（中英文 + 同义词；norm 精确匹配） */
-const FIELD_ALIASES: Record<FactTableKind, Record<string, string[]>> = {
+export const FIELD_ALIASES: Record<FactTableKind, Record<string, string[]>> = {
   channel: {
     date: ["date", "日期", "统计日期", "dt", "交易日", "order_date"],
     channel: ["channel", "渠道", "渠道名称", "channelname"],
@@ -136,6 +136,8 @@ export interface UploadDiagnostics {
   unmappedColumns: string[];
   /** 各表入库行数 */
   rowsByTable: Record<string, number>;
+  /** 命中的规范字段（按事实表分组；供字段规范提示与 schema 捕获） */
+  matchedByTable: Partial<Record<FactTableKind, string[]>>;
 }
 
 export interface BuildResult {
@@ -151,6 +153,7 @@ export interface BuildResult {
 export function buildFacts(files: DatasetFile[]): BuildResult {
   const facts: Facts = { channel: [], member: [], scrm: [], events: [] };
   const rowsByTable: UploadDiagnostics["rowsByTable"] = {};
+  const matchedByTable: UploadDiagnostics["matchedByTable"] = {};
   const unmappedSet = new Set<string>();
   let rawDetected = false;
 
@@ -159,7 +162,7 @@ export function buildFacts(files: DatasetFile[]): BuildResult {
     const candidates = (Object.keys(FIELD_ALIASES) as FactTableKind[]).map((kind) => {
       const { mapping, matched } = mapColumnsFor(file.columns, FIELD_ALIASES[kind]);
       const hasCore = CORE_BY_KIND[kind].some((f) => matched.has(f));
-      return { kind, mapping, matchedCount: matched.size, hasCore };
+      return { kind, mapping, matchedCount: matched.size, hasCore, matched: Array.from(matched) };
     });
 
     // 取命中最多、≥ MIN 且命中至少 1 个核心字段的表（优先非 events；events 仅当无业务表命中时考虑）
@@ -186,6 +189,11 @@ export function buildFacts(files: DatasetFile[]): BuildResult {
         case "events": facts.events = facts.events.concat(mapEventRows(rows)); break;
       }
       rowsByTable[best.kind] = (rowsByTable[best.kind] ?? 0) + rows.length;
+      // 累计该表命中的规范字段（去重），供字段规范提示与 schema 捕获
+      const prev = matchedByTable[best.kind] ?? [];
+      matchedByTable[best.kind] = Array.from(
+        new Set([...prev, ...Array.from(best.matched)]),
+      );
     } else {
       // 无任何表达标：全部列未识别；按 raw 字段判定 rawDetected
       for (const col of file.columns) unmappedSet.add(col);
@@ -200,6 +208,7 @@ export function buildFacts(files: DatasetFile[]): BuildResult {
       rawDetected,
       unmappedColumns: Array.from(unmappedSet),
       rowsByTable,
+      matchedByTable,
     },
   };
 }

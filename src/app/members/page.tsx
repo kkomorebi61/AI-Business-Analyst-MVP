@@ -1,11 +1,9 @@
-import TopNav from "@/components/top-nav";
 import DrillDownStub from "@/components/home/drill-down-stub";
 
 /** 会员经营 Drill-Down 二级页（L2 指标：渠道会员数 / 渠道 LTV / 渠道复购等，后续迭代） */
 export default function MembersPage() {
   return (
     <div className="min-h-screen">
-      <TopNav />
       <DrillDownStub
         title="会员经营 · 明细分析"
         source="CRM · CDP"

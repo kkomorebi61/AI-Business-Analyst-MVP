@@ -14,7 +14,6 @@ import {
   Trash2,
   Upload,
 } from "lucide-react";
-import TopNav from "@/components/top-nav";
 import { DATA_TYPE_LABELS } from "@/lib/data-understanding/recommend";
 import type { DatasetSummary } from "@/lib/data/dataset-store";
 
@@ -230,7 +229,6 @@ export default function DatasetsPage() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA]">
-      <TopNav />
       <main className="mx-auto max-w-[1100px] px-6 py-8">
         {/* 标题 + 操作 */}
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3">

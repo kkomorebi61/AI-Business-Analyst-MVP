@@ -8,7 +8,6 @@ import {
   ShieldCheck,
   Users,
 } from "lucide-react";
-import TopNav from "@/components/top-nav";
 import MetricsCenterClient from "@/components/metrics/metrics-center-client";
 import { ALL_METRICS } from "@/lib/kb/metric-kb";
 import {
@@ -47,7 +46,6 @@ export default function MetricsPage() {
 
   return (
     <div className="min-h-screen">
-      <TopNav />
       <main className="mx-auto max-w-[1280px] px-6 py-8">
         <Link
           href="/"

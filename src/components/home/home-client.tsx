@@ -6,6 +6,7 @@ import type { Role } from "@/lib/kb/metric-kb";
 import HomeWorkspace from "./home-workspace";
 import Dashboard from "./dashboard";
 import CurrentDatasetBar from "../dataset/current-dataset-bar";
+import { useDeactivateOnMount } from "@/components/shared/use-deactivate-on-mount";
 
 /**
  * 首页客户端根（IA V2）：持有视角 + 时间范围 + 问题输入状态。
@@ -15,6 +16,7 @@ import CurrentDatasetBar from "../dataset/current-dataset-bar";
  * 原 KpiSidebar（4 KPI 侧栏）已由 Dashboard 的 §1 经营总览取代。
  */
 export default function HomeClient() {
+  useDeactivateOnMount();
   const [perspective, setPerspective] = useState<Role>("CEO");
   const [range, setRange] = useState<Range>(7);
   const [question, setQuestion] = useState(

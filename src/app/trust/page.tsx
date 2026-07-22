@@ -12,7 +12,6 @@ import {
   Upload,
   XCircle,
 } from "lucide-react";
-import TopNav from "@/components/top-nav";
 import CurrentDatasetCard from "@/components/dataset/current-dataset-card";
 import { listSources, type SourceTrust } from "@/lib/data/data-trust";
 import { METRIC_SPECS, type MetricKey } from "@/lib/kb/metric-kb";
@@ -63,7 +62,6 @@ export default function TrustPage() {
 
   return (
     <div className="min-h-screen">
-      <TopNav />
       <main className="mx-auto max-w-[1280px] px-6 py-8">
         <Link
           href="/"

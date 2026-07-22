@@ -9,7 +9,6 @@ import {
   Hash,
   Zap,
 } from "lucide-react";
-import TopNav from "@/components/top-nav";
 import { getCostSnapshot, COST_TARGETS } from "@/lib/routing/cost-store";
 
 /** 强制动态：读取进程内实时计数器，禁用静态预渲染 */
@@ -103,7 +102,6 @@ export default function CostPage() {
 
   return (
     <div className="min-h-screen">
-      <TopNav />
       <main className="mx-auto max-w-[1280px] px-6 py-8">
         <Link
           href="/"
